@@ -1,5 +1,7 @@
 # Custom Plugin Node Library
 
+[![Build Status](https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master)](https://travis-ci.org/mia-platform/custom-plugin-lib)
+
 ## Summary
 This library helps you to implement the new platform custom plugins.
 The most basic (and powerful) plugin is the rawCustomPlugin.
