@@ -121,6 +121,9 @@ a(async function (service) {
     const proxiedServiceWithOptionsAndHeaders: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', headers: { key: 'value1' }})
     await invokeSomeApis(proxiedServiceWithOptionsAndHeaders)
 
+    const proxiedServiceWithPrefix: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', prefix: '/my-prefix'})
+    await invokeSomeApis(proxiedServiceWithPrefix)
+
     return { 'aa': 'boo' }
   }, {
     headers: {
