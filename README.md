@@ -1,6 +1,7 @@
 # Custom Plugin Node Library
 
 [![Build Status](https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master)](https://travis-ci.org/mia-platform/custom-plugin-lib)
+[![Coverage Status](https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master)](https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master)
 
 ## Summary
 This library helps you to implement the new platform custom plugins.
