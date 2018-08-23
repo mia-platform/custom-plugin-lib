@@ -30,7 +30,8 @@
     "start": "echo 'unable to start the library directly' && exit 1",
     "test": "npm run lint && npm run unit && npm run checkonly && npm run typescript",
     "unit": "tap -b -o tap.log tests/*.test.js",
-    "typescript": "tsc --project ./tests/types/tsconfig.json"
+    "typescript": "tsc --project ./tests/types/tsconfig.json",
+    "coveralls": "npm run unit -- --cov"
   },
   "dependencies": {
     "ajv": "^6.5.2",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "@mia-platform/standard-mia": "^1.1.0",
+    "coveralls": "^3.0.2",
     "nock": "^9.4.4",
     "pre-commit": "^1.2.2",
     "snazzy": "^7.1.1",
