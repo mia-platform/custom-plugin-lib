@@ -737,7 +737,7 @@ t.test('serviceBuilder', t => {
     myServiceNameScope.done()
   })
 
-  t.test('request header overwrite global and mia headers', async t => {
+  t.test('request header overwrites global and mia headers', async t => {
     t.plan(4)
 
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'request header' } })
@@ -759,10 +759,10 @@ t.test('serviceBuilder', t => {
     myServiceNameScope.done()
   })
 
-  t.test('mia header overwrite global header', async t => {
+  t.test('global user header overwrites mia header', async t => {
     t.plan(4)
 
-    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'mia header' } })
+    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'global user header' } })
       .replyContentLength()
       .get('/foo?aa=bar')
       .reply(200, { the: 'response' }, {
