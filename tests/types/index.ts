@@ -109,11 +109,17 @@ a(async function (service) {
     const directServiceWithOptions: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http'})
     await invokeSomeApis(directServiceWithOptions)
 
+    const directServiceWithOptionsAndHeaders: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http', headers: { key: 'value1' }})
+    await invokeSomeApis(directServiceWithOptionsAndHeaders)
+
     const proxiedService: cpl.Service = request.getServiceProxy()
     await invokeSomeApis(proxiedService)
 
     const proxiedServiceWithOptions: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http'})
     await invokeSomeApis(proxiedServiceWithOptions)
+
+    const proxiedServiceWithOptionsAndHeaders: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', headers: { key: 'value1' }})
+    await invokeSomeApis(proxiedServiceWithOptionsAndHeaders)
 
     return { 'aa': 'boo' }
   }, {

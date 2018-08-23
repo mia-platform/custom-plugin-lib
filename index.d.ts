@@ -63,7 +63,8 @@ declare namespace customPlugin {
   //
   interface InitServiceOptions {
     port?: number,
-    protocol?: 'http' | 'https'
+    protocol?: 'http' | 'https',
+    headers?: object,
   }
   interface ServiceOptions {
     returnAs: 'JSON' | 'BUFFER' | 'STREAM'

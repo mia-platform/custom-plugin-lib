@@ -21,6 +21,7 @@
 /* eslint no-use-before-define: 0 */
 /* eslint max-nested-callbacks: 0 */
 /* eslint max-statements-per-line: 0 */
+/* eslint max-lines: 0 */
 'use strict'
 
 const t = require('tap')
@@ -683,6 +684,94 @@ t.test('serviceBuilder', t => {
     const service = serviceBuilder('my-service-name', { foo: 'header value chosen by platform' })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'header value chosen by the developer' } })
+
+    t.equal(response.statusCode, 200)
+    t.strictSame(response.payload, { the: 'response' })
+    t.strictSame(response.headers.some, 'response-header')
+    t.ok(response.headers['content-length'])
+
+    myServiceNameScope.done()
+  })
+
+  t.test('developer can specify a global header', async t => {
+    t.plan(4)
+
+    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'global user header' } })
+      .replyContentLength()
+      .get('/foo?aa=bar')
+      .reply(200, { the: 'response' }, {
+        some: 'response-header',
+      })
+
+    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+
+    const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
+
+    t.equal(response.statusCode, 200)
+    t.strictSame(response.payload, { the: 'response' })
+    t.strictSame(response.headers.some, 'response-header')
+    t.ok(response.headers['content-length'])
+
+    myServiceNameScope.done()
+  })
+
+  t.test('global header can be overwritten by a request header', async t => {
+    t.plan(4)
+
+    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'request header' } })
+      .replyContentLength()
+      .get('/foo?aa=bar')
+      .reply(200, { the: 'response' }, {
+        some: 'response-header',
+      })
+
+    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+
+    const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
+
+    t.equal(response.statusCode, 200)
+    t.strictSame(response.payload, { the: 'response' })
+    t.strictSame(response.headers.some, 'response-header')
+    t.ok(response.headers['content-length'])
+
+    myServiceNameScope.done()
+  })
+
+  t.test('request header overwrite global and mia headers', async t => {
+    t.plan(4)
+
+    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'request header' } })
+      .replyContentLength()
+      .get('/foo?aa=bar')
+      .reply(200, { the: 'response' }, {
+        some: 'response-header',
+      })
+
+    const service = serviceBuilder('my-service-name', { foo: 'mia header' }, { headers: { foo: 'global user header' } })
+
+    const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
+
+    t.equal(response.statusCode, 200)
+    t.strictSame(response.payload, { the: 'response' })
+    t.strictSame(response.headers.some, 'response-header')
+    t.ok(response.headers['content-length'])
+
+    myServiceNameScope.done()
+  })
+
+  t.test('mia header overwrite global header', async t => {
+    t.plan(4)
+
+    const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'mia header' } })
+      .replyContentLength()
+      .get('/foo?aa=bar')
+      .reply(200, { the: 'response' }, {
+        some: 'response-header',
+      })
+
+    const service = serviceBuilder('my-service-name', { foo: 'mia header' }, { headers: { foo: 'global user header' } })
+
+    const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
     t.equal(response.statusCode, 200)
     t.strictSame(response.payload, { the: 'response' })
