@@ -1,7 +1,7 @@
 # Custom Plugin Node Library
 
 [![Build Status](https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master)](https://travis-ci.org/mia-platform/custom-plugin-lib)
-[![Coverage Status](https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master)](https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master)](https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg)](https://greenkeeper.io/)
 
 ## Summary
 This library helps you to implement the new platform custom plugins.
