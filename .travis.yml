@@ -6,7 +6,7 @@ node_js:
   - "8"
 
 script:
-  - npm test
+  - npm run coveralls -- -c
 
 notifications:
   email:
