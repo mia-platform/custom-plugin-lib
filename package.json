@@ -45,7 +45,7 @@
   "devDependencies": {
     "@mia-platform/standard-mia": "^1.1.0",
     "coveralls": "^3.0.2",
-    "nock": "^9.4.4",
+    "nock": "^10.0.0",
     "pre-commit": "^1.2.2",
     "snazzy": "^8.0.0",
     "tap": "^12.0.1",
