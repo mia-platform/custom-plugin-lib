@@ -111,7 +111,7 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction) {
-    return async function index(fastify, opts) {
+    async function index(fastify, opts) {
       const { name, description, version } = require(`${process.cwd()}/package`)
       fastify
         .register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
@@ -131,6 +131,10 @@ function initCustomServiceEnvironment(envSchema = defaultSchema) {
 
       fastify.register(decorateRequestAndFastifyInstance, { asyncInitFunction })
     }
+    index.options = {
+      trustProxy: process.env.TRUSTED_PROXIES, // eslint-disable-line no-process-env
+    }
+    return index
   }
 }
 

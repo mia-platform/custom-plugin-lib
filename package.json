@@ -10,8 +10,9 @@
   "license": "Apache-2.0",
   "author": "Mia Platform Core Team<core@mia-platform.eu>",
   "contributors": [
-    "Paolo Sarti<paolo.sarti@mia-platform.eu>",
-    "Tommaso Allevi<tommaso.allevi@mia-platform.eu>"
+    "Paolo Sarti <paolo.sarti@mia-platform.eu>",
+    "Tommaso Allevi <tommaso.allevi@mia-platform.eu>",
+    "Jacopo Andrea Giola <jacopo.giola@mia-platform.eu>"
   ],
   "files": [
     "lib/*",

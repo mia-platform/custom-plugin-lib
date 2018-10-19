@@ -52,6 +52,22 @@ function setupFastify(t) {
 nock.disableNetConnect()
 
 t.test('customService', t => {
+  t.test('', async t => {
+    t.plan(1)
+    const payload = 'Hello world'
+    const customService = initCustomServiceEnvironment()
+    process.env.TRUSTED_PROXIES = '127.0.0.1' // eslint-disable-line no-process-env
+    const helloWorldPlugin = customService(async function hello(service) {
+      async function handler() {
+        return payload
+      }
+      service.addRawCustomPlugin('GET', '/', handler)
+    })
+
+    t.strictSame(helloWorldPlugin.options, { trustProxy: '127.0.0.1' })
+    delete process.env.TRUSTED_PROXIES  // eslint-disable-line no-process-env
+  })
+
   t.test('hello world', async t => {
     t.plan(4)
     const payload = 'Hello world'
