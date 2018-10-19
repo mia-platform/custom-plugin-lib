@@ -1,7 +1,8 @@
 # Custom Plugin Node Library
 
-[![Build Status](https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master)](https://travis-ci.org/mia-platform/custom-plugin-lib)
-[![Coverage Status](https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master)](https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master) [![Greenkeeper badge](https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg)](https://greenkeeper.io/)
+[![Build Status][travis-svg]][travis-link]
+[![Coverage Status][coverall-svg]][coverall-link]
+[![Greenkeeper badge][greenkeeper-svg]][greenkeeper-link]
 
 ## Summary
 This library helps you to implement the new platform custom plugins.
@@ -68,6 +69,13 @@ npm run coverage
 
 This two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
 page in `coverage/lcov-report/index.html`.
+
+[travis-svg]: https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master
+[travis-link]: https://travis-ci.org/mia-platform/custom-plugin-lib
+[coverall-svg]: https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master
+[coverall-link]: https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master
+[greenkeeper-svg]: https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg
+[greenkeeper-link]: https://greenkeeper.io/
 
 [nvm]: https://github.com/creationix/nvm
 
