@@ -18,6 +18,7 @@
 /* eslint require-await: 0 */
 /* eslint no-shadow: 0 */
 /* eslint no-magic-numbers: 0 */
+/* eslint max-lines: 0 */
 'use strict'
 
 const t = require('tap')
@@ -33,6 +34,7 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
+const ADDITIONAL_HEADERS_TO_PROXY = 'header1,header2'
 const baseEnv = {
   USERID_HEADER_KEY,
   GROUPS_HEADER_KEY,
@@ -417,6 +419,50 @@ t.test('customService', t => {
     scope.done()
   })
 
+  t.test('directly call a service with custom header', async t => {
+    t.plan(3)
+    const otherServiceName = 'other-service'
+    const headers = {
+      [CLIENTTYPE_HEADER_KEY]: 'CMS',
+      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
+      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
+      [BACKOFFICE_HEADER_KEY]: '',
+      header1: 'header1Value',
+    }
+    const scope = nock(`http://${otherServiceName}:3000`, {
+      reqheaders: headers,
+      badheaders: ['header2'],
+    })
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      service.addRawCustomPlugin('POST', '/', async function handler(req) {
+        const { some } = req.body
+        const service = req.getDirectServiceProxy(otherServiceName, { port: 3000 })
+        const res = await service.get('/res')
+        const { id } = res.payload
+        return { id, some }
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/',
+      payload: { some: 'stuff' },
+      headers,
+    })
+    t.strictSame(response.statusCode, 200)
+    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    t.strictSame(JSON.parse(response.payload), {
+      id: 'a',
+      some: 'stuff',
+    })
+    scope.done()
+  })
+
   t.test('call a service (through the microservice_gateway)', async t => {
     t.plan(3)
     const headers = {
@@ -484,6 +530,49 @@ t.test('customService', t => {
     })
     const fastify = setupFastify(t)
     fastify.register(myCustomService, baseEnv)
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/',
+      payload: { some: 'stuff' },
+      headers,
+    })
+    t.strictSame(response.statusCode, 200)
+    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    t.strictSame(JSON.parse(response.payload), {
+      id: 'a',
+      some: 'stuff',
+    })
+    scope.done()
+  })
+
+  t.test('call a service (through the microservice_gateway) custom header', async t => {
+    t.plan(3)
+    const headers = {
+      [CLIENTTYPE_HEADER_KEY]: 'CMS',
+      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
+      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
+      [BACKOFFICE_HEADER_KEY]: '',
+      header1: 'header1value',
+      header2: 'header2value',
+    }
+    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
+      reqheaders: headers,
+    })
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      service.addRawCustomPlugin('POST', '/', async function handler(req) {
+        const { some } = req.body
+        const service = req.getServiceProxy({ port: 3000, protocol: 'https' })
+        const res = await service.get('/res')
+        const { id } = res.payload
+        return { id, some }
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
     const response = await fastify.inject({
       method: 'POST',
       url: '/',

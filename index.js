@@ -35,6 +35,8 @@ const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
 
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
 
+const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
+
 const baseSchema = {
   type: 'object',
   required: [USERID_HEADER_KEY, GROUPS_HEADER_KEY, CLIENTTYPE_HEADER_KEY,
@@ -51,6 +53,11 @@ const baseSchema = {
       type: 'string',
       description: 'the service name of the microservice gateway',
     },
+    [ADDITIONAL_HEADERS_TO_PROXY]: {
+      type: 'string',
+      default: '',
+      description: 'comma separated list of additional headers to proxy',
+    },
   },
 }
 
@@ -66,12 +73,35 @@ function concatEnvSchemas(schema, otherSchema) {
   }
 }
 
+function getCustomHeaders(headersKeyToProxy, headers) {
+  const headersKeys = headersKeyToProxy.split(',').filter(header => header)
+  return headersKeys.reduce((acc, headerKey) => {
+    const headerValue = headers[headerKey]
+    return {
+      ...acc,
+      ...headerValue ? { [headerKey]: headerValue } : null,
+    }
+  }, {})
+}
+
+function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
+  return {
+    ...baseOptions,
+    headers: {
+      ...headersKeyToProxy ? getCustomHeaders(headersKeyToProxy, headers) : {},
+      ...baseOptions.headers,
+    },
+  }
+}
+
 function getDirectlyServiceBuilder(serviceName, baseOptions = {}) {
-  return serviceBuilder(serviceName, this.getMiaHeaders(), baseOptions)
+  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, this.headers)
+  return serviceBuilder(serviceName, this.getMiaHeaders(), options)
 }
 
 function getServiceBuilder(baseOptions = {}) {
-  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], this.getMiaHeaders(), baseOptions)
+  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, this.headers)
+  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], this.getMiaHeaders(), options)
 }
 
 function getMiaHeaders() {
@@ -94,6 +124,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
   fastify.decorateRequest(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
+  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY])
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
 
