@@ -74,8 +74,7 @@ function concatEnvSchemas(schema, otherSchema) {
 }
 
 function getCustomHeaders(headersKeyToProxy, headers) {
-  const headersKeys = headersKeyToProxy.split(',').filter(header => header)
-  return headersKeys.reduce((acc, headerKey) => {
+  return headersKeyToProxy.reduce((acc, headerKey) => {
     const headerValue = headers[headerKey]
     return {
       ...acc,
@@ -88,7 +87,7 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   return {
     ...baseOptions,
     headers: {
-      ...headersKeyToProxy ? getCustomHeaders(headersKeyToProxy, headers) : {},
+      ...getCustomHeaders(headersKeyToProxy, headers),
       ...baseOptions.headers,
     },
   }
@@ -124,7 +123,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
   fastify.decorateRequest(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
-  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY])
+  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header))
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
 
