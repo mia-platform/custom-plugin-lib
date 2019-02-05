@@ -34,7 +34,7 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
-const ADDITIONAL_HEADERS_TO_PROXY = 'header1,header2'
+const ADDITIONAL_HEADERS_TO_PROXY = 'additionalheader1,additionalheader2'
 const baseEnv = {
   USERID_HEADER_KEY,
   GROUPS_HEADER_KEY,
@@ -427,11 +427,11 @@ t.test('customService', t => {
       [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
-      header1: 'header1Value',
+      additionalheader1: 'header1Value',
     }
     const scope = nock(`http://${otherServiceName}:3000`, {
       reqheaders: headers,
-      badheaders: ['header2'],
+      badheaders: ['additionalheader2'],
     })
       .get('/res')
       .reply(200, { id: 'a', b: 2 })
@@ -552,8 +552,8 @@ t.test('customService', t => {
       [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
-      header1: 'header1value',
-      header2: 'header2value',
+      additionalheader1: 'header1value',
+      // additionalheader2: 'header2value',
     }
     const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
       reqheaders: headers,

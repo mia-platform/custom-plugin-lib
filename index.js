@@ -75,10 +75,13 @@ function concatEnvSchemas(schema, otherSchema) {
 
 function getCustomHeaders(headersKeyToProxy, headers) {
   return headersKeyToProxy.reduce((acc, headerKey) => {
+    if (!headers.hasOwnProperty(headerKey)) { // eslint-disable-line no-prototype-builtins
+      return acc
+    }
     const headerValue = headers[headerKey]
     return {
       ...acc,
-      ...headerValue ? { [headerKey]: headerValue } : null,
+      [headerKey]: headerValue,
     }
   }, {})
 }
