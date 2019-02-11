@@ -117,7 +117,7 @@ function getMiaHeaders() {
   }
 }
 
-function getHeaders() {
+function getOriginalRequestHeaders() {
   return this.headers
 }
 
@@ -135,7 +135,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header))
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
-  fastify.decorateRequest('getOriginalRequestHeaders', getHeaders)
+  fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilder)
   fastify.decorateRequest('getServiceProxy', getServiceBuilder)
