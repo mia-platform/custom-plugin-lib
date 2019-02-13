@@ -97,12 +97,14 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
 }
 
 function getDirectlyServiceBuilder(serviceName, baseOptions = {}) {
-  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, this.headers)
+  const requestHeaders = this.getOriginalRequestHeaders()
+  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   return serviceBuilder(serviceName, this.getMiaHeaders(), options)
 }
 
 function getServiceBuilder(baseOptions = {}) {
-  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, this.headers)
+  const requestHeaders = this.getOriginalRequestHeaders()
+  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], this.getMiaHeaders(), options)
 }
 
@@ -113,6 +115,10 @@ function getMiaHeaders() {
     [this.CLIENTTYPE_HEADER_KEY]: this.getClientType(),
     [this.BACKOFFICE_HEADER_KEY]: this.isFromBackOffice() ? '1' : '',
   }
+}
+
+function getOriginalRequestHeaders() {
+  return this.headers
 }
 
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction }) {
@@ -129,6 +135,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header))
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
+  fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilder)
   fastify.decorateRequest('getServiceProxy', getServiceBuilder)
