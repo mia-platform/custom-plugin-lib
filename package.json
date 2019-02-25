@@ -37,7 +37,7 @@
   "dependencies": {
     "ajv": "^6.5.2",
     "fastify": "^1.12.1",
-    "fastify-cli": "^0.24.0",
+    "fastify-cli": "^1.0.0",
     "fastify-env": "^0.6.0",
     "fastify-formbody": "^2.0.1",
     "fastify-swagger": "^0.15.0",
