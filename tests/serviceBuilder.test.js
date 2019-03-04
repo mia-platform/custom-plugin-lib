@@ -202,7 +202,7 @@ t.test('serviceBuilder', t => {
       }
     })
 
-    t.test('response status code is allowed', async t => {
+    t.test('response status code is allowed - returnAs: JSON', async t => {
       t.plan(4)
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
@@ -223,8 +223,8 @@ t.test('serviceBuilder', t => {
       myServiceNameScope.done()
     })
 
-    t.test('response status code is not allowed', async t => {
-      t.plan(1)
+    t.test('response status code is not allowed: returnAs: JSON', async t => {
+      t.plan(5)
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -236,7 +236,11 @@ t.test('serviceBuilder', t => {
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202] })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.strictSame(error.response.statusCode, 205)
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
+        t.strictSame(error.response.payload, { the: 'response' })
       }
 
       myServiceNameScope.done()
@@ -264,7 +268,7 @@ t.test('serviceBuilder', t => {
     })
 
     t.test('response status code is not allowed - returnAs: BUFFER', async t => {
-      t.plan(1)
+      t.plan(5)
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -276,7 +280,11 @@ t.test('serviceBuilder', t => {
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.strictSame(error.response.statusCode, 205)
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
+        t.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
       }
 
       myServiceNameScope.done()
@@ -310,7 +318,7 @@ t.test('serviceBuilder', t => {
     })
 
     t.test('response status code is not allowed - returnAs: STREAM', async t => {
-      t.plan(1)
+      t.plan(4)
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -323,10 +331,12 @@ t.test('serviceBuilder', t => {
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.strictSame(error.response.statusCode, 205)
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
+        myServiceNameScope.done()
       }
-
-      myServiceNameScope.done()
     })
 
     t.end()
@@ -600,7 +610,7 @@ t.test('serviceBuilder', t => {
       myServiceNameScope.done()
     })
 
-    t.test('response status code is allowed', async t => {
+    t.test('response status code is allowed - returnAs: JSON', async t => {
       t.plan(4)
 
       const THE_SENT_BODY = { the: 'sent body' }
@@ -624,8 +634,8 @@ t.test('serviceBuilder', t => {
       myServiceNameScope.done()
     })
 
-    t.test('response status code is not allowed', async t => {
-      t.plan(1)
+    t.test('response status code is not allowed - returnAs: JSON', async t => {
+      t.plan(5)
 
       const THE_SENT_BODY = { the: 'sent body' }
 
@@ -641,10 +651,13 @@ t.test('serviceBuilder', t => {
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202] })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.equal(error.response.statusCode, 205)
+        t.strictSame(error.response.payload, { the: 'response' })
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
+        myServiceNameScope.done()
       }
-
-      myServiceNameScope.done()
     })
 
     t.test('response status code is allowed - returnAs: BUFFER', async t => {
@@ -672,7 +685,7 @@ t.test('serviceBuilder', t => {
     })
 
     t.test('response status code is not allowed - returnAs: BUFFER', async t => {
-      t.plan(1)
+      t.plan(5)
 
       const THE_SENT_BODY = { the: 'sent body' }
 
@@ -688,10 +701,14 @@ t.test('serviceBuilder', t => {
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
-      }
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.equal(error.response.statusCode, 205)
+        t.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
 
-      myServiceNameScope.done()
+        myServiceNameScope.done()
+      }
     })
 
     t.test('response status code is allowed - returnAs: STREAM', async t => {
@@ -726,7 +743,7 @@ t.test('serviceBuilder', t => {
     })
 
     t.test('response status code is not allowed - returnAs: STREAM', async t => {
-      t.plan(1)
+      t.plan(4)
 
       const THE_SENT_BODY = { the: 'sent body' }
 
@@ -742,10 +759,12 @@ t.test('serviceBuilder', t => {
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
       } catch (error) {
-        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        t.equal(error.response.statusCode, 205)
+        t.strictSame(error.response.headers.some, 'response-header')
+        t.ok(error.response.headers['content-length'])
+        myServiceNameScope.done()
       }
-
-      myServiceNameScope.done()
     })
 
     t.end()
