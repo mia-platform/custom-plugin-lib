@@ -68,7 +68,8 @@ declare namespace customPlugin {
     prefix?: string,
   }
   interface ServiceOptions {
-    returnAs: 'JSON' | 'BUFFER' | 'STREAM'
+    returnAs?: 'JSON' | 'BUFFER' | 'STREAM'
+    allowedStatusCodes?: number[]
   }
   interface BaseServiceResponse extends http.ServerResponse {
     headers: object
