@@ -282,6 +282,53 @@ t.test('serviceBuilder', t => {
       myServiceNameScope.done()
     })
 
+    t.test('response status code is allowed - returnAs: STREAM', async t => {
+      t.plan(4)
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      const response = await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
+      t.equal(response.statusCode, 200)
+      t.strictSame(response.headers.some, 'response-header')
+      t.ok(response.headers['content-length'])
+      myServiceNameScope.done()
+
+      await wait(200)
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.on('data', data => { acc += data.toString() })
+        response.on('end', () => resolve(acc))
+      })
+      t.strictSame(body, JSON.stringify({ the: 'response' }))
+    })
+
+    t.test('response status code is not allowed - returnAs: STREAM', async t => {
+      t.plan(1)
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .reply(205, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      try {
+        await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
+      } catch (error) {
+        t.strictSame(error.message, 'Status code of the response is not included in the allowed status codes.')
+      }
+
+      myServiceNameScope.done()
+    })
+
     t.end()
   })
 
