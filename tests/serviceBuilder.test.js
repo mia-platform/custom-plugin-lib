@@ -865,6 +865,17 @@ t.test('serviceBuilder', t => {
     }
   })
 
+  t.test('allowedStatusCodes is not array', async t => {
+    t.plan(1)
+
+    const service = serviceBuilder('my-service-name')
+    try {
+      await service.get('/foo', {}, { allowedStatusCodes: 200 })
+    } catch (error) {
+      t.equal(error.message, 'allowedStatusCodes should be array. Found: number.')
+    }
+  })
+
   t.test('https', async t => {
     t.plan(3)
 
