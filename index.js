@@ -96,16 +96,24 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   }
 }
 
-function getDirectlyServiceBuilder(serviceName, baseOptions = {}) {
+function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   return serviceBuilder(serviceName, this.getMiaHeaders(), options)
 }
 
-function getServiceBuilder(baseOptions = {}) {
+function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
+  return serviceBuilder(serviceName, {}, baseOptions)
+}
+
+function getServiceBuilderFromRequest(baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], this.getMiaHeaders(), options)
+}
+
+function getServiceBuilderFromService(baseOptions = {}) {
+  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
 }
 
 function getMiaHeaders() {
@@ -137,12 +145,16 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
 
-  fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilder)
-  fastify.decorateRequest('getServiceProxy', getServiceBuilder)
+  fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
+  fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
 
+  fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
   fastify.decorate('addPreDecorator', addPreDecorator)
   fastify.decorate('addPostDecorator', addPostDecorator)
+
+  fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
+  fastify.decorate('getServiceProxy', getServiceBuilderFromService)
 
   fastify.register(asyncInitFunction)
 }

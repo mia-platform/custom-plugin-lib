@@ -37,6 +37,8 @@ declare namespace customPlugin {
     addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas): DecoratedFastify,
     addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
+    getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
+    getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
   interface DecoratedRequest extends fastify.FastifyRequest<http.IncomingMessage> {

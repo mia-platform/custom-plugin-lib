@@ -336,7 +336,7 @@ t.test('customService', t => {
     t.strictSame(response.payload, payload)
   })
 
-  t.test('directly call a service', async t => {
+  t.test('directly call a service from request instance', async t => {
     t.plan(3)
     const otherServiceName = 'other-service'
     const headers = {
@@ -378,7 +378,31 @@ t.test('customService', t => {
     scope.done()
   })
 
-  t.test('directly call a service specifying port', async t => {
+  t.test('directly call a service from service instance', async t => {
+    t.plan(2)
+    const otherServiceName = 'other-service'
+    const scope = nock(`http://${otherServiceName}`)
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      const otherService = service.getDirectServiceProxy(otherServiceName)
+      const res = await otherService.get('/res')
+      t.strictSame(res.statusCode, 200)
+      t.strictSame(res.payload, {
+        id: 'a',
+        b: 2,
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, baseEnv)
+
+    await fastify.ready()
+    scope.done()
+  })
+
+  t.test('directly call a service from request instance specifying port', async t => {
     t.plan(3)
     const otherServiceName = 'other-service'
     const headers = {
@@ -417,6 +441,30 @@ t.test('customService', t => {
       id: 'a',
       some: 'stuff',
     })
+    scope.done()
+  })
+
+  t.test('directly call a service from service instance specifying port', async t => {
+    t.plan(2)
+    const otherServiceName = 'other-service'
+    const scope = nock(`http://${otherServiceName}:3000`)
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      const otherService = service.getDirectServiceProxy(otherServiceName, { port: 3000 })
+      const res = await otherService.get('/res')
+      t.strictSame(res.statusCode, 200)
+      t.strictSame(res.payload, {
+        id: 'a',
+        b: 2,
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, baseEnv)
+
+    await fastify.ready()
     scope.done()
   })
 
@@ -579,7 +627,7 @@ t.test('customService', t => {
     scope.done()
   })
 
-  t.test('call a service (through the microservice_gateway)', async t => {
+  t.test('call a service (through the microservice_gateway) from request instance', async t => {
     t.plan(3)
     const headers = {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
@@ -620,7 +668,30 @@ t.test('customService', t => {
     scope.done()
   })
 
-  t.test('call a service (through the microservice_gateway) custom options', async t => {
+  t.test('call a service (through the microservice_gateway) from service instance', async t => {
+    t.plan(2)
+    const scope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}`)
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      const otherService = service.getServiceProxy()
+      const res = await otherService.get('/res')
+      t.strictSame(res.statusCode, 200)
+      t.strictSame(res.payload, {
+        id: 'a',
+        b: 2,
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, baseEnv)
+
+    await fastify.ready()
+    scope.done()
+  })
+
+  t.test('call a service (through the microservice_gateway) from request instance custom options', async t => {
     t.plan(3)
     const headers = {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
@@ -658,6 +729,29 @@ t.test('customService', t => {
       id: 'a',
       some: 'stuff',
     })
+    scope.done()
+  })
+
+  t.test('call a service (through the microservice_gateway) from service instance custom options', async t => {
+    t.plan(2)
+    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`)
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      const otherService = service.getServiceProxy({ port: 3000, protocol: 'https' })
+      const res = await otherService.get('/res')
+      t.strictSame(res.statusCode, 200)
+      t.strictSame(res.payload, {
+        id: 'a',
+        b: 2,
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, baseEnv)
+
+    await fastify.ready()
     scope.done()
   })
 
