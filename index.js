@@ -96,10 +96,14 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   }
 }
 
-function getDirectlyServiceBuilder(serviceName, baseOptions = {}) {
+function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   return serviceBuilder(serviceName, this.getMiaHeaders(), options)
+}
+
+function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
+  return serviceBuilder(serviceName, {}, baseOptions)
 }
 
 function getServiceBuilder(baseOptions = {}) {
@@ -137,12 +141,14 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
 
-  fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilder)
+  fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilder)
 
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
   fastify.decorate('addPreDecorator', addPreDecorator)
   fastify.decorate('addPostDecorator', addPostDecorator)
+
+  fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
 
   fastify.register(asyncInitFunction)
 }

@@ -336,7 +336,7 @@ t.test('customService', t => {
     t.strictSame(response.payload, payload)
   })
 
-  t.test('directly call a service', async t => {
+  t.test('directly call a service from request instance', async t => {
     t.plan(3)
     const otherServiceName = 'other-service'
     const headers = {
@@ -375,6 +375,30 @@ t.test('customService', t => {
       id: 'a',
       some: 'stuff',
     })
+    scope.done()
+  })
+
+  t.test('directly call a service from service instance', async t => {
+    t.plan(2)
+    const otherServiceName = 'other-service'
+    const scope = nock(`http://${otherServiceName}`)
+      .get('/res')
+      .reply(200, { id: 'a', b: 2 })
+
+    const customService = initCustomServiceEnvironment()
+    const myCustomService = customService(async function index(service) {
+      const otherService = service.getDirectServiceProxy(otherServiceName)
+      const res = await otherService.get('/res')
+      t.strictSame(res.statusCode, 200)
+      t.strictSame(res.payload, {
+        id: 'a',
+        b: 2,
+      })
+    })
+    const fastify = setupFastify(t)
+    fastify.register(myCustomService, baseEnv)
+
+    await fastify.ready()
     scope.done()
   })
 
