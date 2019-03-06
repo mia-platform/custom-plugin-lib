@@ -42,16 +42,18 @@ const baseSchema = {
   required: [USERID_HEADER_KEY, GROUPS_HEADER_KEY, CLIENTTYPE_HEADER_KEY,
     BACKOFFICE_HEADER_KEY, MICROSERVICE_GATEWAY_SERVICE_NAME],
   properties: {
-    [USERID_HEADER_KEY]: { type: 'string', description: 'the header key to get the user id' },
-    [GROUPS_HEADER_KEY]: { type: 'string', description: 'the header key to get the groups comma separated list' },
-    [CLIENTTYPE_HEADER_KEY]: { type: 'string', description: 'the header key to get the client type' },
+    [USERID_HEADER_KEY]: { type: 'string', description: 'the header key to get the user id', minLength: 1 },
+    [GROUPS_HEADER_KEY]: { type: 'string', description: 'the header key to get the groups comma separated list', minLength: 1 },
+    [CLIENTTYPE_HEADER_KEY]: { type: 'string', description: 'the header key to get the client type', minLength: 1 },
     [BACKOFFICE_HEADER_KEY]: {
       type: 'string',
       description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+      minLength: 1,
     },
     [MICROSERVICE_GATEWAY_SERVICE_NAME]: {
       type: 'string',
       description: 'the service name of the microservice gateway',
+      format: 'hostname',
     },
     [ADDITIONAL_HEADERS_TO_PROXY]: {
       type: 'string',
