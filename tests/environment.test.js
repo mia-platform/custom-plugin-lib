@@ -51,19 +51,29 @@ function setupFastify(t) {
 
 nock.disableNetConnect()
 
+function testEnvVariableIsNotEmptyString(t, envVariableName) {
+  t.test(`should fail on empty ${envVariableName}`, async t => {
+    t.plan(1)
+    const customService = initCustomServiceEnvironment()
+    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
+      t.fail()
+    })
+    const fastify = setupFastify(t)
+    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, [envVariableName]: '' })
+
+    t.rejects(fastify.ready())
+  })
+}
+
 t.test('environment', async t => {
+  const headersToTest = ['USERID_HEADER_KEY', 'GROUPS_HEADER_KEY', 'CLIENTTYPE_HEADER_KEY', 'BACKOFFICE_HEADER_KEY', 'MICROSERVICE_GATEWAY_SERVICE_NAME']
+  headersToTest.forEach(h => testEnvVariableIsNotEmptyString(t, h))
+
   t.test('should fail if required properties are missing', async t => {
     t.plan(1)
     const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
+    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
+      t.fail()
     })
     const fastify = setupFastify(t)
     const { ...badEnv } = baseEnv
@@ -73,37 +83,11 @@ t.test('environment', async t => {
     t.rejects(fastify.ready())
   })
 
-  t.test('should fail on invalid microservice gateway name (empty string)', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, MICROSERVICE_GATEWAY_SERVICE_NAME: '' })
-
-    t.rejects(fastify.ready())
-  })
-
   t.test('should fail on invalid microservice gateway name (special characters)', async t => {
     t.plan(1)
     const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
+    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
+      t.fail()
     })
     const fastify = setupFastify(t)
     fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, MICROSERVICE_GATEWAY_SERVICE_NAME: '%$£!"' })
@@ -114,95 +98,12 @@ t.test('environment', async t => {
   t.test('should not fail when microservice gateway name is a valid IP', async t => {
     t.plan(1)
     const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
+    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
+      t.pass()
     })
     const fastify = setupFastify(t)
     fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, MICROSERVICE_GATEWAY_SERVICE_NAME: '172.16.0.0' })
 
-    t.resolves(fastify.ready())
-  })
-
-  t.test('should fail on invalid user id header key', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, USERID_HEADER_KEY: '' })
-
-    t.rejects(fastify.ready())
-  })
-
-  t.test('should fail on invalid groups header key', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, GROUPS_HEADER_KEY: '' })
-
-    t.rejects(fastify.ready())
-  })
-
-  t.test('should fail on invalid client type header key', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, CLIENTTYPE_HEADER_KEY: '' })
-
-    t.rejects(fastify.ready())
-  })
-
-  t.test('should fail on invalid backoffice header key', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, BACKOFFICE_HEADER_KEY: '' })
-
-    t.rejects(fastify.ready())
+    await fastify.ready()
   })
 })
