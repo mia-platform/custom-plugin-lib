@@ -14,17 +14,10 @@
  * limitations under the License.
 */
 
-/* eslint id-length: 0 */
-/* eslint require-await: 0 */
-/* eslint no-shadow: 0 */
-/* eslint no-magic-numbers: 0 */
 'use strict'
 
-const t = require('tap')
-const fastifyBuilder = require('fastify')
-const nock = require('nock')
-
-const initCustomServiceEnvironment = require('../index')
+const tap = require('tap')
+const lc39 = require('@mia-platform/lc39')
 
 const USERID_HEADER_KEY = 'userid-header-key'
 const GROUPS_HEADER_KEY = 'groups-header-key'
@@ -39,33 +32,21 @@ const baseEnv = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
-function setupFastify(t) {
-  const fastify = fastifyBuilder({
-    logger: { level: 'silent' },
+async function setupFastify(envVariables) {
+  const fastify = await lc39('./tests/services/pre-decorator.js', {
+    logLevel: 'silent',
+    envVariables,
   })
-  t.tearDown(() => fastify.close())
   return fastify
 }
 
-nock.disableNetConnect()
-
-t.test('preDecorator', t => {
-  t.test('leaveOriginalRequestUnmodified', async t => {
-    t.plan(1)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        return request.leaveOriginalRequestUnmodified()
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
+tap.test('preDecorator', test => {
+  test.test('leaveOriginalRequestUnmodified', async assert => {
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/response-unmodified',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -74,27 +55,17 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 204)
+
+    assert.strictSame(response.statusCode, 204)
+    assert.strictSame(response.payload, '')
+    assert.end()
   })
 
-  t.test('changeOriginalRequest', async t => {
-    t.plan(4)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        return request.changeOriginalRequest()
-          .setBody({ the: 'new-body' })
-          .setQuery({ new: 'querystring' })
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('changeOriginalRequest', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/change-original-request',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -103,33 +74,21 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/application\/json/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, JSON.stringify({
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(response.payload, JSON.stringify({
       body: { the: 'new-body' },
       query: { new: 'querystring' },
     }))
+    assert.end()
   })
 
-  t.test('changeOriginalRequest with headers', async t => {
-    t.plan(4)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        return request.changeOriginalRequest()
-          .setBody({ the: 'new-body' })
-          .setHeaders({ new: 'headers' })
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('changeOriginalRequest with headers', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/change-original-headers',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -138,33 +97,21 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/application\/json/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, JSON.stringify({
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(response.payload, JSON.stringify({
       body: { the: 'new-body' },
       headers: { new: 'headers' },
     }))
+    assert.end()
   })
 
-  t.test('test bad handler that doesn\'t return the right type', async t => {
-    t.plan(3)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler() {
-        return {
-          not: 'using the decorated functions',
-        }
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('test bad handler that doesn\'t return the right type', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/bad-hook',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -173,31 +120,20 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 500)
-    t.ok(/application\/json/.test(response.headers['content-type']))
-    t.strictSame(JSON.parse(response.payload), {
+    assert.strictSame(response.statusCode, 500)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), {
       error: 'Internal Server Error',
       message: 'Unknown return type',
       statusCode: 500,
     })
   })
 
-  t.test('abortChain', async t => {
-    t.plan(4)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        return request.abortChain(406, { the: 'body' }, {})
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('abortChain', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/abort-chain',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -206,64 +142,22 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 418)
-    t.ok(/application\/json/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, JSON.stringify({
+    assert.strictSame(response.statusCode, 418)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(response.payload, JSON.stringify({
       statusCode: 406,
-      body: { the: 'body' },
+      body: { the: 'final body' },
       headers: {},
     }))
+    assert.end()
   })
 
-  t.test('is able to access to the mia headers correctly', async t => {
-    t.plan(12)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        t.strictSame(request.getUserId(), 'fjdsaklfaksldkksjkfllsdhjk')
-        t.strictSame(request.getGroups(), ['group-to-greet', 'group'])
-        t.strictSame(request.getClientType(), 'CMS')
-        t.strictSame(request.isFromBackOffice(), true)
-
-        t.strictSame(request.getOriginalRequest(), {
-          method: 'GET',
-          path: '/the-original-request-path',
-          query: { my: 'query' },
-          body: { the: 'body' },
-          headers: {
-            [CLIENTTYPE_HEADER_KEY]: 'CMS',
-            [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-            [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-            [BACKOFFICE_HEADER_KEY]: '1',
-            my: 'headers',
-          },
-        })
-        t.strictSame(request.getOriginalRequestBody(), { the: 'body' })
-        t.strictSame(request.getOriginalRequestHeaders(), {
-          [CLIENTTYPE_HEADER_KEY]: 'CMS',
-          [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-          [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-          [BACKOFFICE_HEADER_KEY]: '1',
-          my: 'headers',
-        })
-        t.strictSame(request.getOriginalRequestQuery(), { my: 'query' })
-        t.strictSame(request.getOriginalRequestMethod(), 'GET')
-        t.strictSame(request.getOriginalRequestPath(), '/the-original-request-path')
-
-        t.ok(this.config)
-
-        return request.leaveOriginalRequestUnmodified()
-      }
-      service.addPreDecorator('/my-hook', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('is able to access to the mia headers correctly', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/can-access-data',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -271,34 +165,23 @@ t.test('preDecorator', t => {
         body: { the: 'body' },
         headers: {
           [CLIENTTYPE_HEADER_KEY]: 'CMS',
-          [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
+          [USERID_HEADER_KEY]: 'userid',
           [GROUPS_HEADER_KEY]: 'group-to-greet,group',
           [BACKOFFICE_HEADER_KEY]: '1',
           my: 'headers',
         },
       },
     })
-    t.strictSame(response.statusCode, 204)
+    assert.strictSame(response.statusCode, 204)
+    assert.strictSame(response.payload, '')
+    assert.end()
   })
 
-  t.test('addPreDecorator is Chainable', async t => {
-    t.plan(2)
-
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler(request) {
-        return request.leaveOriginalRequestUnmodified()
-      }
-      service
-        .addPreDecorator('/my-hook', handler)
-        .addPreDecorator('/my-hook1', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
-
+  test.test('addPreDecorator is Chainable', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
-      url: '/my-hook',
+      url: '/chained1',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -307,11 +190,11 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response.statusCode, 204)
+    assert.strictSame(response.statusCode, 204)
 
     const response1 = await fastify.inject({
       method: 'POST',
-      url: '/my-hook1',
+      url: '/chained2',
       payload: {
         method: 'GET',
         path: '/the-original-request-path',
@@ -320,8 +203,8 @@ t.test('preDecorator', t => {
         headers: { my: 'headers' },
       },
     })
-    t.strictSame(response1.statusCode, 204)
+    assert.strictSame(response1.statusCode, 204)
   })
 
-  t.end()
+  test.end()
 })

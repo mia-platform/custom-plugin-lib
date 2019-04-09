@@ -14,19 +14,10 @@
  * limitations under the License.
 */
 
-/* eslint id-length: 0 */
-/* eslint require-await: 0 */
-/* eslint no-shadow: 0 */
-/* eslint no-magic-numbers: 0 */
-/* eslint max-lines: 0 */
-/* eslint max-statements: 0 */
 'use strict'
 
-const t = require('tap')
-const fastifyBuilder = require('fastify')
-const nock = require('nock')
-
-const initCustomServiceEnvironment = require('../index')
+const tap = require('tap')
+const lc39 = require('@mia-platform/lc39')
 
 const USERID_HEADER_KEY = 'userid-header-key'
 const GROUPS_HEADER_KEY = 'groups-header-key'
@@ -41,69 +32,70 @@ const baseEnv = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
-function setupFastify(t) {
-  const fastify = fastifyBuilder({
-    logger: { level: 'silent' },
+async function setupFastify(filePath, envVariables) {
+  const fastify = await lc39(filePath, {
+    logLevel: 'silent',
+    envVariables,
   })
-  t.tearDown(() => fastify.close())
+
   return fastify
 }
 
-nock.disableNetConnect()
+function testEnvVariableIsNotEmptyString(test, envVariableName) {
+  test.test(`Should fail on empty ${envVariableName}`, async assert => {
+    try {
+      await setupFastify('./tests/services/plain-custom-service.js', { ...baseEnv, [envVariableName]: '' })
+      assert.fail()
+    } catch (error) {
+      assert.ok(error)
+    }
 
-function testEnvVariableIsNotEmptyString(t, envVariableName) {
-  t.test(`should fail on empty ${envVariableName}`, async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
-      t.fail()
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, [envVariableName]: '' })
-
-    t.rejects(fastify.ready())
+    assert.end()
   })
 }
 
-t.test('environment', async t => {
+tap.test('Test Environment variables', test => {
   const headersToTest = ['USERID_HEADER_KEY', 'GROUPS_HEADER_KEY', 'CLIENTTYPE_HEADER_KEY', 'BACKOFFICE_HEADER_KEY', 'MICROSERVICE_GATEWAY_SERVICE_NAME']
-  headersToTest.forEach(h => testEnvVariableIsNotEmptyString(t, h))
+  headersToTest.forEach(header => testEnvVariableIsNotEmptyString(test, header))
 
-  t.test('should fail if required properties are missing', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
-      t.fail()
-    })
-    const fastify = setupFastify(t)
+  test.test('Should fail if required properties are missing', async assert => {
     const { ...badEnv } = baseEnv
     delete badEnv.USERID_HEADER_KEY
-    fastify.register(baseFunctionalitiesPlugin, badEnv)
 
-    t.rejects(fastify.ready())
+    try {
+      await setupFastify('./tests/services/plain-custom-service.js', badEnv)
+      assert.fail()
+    } catch (error) {
+      assert.ok(error)
+    }
+
+    assert.end()
   })
 
-  t.test('should fail on invalid microservice gateway name (special characters)', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
-      t.fail()
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, MICROSERVICE_GATEWAY_SERVICE_NAME: '%$£!"' })
+  test.test('Should fail on invalid microservice gateway name (special characters)', async assert => {
+    try {
+      await setupFastify('./tests/services/plain-custom-service.js', {
+        ...baseEnv,
+        MICROSERVICE_GATEWAY_SERVICE_NAME: '%$£!"',
+      })
+      assert.fail()
+    } catch (error) {
+      assert.strictSame(error.message, 'should match format "hostname"')
+    }
 
-    t.rejects(fastify.ready())
+    assert.end()
   })
 
-  t.test('should not fail when microservice gateway name is a valid IP', async t => {
-    t.plan(1)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups() {
-      t.pass()
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, { ...baseEnv, MICROSERVICE_GATEWAY_SERVICE_NAME: '172.16.0.0' })
+  test.test('Should not fail when microservice gateway name is a valid IP', async assert => {
+    const options = {
+      ...baseEnv,
+      MICROSERVICE_GATEWAY_SERVICE_NAME: '172.16.0.0',
+    }
 
-    await fastify.ready()
+    const fastify = await setupFastify('./tests/services/plain-custom-service.js', options)
+    assert.ok(fastify)
+    assert.end()
   })
+
+  test.end()
 })

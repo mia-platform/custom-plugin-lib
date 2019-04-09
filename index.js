@@ -19,9 +19,10 @@
 'use strict'
 
 const fastifyEnv = require('fastify-env')
-const fastifySwagger = require('fastify-swagger')
 const fastifyFormbody = require('fastify-formbody')
 const Ajv = require('ajv')
+const path = require('path')
+const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
 
 const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
@@ -42,9 +43,21 @@ const baseSchema = {
   required: [USERID_HEADER_KEY, GROUPS_HEADER_KEY, CLIENTTYPE_HEADER_KEY,
     BACKOFFICE_HEADER_KEY, MICROSERVICE_GATEWAY_SERVICE_NAME],
   properties: {
-    [USERID_HEADER_KEY]: { type: 'string', description: 'the header key to get the user id', minLength: 1 },
-    [GROUPS_HEADER_KEY]: { type: 'string', description: 'the header key to get the groups comma separated list', minLength: 1 },
-    [CLIENTTYPE_HEADER_KEY]: { type: 'string', description: 'the header key to get the client type', minLength: 1 },
+    [USERID_HEADER_KEY]: {
+      type: 'string',
+      description: 'the header key to get the user id',
+      minLength: 1,
+    },
+    [GROUPS_HEADER_KEY]: {
+      type: 'string',
+      description: 'the header key to get the groups comma separated list',
+      minLength: 1,
+    },
+    [CLIENTTYPE_HEADER_KEY]: {
+      type: 'string',
+      description: 'the header key to get the client type',
+      minLength: 1,
+    },
     [BACKOFFICE_HEADER_KEY]: {
       type: 'string',
       description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
@@ -131,6 +144,7 @@ function getOriginalRequestHeaders() {
   return this.headers
 }
 
+// eslint-disable-next-line max-statements
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction }) {
   const { config } = fastify
 
@@ -159,6 +173,14 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
 
   fastify.register(asyncInitFunction)
+  fastify.setErrorHandler(function errorHanlder(error, request, reply) {
+    if (error.statusCode) {
+      reply.send(error)
+    } else {
+      request.log.error(error)
+      reply.send(new Error('Something went wrong'))
+    }
+  })
 }
 
 const defaultSchema = { type: 'object', required: [], properties: {} }
@@ -166,27 +188,24 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction) {
     async function index(fastify, opts) {
-      const { name, description, version } = require(`${process.cwd()}/package`)
       fastify
         .register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
         .register(fastifyFormbody)
-        .register(fastifySwagger, {
-          swagger: {
-            info: {
-              title: name,
-              description,
-              version,
-            },
-            consumes: ['application/json', 'application/x-www-form-urlencoded'],
-            produces: ['application/json'],
-          },
-          exposeRoute: true,
-        })
-
       fastify.register(decorateRequestAndFastifyInstance, { asyncInitFunction })
     }
     index.options = {
+      errorHandler: false,
       trustProxy: process.env.TRUSTED_PROXIES, // eslint-disable-line no-process-env
+    }
+
+    index.swaggerDefinition = {
+      info: {
+        title: name,
+        description,
+        version,
+      },
+      consumes: ['application/json', 'application/x-www-form-urlencoded'],
+      produces: ['application/json'],
     }
     return index
   }

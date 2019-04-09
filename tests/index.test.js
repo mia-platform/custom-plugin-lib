@@ -14,19 +14,11 @@
  * limitations under the License.
 */
 
-/* eslint id-length: 0 */
-/* eslint require-await: 0 */
-/* eslint no-shadow: 0 */
-/* eslint no-magic-numbers: 0 */
-/* eslint max-lines: 0 */
-/* eslint max-statements: 0 */
 'use strict'
 
-const t = require('tap')
-const fastifyBuilder = require('fastify')
-const nock = require('nock')
+const tap = require('tap')
+const lc39 = require('@mia-platform/lc39')
 
-const initCustomServiceEnvironment = require('../index')
 const fs = require('fs')
 const { promisify } = require('util')
 
@@ -35,7 +27,7 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
-const ADDITIONAL_HEADERS_TO_PROXY = 'additionalheader1,additionalheader2'
+
 const baseEnv = {
   USERID_HEADER_KEY,
   GROUPS_HEADER_KEY,
@@ -44,224 +36,76 @@ const baseEnv = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
-function setupFastify(t) {
-  const fastify = fastifyBuilder({
-    logger: { level: 'silent' },
-  })
-  t.tearDown(() => fastify.close())
-  return fastify
-}
-
-nock.disableNetConnect()
-
-t.test('customService', t => {
-  t.test('', async t => {
-    t.plan(1)
-    const payload = 'Hello world'
-    const customService = initCustomServiceEnvironment()
-    process.env.TRUSTED_PROXIES = '127.0.0.1' // eslint-disable-line no-process-env
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler() {
-        return payload
-      }
-      service.addRawCustomPlugin('GET', '/', handler)
+tap.test('Plain Custom Service', test => {
+  async function setupFastify(envVariables) {
+    const fastify = await lc39('./tests/services/plain-custom-service.js', {
+      logLevel: 'silent',
+      envVariables,
     })
+    return fastify
+  }
 
-    t.strictSame(helloWorldPlugin.options, { trustProxy: '127.0.0.1' })
-    delete process.env.TRUSTED_PROXIES  // eslint-disable-line no-process-env
-  })
+  test.test('Hello World', async assert => {
+    const fastify = await setupFastify(baseEnv)
 
-  t.test('hello world', async t => {
-    t.plan(4)
-    const payload = 'Hello world'
-    const customService = initCustomServiceEnvironment()
-    const helloWorldPlugin = customService(async function hello(service) {
-      async function handler() {
-        return payload
-      }
-      service.addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(helloWorldPlugin, baseEnv)
     const response = await fastify.inject({
       method: 'GET',
       url: '/',
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/text\/plain/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, payload)
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/text\/plain/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(response.payload, 'Hello world!')
+    assert.end()
   })
 
-  t.test('access client, groups, clientType, backoffice', async t => {
-    const testConfigs = [
-      {
-        url: '/myuser',
-        headers: {
-          [USERID_HEADER_KEY]: 'Mark',
-        },
-        expectedPayload: 'Hi Mark!',
-      },
-      {
-        url: '/mygroups',
-        headers: {
-          [GROUPS_HEADER_KEY]: 'group-name,group-to-greet',
-        },
-        expectedPayload: 'Hi, your groups are: group-name group-to-greet',
-      },
-      {
-        url: '/myclienttype',
-        headers: {
-          [CLIENTTYPE_HEADER_KEY]: 'CMS',
-        },
-        expectedPayload: 'Hi, your client type is CMS',
-      },
-      {
-        url: '/amibackoffice',
-        headers: {},
-        expectedPayload: 'false',
-      },
-    ]
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handleUser(request) {
-        return `Hi ${request.getUserId()}!`
-      }
-      async function handleGroups(request) {
-        return `Hi, your groups are: ${request.getGroups().join(' ')}`
-      }
-      async function handleClient(request) {
-        return `Hi, your client type is ${request.getClientType()}`
-      }
-      async function handleFromBackoffice(request) {
-        return `${request.isFromBackOffice()}`
-      }
-      service
-        .addRawCustomPlugin('GET', '/myuser', handleUser)
-        .addRawCustomPlugin('GET', '/mygroups', handleGroups)
-        .addRawCustomPlugin('GET', '/myclienttype', handleClient)
-        .addRawCustomPlugin('GET', '/amibackoffice', handleFromBackoffice)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, baseEnv)
-    t.plan(testConfigs.length * 4)
-    for (const { url, headers, expectedPayload } of testConfigs) {
-      const response = await fastify.inject({
-        method: 'GET',
-        url,
-        headers,
-      })
-      t.strictSame(response.statusCode, 200)
-      t.ok(/text\/plain/.test(response.headers['content-type']))
-      t.ok(/charset=utf-8/.test(response.headers['content-type']))
-      t.strictSame(response.payload, expectedPayload)
-    }
-  })
-
-  t.test('require some environment variables', async t => {
-    t.plan(4)
-    const MY_AWESOME_ENV = 'foobar'
-    const envSchema = {
-      type: 'object',
-      required: ['MY_AWESOME_ENV'],
-      properties: {
-        MY_AWESOME_ENV: { type: 'string' },
-      },
-    }
-    const customService = initCustomServiceEnvironment(envSchema)
-    const myEnvService = customService(async function envService(service) {
-      const configVariable = service.config['MY_AWESOME_ENV']
-      async function handler() {
-        return configVariable
-      }
-      service.addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myEnvService, { ...baseEnv, MY_AWESOME_ENV })
+  test.test('Access platform values', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'GET',
-      url: '/',
+      url: '/platform-values',
+      headers: {
+        [CLIENTTYPE_HEADER_KEY]: 'CMS',
+        [GROUPS_HEADER_KEY]: 'group-name,group-to-greet',
+        [USERID_HEADER_KEY]: 'Mark',
+      },
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/text\/plain/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, MY_AWESOME_ENV)
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), {
+      userId: 'Mark',
+      userGroups: ['group-name', 'group-to-greet'],
+      clientType: 'CMS',
+      backoffice: false,
+    })
+    assert.end()
   })
 
-  t.test('decorate fastify with custom functionalities', async t => {
-    t.plan(4)
-    const payload = 'Hello world'
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function custom(service) {
-      const customFunctionality = () => payload
-      service.decorate('customFunctionality', customFunctionality)
-      async function handler() {
-        return this.customFunctionality()
-      }
-      service.addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
+  test.test('Access platform values when not declared', async assert => {
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'GET',
-      url: '/',
+      url: '/platform-values',
+      headers: {},
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/text\/plain/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(response.payload, payload)
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), {
+      userId: null,
+      userGroups: [],
+      clientType: null,
+      backoffice: false,
+    })
+    assert.end()
   })
 
-  t.test('send some json, with validation', async t => {
-    t.plan(5)
-    const payload = { some: 'stuff' }
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function serviceWithValidation(service) {
-      const schema = {
-        body: {
-          type: 'object',
-          required: ['some'],
-          properties: {
-            some: { type: 'string' },
-          },
-          additionalProperties: false,
-        },
-      }
-      async function handler(request) {
-        return request.body
-      }
-      service.addRawCustomPlugin('POST', '/', handler, schema)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), payload)
-    const badResponse = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { ...payload, other: 'stuff' },
-    })
-    t.strictSame(badResponse.statusCode, 400)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-  })
+  test.test('Send form encoded data', async assert => {
+    const fastify = await setupFastify(baseEnv)
 
-  t.test('send form encoded data', async t => {
-    t.plan(3)
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function form(service) {
-      async function handler(request) {
-        return request.body
-      }
-      service.addRawCustomPlugin('POST', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
     const response = await fastify.inject({
       method: 'POST',
       url: '/',
@@ -270,60 +114,61 @@ t.test('customService', t => {
       },
       payload: 'foo=foo&bar=bar',
     })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
+
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(response.payload), {
       foo: 'foo',
       bar: 'bar',
     })
+
+    assert.end()
   })
 
-  t.test('can return a stream', async t => {
-    t.plan(4)
-    const filename = './tests/index.test.js'
+  test.test('Can return a stream', async assert => {
+    const filename = './tests/services/plain-custom-service.js'
     const readFile = promisify(fs.readFile)
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function stream(service) {
-      async function handler() {
-        return fs.createReadStream(filename)
-      }
-      service.addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'GET',
-      url: '/',
+      url: '/stream',
     })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/octet-stream')
-    t.strictSame(response.headers['transfer-encoding'], 'chunked')
-    t.strictSame(response.payload, (await readFile(filename)).toString())
+
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(response.headers['content-type'], 'application/octet-stream')
+    assert.strictSame(response.headers['transfer-encoding'], 'chunked')
+    assert.strictSame(response.payload, (await readFile(filename)).toString())
+    assert.end()
   })
 
-  t.test('custom body parsing', async t => {
-    t.plan(2)
-    const customType = 'application/hakunamatata'
-    const payload = 'hello world'
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function customBodyParsing(service) {
-      function customParser(req, done) {
-        let data = ''
-        req.on('data', chunk => {
-          data += chunk
-        })
-        req.on('end', () => {
-          done(null, data)
-        })
-      }
-      service.addContentTypeParser(customType, customParser)
-      async function handler(req) {
-        return req.body
-      }
-      service.addRawCustomPlugin('POST', '/', handler)
+  test.test('Send some json, with validation', async assert => {
+    const payload = { some: 'stuff' }
+    const fastify = await setupFastify(baseEnv)
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/validation',
+      payload,
     })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
+
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(response.payload), payload)
+
+    const badResponse = await fastify.inject({
+      method: 'POST',
+      url: '/validation',
+      payload: { ...payload, other: 'stuff' },
+    })
+
+    assert.strictSame(badResponse.statusCode, 400)
+    assert.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    assert.end()
+  })
+
+  test.test('custom body parsing', async assert => {
+    const customType = 'application/custom-type'
+    const payload = { hello: 'world' }
+    const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
       method: 'POST',
       url: '/',
@@ -332,608 +177,53 @@ t.test('customService', t => {
       },
       payload,
     })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.payload, payload)
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(JSON.parse(response.payload), payload)
+    assert.end()
   })
 
-  t.test('directly call a service from request instance', async t => {
-    t.plan(3)
-    const otherServiceName = 'other-service'
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-    }
-    const scope = nock(`http://${otherServiceName}`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
+  test.end()
+})
 
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getDirectServiceProxy(otherServiceName)
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
+tap.test('Advanced Custom Service', test => {
+  async function setupFastify(envVariables) {
+    const fastify = await lc39('./tests/services/advanced-custom-service.js', {
+      logLevel: 'silent',
+      envVariables,
     })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
+    return fastify
+  }
 
-  t.test('directly call a service from service instance', async t => {
-    t.plan(2)
-    const otherServiceName = 'other-service'
-    const scope = nock(`http://${otherServiceName}`)
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      const otherService = service.getDirectServiceProxy(otherServiceName)
-      const res = await otherService.get('/res')
-      t.strictSame(res.statusCode, 200)
-      t.strictSame(res.payload, {
-        id: 'a',
-        b: 2,
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-
-    await fastify.ready()
-    scope.done()
-  })
-
-  t.test('directly call a service from request instance specifying port', async t => {
-    t.plan(3)
-    const otherServiceName = 'other-service'
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-    }
-    const scope = nock(`http://${otherServiceName}:3000`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getDirectServiceProxy(otherServiceName, { port: 3000 })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
-
-  t.test('directly call a service from service instance specifying port', async t => {
-    t.plan(2)
-    const otherServiceName = 'other-service'
-    const scope = nock(`http://${otherServiceName}:3000`)
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      const otherService = service.getDirectServiceProxy(otherServiceName, { port: 3000 })
-      const res = await otherService.get('/res')
-      t.strictSame(res.statusCode, 200)
-      t.strictSame(res.payload, {
-        id: 'a',
-        b: 2,
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-
-    await fastify.ready()
-    scope.done()
-  })
-
-  t.test('directly call a service with custom header', async t => {
-    t.plan(3)
-    const otherServiceName = 'other-service'
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1Value',
-    }
-    const scope = nock(`http://${otherServiceName}:3000`, {
-      reqheaders: headers,
-      badheaders: ['additionalheader2'],
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getDirectServiceProxy(otherServiceName, { port: 3000 })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
-
-  t.test('directly call a service with custom header into a pre decorator', async t => {
-    t.plan(3)
-    const otherServiceName = 'other-service'
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1Value',
-    }
-    const scope = nock(`http://${otherServiceName}:3000`, {
-      reqheaders: headers,
-      badheaders: ['additionalheader2'],
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addPreDecorator('/', async function handler(req) {
-        const { some } = req.getOriginalRequestBody()
-        const service = req.getDirectServiceProxy(otherServiceName, { port: 3000 })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return req.changeOriginalRequest().setBody({ id, some })
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: {
-        method: 'POST',
-        path: '/',
-        headers,
-        query: {},
-        body: {
-          some: 'stuff',
-        },
-      },
-      headers: {},
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      body: {
-        id: 'a',
-        some: 'stuff',
-      },
-    })
-    scope.done()
-  })
-
-  t.test('directly call a service with custom header into a post decorator', async t => {
-    t.plan(3)
-    const otherServiceName = 'other-service'
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1Value',
-    }
-    const scope = nock(`http://${otherServiceName}:3000`, {
-      reqheaders: headers,
-      badheaders: ['additionalheader2'],
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addPostDecorator('/', async function handler(req) {
-        const { some } = req.getOriginalResponseBody()
-        const service = req.getDirectServiceProxy(otherServiceName, { port: 3000 })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return req.changeOriginalResponse().setBody({ id, some })
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: {
-        request: {
-          method: 'POST',
-          path: '/',
-          headers,
-          query: {},
-          body: {},
-        },
-        response: {
-          statusCode: 200,
-          headers: {},
-          body: {
-            some: 'stuff',
-          },
-        },
-      },
-      headers: {},
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      body: {
-        id: 'a',
-        some: 'stuff',
-      },
-    })
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) from request instance', async t => {
-    t.plan(3)
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-    }
-    const scope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getServiceProxy()
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) from service instance', async t => {
-    t.plan(2)
-    const scope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}`)
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      const otherService = service.getServiceProxy()
-      const res = await otherService.get('/res')
-      t.strictSame(res.statusCode, 200)
-      t.strictSame(res.payload, {
-        id: 'a',
-        b: 2,
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-
-    await fastify.ready()
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) from request instance custom options', async t => {
-    t.plan(3)
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-    }
-    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getServiceProxy({ port: 3000, protocol: 'https' })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) from service instance custom options', async t => {
-    t.plan(2)
-    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`)
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      const otherService = service.getServiceProxy({ port: 3000, protocol: 'https' })
-      const res = await otherService.get('/res')
-      t.strictSame(res.statusCode, 200)
-      t.strictSame(res.payload, {
-        id: 'a',
-        b: 2,
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, baseEnv)
-
-    await fastify.ready()
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) with custom header', async t => {
-    t.plan(3)
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1value',
-      additionalheader2: 'header2value',
-    }
-    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addRawCustomPlugin('POST', '/', async function handler(req) {
-        const { some } = req.body
-        const service = req.getServiceProxy({ port: 3000, protocol: 'https' })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return { id, some }
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: { some: 'stuff' },
-      headers,
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      id: 'a',
-      some: 'stuff',
-    })
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) with custom header into a pre decorator', async t => {
-    t.plan(3)
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1value',
-      additionalheader2: 'header2value',
-    }
-    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addPreDecorator('/', async function handler(req) {
-        const { some } = req.getOriginalRequestBody()
-        const service = req.getServiceProxy({ port: 3000, protocol: 'https' })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return req.changeOriginalRequest().setBody({ id, some })
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: {
-        method: 'POST',
-        path: '/',
-        headers,
-        query: {},
-        body: {
-          some: 'stuff',
-        },
-      },
-      headers: {},
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      body: {
-        id: 'a',
-        some: 'stuff',
-      },
-    })
-    scope.done()
-  })
-
-  t.test('call a service (through the microservice_gateway) with custom header into a post decorator', async t => {
-    t.plan(3)
-    const headers = {
-      [CLIENTTYPE_HEADER_KEY]: 'CMS',
-      [USERID_HEADER_KEY]: 'fjdsaklfaksldkksjkfllsdhjk',
-      [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
-      additionalheader1: 'header1value',
-      additionalheader2: 'header2value',
-    }
-    const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
-      reqheaders: headers,
-    })
-      .get('/res')
-      .reply(200, { id: 'a', b: 2 })
-
-    const customService = initCustomServiceEnvironment()
-    const myCustomService = customService(async function index(service) {
-      service.addPostDecorator('/', async function handler(req) {
-        const { some } = req.getOriginalResponseBody()
-        const service = req.getServiceProxy({ port: 3000, protocol: 'https' })
-        const res = await service.get('/res')
-        const { id } = res.payload
-        return req.changeOriginalResponse().setBody({ id, some })
-      })
-    })
-    const fastify = setupFastify(t)
-    fastify.register(myCustomService, { ...baseEnv, ADDITIONAL_HEADERS_TO_PROXY })
-    const response = await fastify.inject({
-      method: 'POST',
-      url: '/',
-      payload: {
-        request: {
-          method: 'POST',
-          path: '/',
-          headers,
-          query: {},
-          body: {},
-        },
-        response: {
-          statusCode: 200,
-          body: {
-            some: 'stuff',
-          },
-          headers: {},
-        },
-      },
-      headers: {},
-    })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
-    t.strictSame(JSON.parse(response.payload), {
-      body: {
-        id: 'a',
-        some: 'stuff',
-      },
-    })
-    scope.done()
-  })
-
-  t.test('access userId is null if falsy', async t => {
-    t.plan(2)
-    const customService = initCustomServiceEnvironment()
-    const baseFunctionalitiesPlugin = customService(async function clientGroups(service) {
-      async function handler(request) {
-        return {
-          userId: request.getUserId(),
-          clientType: request.getClientType(),
-        }
-      }
-      service
-        .addRawCustomPlugin('GET', '/', handler)
-    })
-    const fastify = setupFastify(t)
-    fastify.register(baseFunctionalitiesPlugin, baseEnv)
+  test.test('Require some environment variables', async assert => {
+    const MY_AWESOME_ENV = 'foobar'
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
     const response = await fastify.inject({
       method: 'GET',
-      url: '/',
-      headers: { },
+      url: '/env',
     })
-    t.strictSame(response.statusCode, 200)
-    t.strictSame(response.payload, JSON.stringify({ userId: null, clientType: null }))
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/text\/plain/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(response.payload, MY_AWESOME_ENV)
+    assert.end()
   })
 
-  t.end()
+  test.test('Decorate fastify with custom functionalities', async assert => {
+    const MY_AWESOME_ENV = 'foobar'
+    const payload = { hello: 'world' }
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/custom',
+      payload,
+    })
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), payload)
+    assert.end()
+  })
+
+  test.end()
 })

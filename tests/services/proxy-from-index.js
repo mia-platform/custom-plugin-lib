@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Mia srl
+ * Copyright 2019 Mia srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
 */
 
-/* eslint require-await: 0 */
 'use strict'
 
 const customService = require('../../index')()
 
-module.exports = customService(async function helloWorldService(service) {
-  service.addRawCustomPlugin('GET', '/hello', async function handler(request) {
-    request.log.trace('requested myuser')
-    // if the user is not logged, this method returns a falsy value
-    const user = request.getUserId() || 'World'
-    return `Hello ${user}!`
-  })
+// eslint-disable-next-line require-await
+module.exports = customService(async function clientGroups(service) {
+  const proxy = service.getServiceProxy()
+  const res = await proxy.get('/res')
+  service.assert.strictEqual(res.statusCode, 200, 400, 'status code not equals')
+  service.assert.deepEqual(res.payload, {
+    id: 'a',
+    key: 2,
+  }, 400, 'payload not equals')
 })

@@ -14,15 +14,10 @@
  * limitations under the License.
 */
 
-/* eslint id-length: 0 */
-/* eslint require-await: 0 */
-/* eslint no-shadow: 0 */
-/* eslint no-magic-numbers: 0 */
 'use strict'
 
-const t = require('tap')
-const fastifyBuilder = require('fastify')
-const greetByGroupService = require('../greetByGroup')
+const tap = require('tap')
+const lc39 = require('@mia-platform/lc39')
 
 const USERID_HEADER_KEY = 'userid-header-key'
 const GROUPS_HEADER_KEY = 'groups-header-key'
@@ -39,18 +34,17 @@ const env = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
-function setupFastify(t) {
-  const fastify = fastifyBuilder({
-    logger: { level: 'silent' },
+async function setupFastify(envVariables) {
+  const fastify = await lc39('./index.js', {
+    logLevel: 'silent',
+    envVariables,
   })
-  t.tearDown(() => fastify.close())
   return fastify
 }
 
-t.test('greetByGroup', t => {
-  t.test('greets the special group', async t => {
-    const fastify = setupFastify(t)
-    fastify.register(greetByGroupService, env)
+tap.test('greetByGroup', test => {
+  test.test('greets the special group', async assert => {
+    const fastify = await setupFastify(env)
     const user = 'Mark'
 
     const response = await fastify.inject({
@@ -61,14 +55,17 @@ t.test('greetByGroup', t => {
         [GROUPS_HEADER_KEY]: 'group-to-greet',
       },
     })
-    t.strictSame(response.statusCode, 200)
-    t.ok(/application\/json/.test(response.headers['content-type']))
-    t.ok(/charset=utf-8/.test(response.headers['content-type']))
-    t.strictSame(JSON.parse(response.payload), {
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), {
       message: `Hello ${user} of group: group-to-greet!\n`,
       user,
       groups: ['group-to-greet'],
     })
+    assert.end()
   })
-  t.end()
+
+  test.end()
 })

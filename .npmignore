@@ -1,0 +1,11 @@
+.github
+.nyc_output
+coverage
+examples
+scripts
+tests
+.editorconfig
+.nvmrc
+.travis.yml
+*.log
+*.tgz

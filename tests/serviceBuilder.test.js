@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /*
  * Copyright 2018 Mia srl
  *
@@ -14,31 +15,28 @@
  * limitations under the License.
 */
 
-/* eslint id-length: 0 */
-/* eslint require-await: 0 */
-/* eslint no-shadow: 0 */
-/* eslint no-magic-numbers: 0 */
-/* eslint no-use-before-define: 0 */
-/* eslint max-nested-callbacks: 0 */
-/* eslint max-statements-per-line: 0 */
-/* eslint max-lines: 0 */
+/* eslint-disable max-nested-callbacks */
 'use strict'
 
-const t = require('tap')
+const tap = require('tap')
 const nock = require('nock')
-
 const serviceBuilder = require('../lib/serviceBuilder')
-
 const reqheaders = { 'content-type': 'application/json;charset=utf8' }
-
 const { Readable } = require('stream')
 
-nock.disableNetConnect()
+function wait(time) {
+  return new Promise(resolve => setTimeout(resolve, time))
+}
 
-t.test('serviceBuilder', t => {
-  t.test('get', async t => {
-    t.test('returnAs: JSON', async t => {
-      t.plan(4)
+// eslint-disable-next-line max-statements
+tap.test('serviceBuilder', test => {
+  nock.disableNetConnect()
+  test.tearDown(() => {
+    nock.enableNetConnect()
+  })
+
+  test.test('get', innerTest => {
+    innerTest.test('returnAs: JSON', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -50,16 +48,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo', {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('returnAs: JSON default', async t => {
-      t.plan(4)
+    innerTest.test('returnAs: JSON default', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -71,16 +69,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo')
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('returnAs: BUFFER', async t => {
-      t.plan(4)
+    innerTest.test('returnAs: BUFFER', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -92,16 +90,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo', {}, { returnAs: 'BUFFER' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('returnAs: STREAM', async t => {
-      t.plan(4)
+    innerTest.test('returnAs: STREAM', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -112,23 +110,25 @@ t.test('serviceBuilder', t => {
       const service = serviceBuilder('my-service-name')
 
       const response = await service.get('/foo', {}, { returnAs: 'STREAM' })
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
       myServiceNameScope.done()
 
       await wait(200)
 
       const body = await new Promise(resolve => {
         let acc = ''
-        response.on('data', data => { acc += data.toString() })
+        response.on('data', data => {
+          acc += data.toString()
+        })
         response.on('end', () => resolve(acc))
       })
-      t.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
     })
 
-    t.test('with queryparameter', async t => {
-      t.plan(4)
+    innerTest.test('with queryparameter', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo?aa=bar')
@@ -140,16 +140,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo', { aa: 'bar' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('returnAs: JSON but xml is returned', async t => {
-      t.plan(2)
+    innerTest.test('returnAs: JSON but xml is returned', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -160,15 +160,15 @@ t.test('serviceBuilder', t => {
       try {
         await service.get('/foo')
       } catch (error) {
-        t.strictSame(error.res.statusCode, 500)
-        t.strictSame(error.payload, Buffer.from('<some><xml /></some>'))
+        assert.strictSame(error.res.statusCode, 500)
+        assert.strictSame(error.payload, Buffer.from('<some><xml /></some>'))
       }
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('on 500 doesn\'t reject the promise', async t => {
-      t.plan(4)
+    innerTest.test('on 500 doesn\'t reject the promise', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -180,30 +180,29 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo')
 
-      t.equal(response.statusCode, 500)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 500)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('on TCP error rejects the promise', async t => {
-      t.plan(1)
-
+    innerTest.test('on TCP error rejects the promise', async assert => {
       nock.enableNetConnect('unresolved-hostname-i-hope-so')
-
       const service = serviceBuilder('unresolved-hostname-i-hope-so')
 
       try {
         await service.get('/foo')
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.equal(error.code, 'ENOTFOUND')
+        assert.equal(error.code, 'ENOTFOUND')
       }
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: JSON', async t => {
-      t.plan(4)
+    innerTest.test('response status code is allowed - returnAs: JSON', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -215,16 +214,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202] })
 
-      t.equal(response.statusCode, 201)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 201)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is not allowed: returnAs: JSON', async t => {
-      t.plan(5)
+    innerTest.test('response status code is not allowed: returnAs: JSON', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -235,19 +234,20 @@ t.test('serviceBuilder', t => {
       const service = serviceBuilder('my-service-name')
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202] })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.strictSame(error.response.statusCode, 205)
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-        t.strictSame(error.response.payload, { the: 'response' })
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.strictSame(error.response.statusCode, 205)
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.response.payload, { the: 'response' })
       }
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: BUFFER', async t => {
-      t.plan(4)
+    innerTest.test('response status code is allowed - returnAs: BUFFER', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -259,16 +259,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
 
-      t.equal(response.statusCode, 201)
-      t.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 201)
+      assert.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is not allowed - returnAs: BUFFER', async t => {
-      t.plan(5)
+    innerTest.test('response status code is not allowed - returnAs: BUFFER', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -279,19 +279,20 @@ t.test('serviceBuilder', t => {
       const service = serviceBuilder('my-service-name')
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.strictSame(error.response.statusCode, 205)
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-        t.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.strictSame(error.response.statusCode, 205)
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
       }
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: STREAM', async t => {
-      t.plan(4)
+    innerTest.test('response status code is allowed - returnAs: STREAM', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -302,23 +303,25 @@ t.test('serviceBuilder', t => {
       const service = serviceBuilder('my-service-name')
 
       const response = await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
       myServiceNameScope.done()
 
       await wait(200)
 
       const body = await new Promise(resolve => {
         let acc = ''
-        response.on('data', data => { acc += data.toString() })
+        response.on('data', data => {
+          acc += data.toString()
+        })
         response.on('end', () => resolve(acc))
       })
-      t.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
     })
 
-    t.test('response status code is not allowed - returnAs: STREAM', async t => {
-      t.plan(4)
+    innerTest.test('response status code is not allowed - returnAs: STREAM', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
@@ -330,22 +333,23 @@ t.test('serviceBuilder', t => {
 
       try {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.strictSame(error.response.statusCode, 205)
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-        myServiceNameScope.done()
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.strictSame(error.response.statusCode, 205)
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
       }
+
+      myServiceNameScope.done()
+      assert.end()
     })
 
-    t.end()
+    innerTest.end()
   })
 
-  t.test('post', t => {
-    t.test('send Object - returnAs: JSON', async t => {
-      t.plan(4)
-
+  test.test('post', innerTest => {
+    innerTest.test('send Object - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -359,17 +363,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send String - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('send String - returnAs: JSON', async assert => {
       const THE_SENT_BODY = 'this is my custom body'
 
       const myServiceNameScope = nock('http://my-service-name')
@@ -383,17 +386,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send Buffer - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('send Buffer - returnAs: JSON', async assert => {
       const THE_SENT_BODY = new Buffer('my buffer')
 
       const myServiceNameScope = nock('http://my-service-name')
@@ -407,17 +409,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send Stream - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('send Stream - returnAs: JSON', async assert => {
       const CHUNK1 = 'my-streamed-data\n'
       const CHUNK2 = 'my-streamed-data2'
       const myStream = new Readable({
@@ -439,17 +440,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', myStream, {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send nothing - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('send nothing - returnAs: JSON', async assert => {
       const myServiceNameScope = nock('http://my-service-name', {
         reqheaders: { 'content-length': '0' },
       })
@@ -463,17 +463,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', undefined, {}, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('with querystring - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('with querystring - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -487,17 +486,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, { qq: 'foobar' }, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send Object - returnAs: BUFFER', async t => {
-      t.plan(4)
-
+    innerTest.test('send Object - returnAs: BUFFER', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -511,17 +509,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { returnAs: 'BUFFER' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('send Object - returnAs: STREAM', async t => {
-      t.plan(4)
-
+    innerTest.test('send Object - returnAs: STREAM', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -535,24 +532,25 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { returnAs: 'STREAM' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
       myServiceNameScope.done()
 
       await wait(200)
 
       const body = await new Promise(resolve => {
         let acc = ''
-        response.on('data', data => { acc += data.toString() })
+        response.on('data', data => {
+          acc += data.toString()
+        })
         response.on('end', () => resolve(acc))
       })
-      t.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
     })
 
-    t.test('on 500 doesn\'t reject the promise', async t => {
-      t.plan(4)
-
+    innerTest.test('on 500 doesn\'t reject the promise', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
         .replyContentLength()
@@ -565,31 +563,30 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY)
 
-      t.equal(response.statusCode, 500)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 500)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('on TCP error rejects the promise', async t => {
-      t.plan(1)
-
+    innerTest.test('on TCP error rejects the promise', async assert => {
       nock.enableNetConnect('unresolved-hostname-i-hope-so')
 
       const service = serviceBuilder('unresolved-hostname-i-hope-so')
 
       try {
         await service.post('/foo', { the: 'sent body' }, {}, { returnAs: 'BUFFER' })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.equal(error.code, 'ENOTFOUND')
+        assert.equal(error.code, 'ENOTFOUND')
       }
+      assert.end()
     })
 
-    t.test('send null', async t => {
-      t.plan(4)
-
+    innerTest.test('send null', async assert => {
       const THE_SENT_BODY = null
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
         .replyContentLength()
@@ -602,17 +599,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY)
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: JSON', async t => {
-      t.plan(4)
-
+    innerTest.test('response status code is allowed - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -626,17 +622,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202] })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is not allowed - returnAs: JSON', async t => {
-      t.plan(5)
-
+    innerTest.test('response status code is not allowed - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -650,19 +645,20 @@ t.test('serviceBuilder', t => {
 
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202] })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.equal(error.response.statusCode, 205)
-        t.strictSame(error.response.payload, { the: 'response' })
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-        myServiceNameScope.done()
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.equal(error.response.statusCode, 205)
+        assert.strictSame(error.response.payload, { the: 'response' })
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
       }
+
+      myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: BUFFER', async t => {
-      t.plan(4)
-
+    innerTest.test('response status code is allowed - returnAs: BUFFER', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -676,17 +672,16 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is not allowed - returnAs: BUFFER', async t => {
-      t.plan(5)
-
+    innerTest.test('response status code is not allowed - returnAs: BUFFER', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -700,20 +695,20 @@ t.test('serviceBuilder', t => {
 
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.equal(error.response.statusCode, 205)
-        t.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-
-        myServiceNameScope.done()
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.equal(error.response.statusCode, 205)
+        assert.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
       }
+
+      myServiceNameScope.done()
+      assert.end()
     })
 
-    t.test('response status code is allowed - returnAs: STREAM', async t => {
-      t.plan(4)
-
+    innerTest.test('response status code is allowed - returnAs: STREAM', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -727,24 +722,25 @@ t.test('serviceBuilder', t => {
 
       const response = await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
       myServiceNameScope.done()
 
       await wait(200)
 
       const body = await new Promise(resolve => {
         let acc = ''
-        response.on('data', data => { acc += data.toString() })
+        response.on('data', data => {
+          acc += data.toString()
+        })
         response.on('end', () => resolve(acc))
       })
-      t.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
     })
 
-    t.test('response status code is not allowed - returnAs: STREAM', async t => {
-      t.plan(4)
-
+    innerTest.test('response status code is not allowed - returnAs: STREAM', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -758,22 +754,23 @@ t.test('serviceBuilder', t => {
 
       try {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
+        assert.fail('We can\'t reach this!')
       } catch (error) {
-        t.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        t.equal(error.response.statusCode, 205)
-        t.strictSame(error.response.headers.some, 'response-header')
-        t.ok(error.response.headers['content-length'])
-        myServiceNameScope.done()
+        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
+        assert.equal(error.response.statusCode, 205)
+        assert.strictSame(error.response.headers.some, 'response-header')
+        assert.ok(error.response.headers['content-length'])
       }
+
+      myServiceNameScope.done()
+      assert.end()
     })
 
-    t.end()
+    innerTest.end()
   })
 
-  t.test('put', t => {
-    t.test('send Object - returnAs: JSON', async t => {
-      t.plan(4)
-
+  test.test('put', innerTest => {
+    innerTest.test('send Object - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -787,21 +784,20 @@ t.test('serviceBuilder', t => {
 
       const response = await service.put('/foo', THE_SENT_BODY, { aa: 'bar' }, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.end()
+    innerTest.end()
   })
 
-  t.test('patch', t => {
-    t.test('send Object - returnAs: JSON', async t => {
-      t.plan(4)
-
+  test.test('patch', innerTest => {
+    innerTest.test('send Object - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -815,21 +811,20 @@ t.test('serviceBuilder', t => {
 
       const response = await service.patch('/foo', THE_SENT_BODY, { aa: 'bar' }, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.end()
+    innerTest.end()
   })
 
-  t.test('delete', t => {
-    t.test('send Object - returnAs: JSON', async t => {
-      t.plan(4)
-
+  test.test('delete', innerTest => {
+    innerTest.test('send Object - returnAs: JSON', async assert => {
       const THE_SENT_BODY = { the: 'sent body' }
 
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
@@ -843,42 +838,41 @@ t.test('serviceBuilder', t => {
 
       const response = await service.delete('/foo', THE_SENT_BODY, { aa: 'bar' }, { returnAs: 'JSON' })
 
-      t.equal(response.statusCode, 200)
-      t.strictSame(response.payload, { the: 'response' })
-      t.strictSame(response.headers.some, 'response-header')
-      t.ok(response.headers['content-length'])
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
 
       myServiceNameScope.done()
+      assert.end()
     })
 
-    t.end()
+    innerTest.end()
   })
 
-  t.test('returnAs: unknwon', async t => {
-    t.plan(1)
-
+  test.test('returnAs: unknwon', async assert => {
     const service = serviceBuilder('my-service-name')
     try {
       await service.get('/foo', {}, { returnAs: 'UNKNWON TYPE' })
+      assert.fail('We can\'t reach this!')
     } catch (error) {
-      t.equal(error.message, 'Unknwon returnAs: UNKNWON TYPE')
+      assert.equal(error.message, 'Unknwon returnAs: UNKNWON TYPE')
     }
+    assert.end()
   })
 
-  t.test('allowedStatusCodes is not array', async t => {
-    t.plan(1)
-
+  test.test('allowedStatusCodes is not array', async assert => {
     const service = serviceBuilder('my-service-name')
     try {
       await service.get('/foo', {}, { allowedStatusCodes: 200 })
+      assert.fail('We can\'t reach this!')
     } catch (error) {
-      t.equal(error.message, 'allowedStatusCodes should be array. Found: number.')
+      assert.equal(error.message, 'allowedStatusCodes should be array. Found: number.')
     }
+    assert.end()
   })
 
-  t.test('https', async t => {
-    t.plan(3)
-
+  test.test('https', async assert => {
     const myServiceNameScope = nock('https://my-service-name:443')
       .get('/foo')
       .reply(200, { the: 'response' }, {
@@ -889,16 +883,15 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', {}, { protocol: 'https' })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('https in service build', async t => {
-    t.plan(3)
-
+  test.test('https in service build', async assert => {
     const myServiceNameScope = nock('https://my-service-name:443')
       .get('/foo')
       .reply(200, { the: 'response' }, {
@@ -909,16 +902,15 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', {})
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('change port', async t => {
-    t.plan(3)
-
+  test.test('change port', async assert => {
     const myServiceNameScope = nock('http://my-service-name:3000')
       .get('/foo')
       .reply(200, { the: 'response' }, {
@@ -929,16 +921,15 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', {}, { port: 3000 })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('base options change port', async t => {
-    t.plan(3)
-
+  test.test('base options change port', async assert => {
     const myServiceNameScope = nock('http://my-service-name:3000')
       .get('/foo')
       .reply(200, { the: 'response' }, {
@@ -949,16 +940,15 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', {})
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('base options change port, override during call', async t => {
-    t.plan(3)
-
+  test.test('base options change port, override during call', async assert => {
     const myServiceNameScope = nock('http://my-service-name:5000')
       .get('/foo')
       .reply(200, { the: 'response' }, {
@@ -969,16 +959,15 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', {}, { port: 5000 })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('request headers can be overwritten', async t => {
-    t.plan(4)
-
+  test.test('request headers can be overwritten', async assert => {
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'header value chosen by the developer' } })
       .replyContentLength()
       .get('/foo?aa=bar')
@@ -990,17 +979,16 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'header value chosen by the developer' } })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('developer can specify a global header', async t => {
-    t.plan(4)
-
+  test.test('developer can specify a global header', async assert => {
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'global user header' } })
       .replyContentLength()
       .get('/foo?aa=bar')
@@ -1012,17 +1000,16 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('global header can be overwritten by a request header', async t => {
-    t.plan(4)
-
+  test.test('global header can be overwritten by a request header', async assert => {
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'request header' } })
       .replyContentLength()
       .get('/foo?aa=bar')
@@ -1034,17 +1021,16 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('request header overwrites global and mia headers', async t => {
-    t.plan(4)
-
+  test.test('request header overwrites global and mia headers', async assert => {
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'request header' } })
       .replyContentLength()
       .get('/foo?aa=bar')
@@ -1056,17 +1042,16 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('global user header overwrites mia header', async t => {
-    t.plan(4)
-
+  test.test('global user header overwrites mia header', async assert => {
     const myServiceNameScope = nock('http://my-service-name', { reqheaders: { foo: 'global user header' } })
       .replyContentLength()
       .get('/foo?aa=bar')
@@ -1078,17 +1063,16 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.test('with prefix', async t => {
-    t.plan(4)
-
+  test.test('with prefix', async assert => {
     const myServiceNameScope = nock('http://my-service-name')
       .replyContentLength()
       .get('/my-prefix/foo?aa=bar')
@@ -1100,17 +1084,14 @@ t.test('serviceBuilder', t => {
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
-    t.equal(response.statusCode, 200)
-    t.strictSame(response.payload, { the: 'response' })
-    t.strictSame(response.headers.some, 'response-header')
-    t.ok(response.headers['content-length'])
+    assert.equal(response.statusCode, 200)
+    assert.strictSame(response.payload, { the: 'response' })
+    assert.strictSame(response.headers.some, 'response-header')
+    assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
   })
 
-  t.end()
+  test.end()
 })
-
-function wait(n) {
-  return new Promise(resolve => setTimeout(resolve, n))
-}

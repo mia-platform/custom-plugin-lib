@@ -1,14 +1,20 @@
+<div align="center">
+
 # Custom Plugin Node Library
+[![Build Status][travis-svg]][travis-org]
+[![javascript style guide][standard-mia-svg]][standard-mia]
+[![Coverage Status][coverall-svg]][coverall-io]  
+[![NPM version][npmjs-svg]][npmjs-com]
+[![Greenkeeper badge][greenkeeper-svg]][greenkeeper-io]
 
-[![Build Status][travis-svg]][travis-link]
-[![Coverage Status][coverall-svg]][coverall-link]
-[![Greenkeeper badge][greenkeeper-svg]][greenkeeper-link]
+</div>
 
-## Summary
-This library helps you to implement the new platform custom plugins.
-The most basic (and powerful) plugin is the rawCustomPlugin.
+**The Mia-Platform Plugin Node Library**
 
-### `rawCustomPlugin`
+This library helps you implement the new platform custom plugins. The most basic (and powerful)
+plugin is the `rawCustomPlugin`.
+
+## `rawCustomPlugin`
 Defining a custom plugin that uses the platform’s services is as simple as
 in this [helloWorld](examples/basic/helloWorld.js) example.
 This library exports a function that optionally takes a schema of the required environment variables
@@ -31,7 +37,7 @@ In the async initialization function you can also access the `fastify` instance,
 see [here][fastify-ecosystem] for a list of currently available plugins.  
 In addition, you can register additional [`content-type` parsers][fastify-pasrers].
 
-### Examples
+## Examples
 Please see also a more [advanced example](examples/advanced/greetByGroup.js)
 to see how to require more environment variables, and to specify schema definitions for
 validation and swagger documentation.
@@ -49,7 +55,7 @@ Then launch the service with:
 Now you can consult the swagger documentation of the service at the
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/) address.
 
-### Configuration
+## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.
 
@@ -71,11 +77,15 @@ This two commands, will install the dependencies and run the tests with the cove
 page in `coverage/lcov-report/index.html`.
 
 [travis-svg]: https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master
-[travis-link]: https://travis-ci.org/mia-platform/custom-plugin-lib
-[coverall-svg]: https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg?branch=master
-[coverall-link]: https://coveralls.io/github/mia-platform/custom-plugin-lib?branch=master
+[travis-org]: https://travis-ci.org/mia-platform/custom-plugin-lib
+[standard-mia-svg]: https://img.shields.io/badge/code_style-standard--mia-orange.svg
+[standard-mia]: https://github.com/mia-platform/eslint-config-mia
+[coverall-svg]: https://coveralls.io/repos/github/mia-platform/custom-plugin-lib/badge.svg
+[coverall-io]: https://coveralls.io/github/mia-platform/custom-plugin-lib
+[npmjs-svg]: https://img.shields.io/npm/v/@mia-platform/custom-plugin-lib.svg?logo=npm
+[npmjs-com]: https://www.npmjs.com/package/@mia-platform/custom-plugin-lib
 [greenkeeper-svg]: https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg
-[greenkeeper-link]: https://greenkeeper.io/
+[greenkeeper-io]: https://greenkeeper.io/
 
 [nvm]: https://github.com/creationix/nvm
 

@@ -2,21 +2,20 @@
   "name": "@mia-platform/custom-plugin-lib",
   "version": "0.7.0",
   "description": "Library that allows you to define Mia-Platform custom plugins easily",
+  "keywords": [],
   "homepage": "https://www.mia-platform.eu/",
   "bugs": {
     "url": "https://github.com/mia-platform/custom-plugin-lib/issues",
     "email": "core@mia-platform.eu"
   },
   "license": "Apache-2.0",
-  "author": "Mia Platform Core Team<core@mia-platform.eu>",
+  "author": "Mia Platform Core Team <core@mia-platform.eu>",
   "contributors": [
+    "Tommaso Allevi <tomallevi@gmail.com>",
+    "Luca Scannapieco <luca.scannapieco@mia-platform.eu>",
     "Paolo Sarti <paolo.sarti@mia-platform.eu>",
-    "Tommaso Allevi <tommaso.allevi@mia-platform.eu>",
-    "Jacopo Andrea Giola <jacopo.giola@mia-platform.eu>"
-  ],
-  "files": [
-    "lib/*",
-    "index.d.ts"
+    "Jacopo Andrea Giola <jacopo@giola.org>",
+    "Davide Bianchi <bianchidavide12@gmail.com>"
   ],
   "main": "index.js",
   "repository": {
@@ -26,36 +25,34 @@
   "scripts": {
     "checkonly": "! grep -R '\\.only' tests/",
     "coverage": "npm run unit -- --coverage-report=text-summary",
-    "postcoverage": "tap --coverage-report=lcov --no-browser",
-    "lint": "standard-mia | snazzy",
+    "postcoverage": "tap --coverage-report=html --no-browser",
+    "lint": "eslint . --ignore-path .gitignore",
     "start": "echo 'unable to start the library directly' && exit 1",
     "test": "npm run lint && npm run unit && npm run checkonly && npm run typescript",
-    "unit": "tap -b -o tap.log tests/*.test.js",
     "typescript": "tsc --project ./tests/types/tsconfig.json",
-    "coveralls": "npm run unit -- --cov"
+    "unit": "tap -b -o tap.log tests/*.test.js",
+    "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "ajv": "^6.5.2",
-    "fastify": "^1.12.1",
-    "fastify-cli": "^0.24.0",
-    "fastify-env": "^0.6.0",
-    "fastify-formbody": "^2.0.1",
-    "fastify-swagger": "^0.15.0",
-    "simple-get": "^3.0.2"
+    "@mia-platform/lc39": "^2.1.1",
+    "@types/node": "^11.13.9",
+    "ajv": "^6.10.0",
+    "fastify-env": "^0.6.2",
+    "fastify-formbody": "^3.1.0",
+    "simple-get": "^3.0.3"
   },
   "devDependencies": {
-    "@mia-platform/standard-mia": "^1.1.0",
-    "coveralls": "^3.0.2",
-    "nock": "^10.0.0",
+    "@mia-platform/eslint-config-mia": "1.7.9",
+    "eslint": "^5.16.0",
+    "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
-    "snazzy": "^8.0.0",
-    "tap": "^12.0.1",
-    "typescript": "^3.0.1"
+    "tap": "^13.1.2",
+    "typescript": "^3.4.5"
   },
   "engines": {
     "node": ">=8"
   },
   "eslintConfig": {
-    "extends": "./node_modules/@mia-platform/eslint-config-mia/eslintrc.json"
+    "extends": "@mia-platform/eslint-config-mia"
   }
 }
