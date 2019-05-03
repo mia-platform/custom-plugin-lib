@@ -1,6 +1,7 @@
 <div align="center">
 
 # Custom Plugin Node Library
+
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
 [![Coverage Status][coverall-svg]][coverall-io]  
@@ -11,8 +12,56 @@
 
 **The Mia-Platform Plugin Node Library**
 
-This library helps you implement the new platform custom plugins. The most basic (and powerful)
-plugin is the `rawCustomPlugin`.
+This library is intented to ease the creation of new services to deploy
+on [Mia-Platform][mia-platform].  
+Is highly copled with [`lc39`][lc39] and on [Fastify][fastify].
+
+## Getting Started
+
+### Install
+
+To install the package you can run:
+
+```sh
+npm install @mia-platform/custom-plugin-lib --save
+```
+
+### Examples
+
+Defining a new service that integrate with the platform is as simple as in this
+[example](examples/basic/index.js).  
+Please see also a more [advanced example](examples/advanced/index.js) to see how to require
+more environment variables, and to specify schema definitions for validation and swagger documentation.
+
+For using one of the two example provided you can move to one of the two directories and run:
+
+```sh
+npm run start:local
+```
+
+This command will launch the service on `localhost:3000` with the environment variables defined
+in this [file](examples/default.env).
+Now you can consult the swagger documentation of the service at
+[this](http://localhost:3000/documentation/) address.
+
+### Local Development
+
+To develop the service locally you need:
+- Node 8+
+
+To setup node, please if possible try to use [nvm][nvm], so you can manage multiple versions easily.
+Once you have installed nvm, you can go inside the directory of the project and simply run
+`nvm install`, the `.nvmrc` file will install and select the correct version
+if you don’t already have it.
+
+Once you have all the dependency in place, you can launch:
+```shell
+npm i
+npm run coverage
+```
+
+This two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
+page in `coverage/lcov-report/index.html`.
 
 ## `rawCustomPlugin`
 Defining a custom plugin that uses the platform’s services is as simple as
@@ -35,46 +84,11 @@ of the request object such as `getUserId` or `getGroups`.
 
 In the async initialization function you can also access the `fastify` instance, so you can register any plugin,
 see [here][fastify-ecosystem] for a list of currently available plugins.  
-In addition, you can register additional [`content-type` parsers][fastify-pasrers].
-
-## Examples
-Please see also a more [advanced example](examples/advanced/greetByGroup.js)
-to see how to require more environment variables, and to specify schema definitions for
-validation and swagger documentation.
-
-To run this example, load the required variables with:
-```
-set -a && source examples/default.env
-```
-
-Then launch the service with:
-```
-./node_modules/.bin/fastify start examples/advanced/greetByGroup.js
-```
-
-Now you can consult the swagger documentation of the service at the
-[http://localhost:3000/documentation/](http://localhost:3000/documentation/) address.
+In addition, you can register additional [`content-type` parsers][fastify-parsers].
 
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.
-
-## Local Development
-To develop the service locally you need:
-- Node 8+
-
-To setup node, please if possible try to use [nvm][nvm], so you can manage multiple
-versions easily. Once you have installed nvm, you can go inside the directory of the project and simply run
-`nvm install`, the `.nvmrc` file will install and select the correct version if you don’t already have it.
-
-Once you have all the dependency in place, you can launch:
-```shell
-npm i
-npm run coverage
-```
-
-This two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
-page in `coverage/lcov-report/index.html`.
 
 [travis-svg]: https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master
 [travis-org]: https://travis-ci.org/mia-platform/custom-plugin-lib
@@ -87,6 +101,8 @@ page in `coverage/lcov-report/index.html`.
 [greenkeeper-svg]: https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg
 [greenkeeper-io]: https://greenkeeper.io/
 
+[mia-platform]: https://www.mia-platform.eu/
+[lc39]: https://github.com/mia-platform/lc39
 [nvm]: https://github.com/creationix/nvm
 
 [fastify]: https://www.fastify.io/
