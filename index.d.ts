@@ -69,7 +69,7 @@ declare namespace customPlugin {
     headers?: object,
     prefix?: string,
   }
-  interface ServiceOptions {
+  interface ServiceOptions extends InitServiceOptions{
     returnAs?: 'JSON' | 'BUFFER' | 'STREAM'
     allowedStatusCodes?: number[]
   }
