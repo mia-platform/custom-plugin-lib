@@ -2,6 +2,7 @@
 
 ### TBR
 - Update repository to use lc39 and fastify 2
+- Modify error message on status code validation failure
 
 ### v0.7.0 (2019-03-12)
 
