@@ -227,7 +227,7 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
@@ -236,11 +236,8 @@ tap.test('serviceBuilder', test => {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202] })
         assert.fail('We can\'t reach this!')
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.strictSame(error.response.statusCode, 205)
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
-        assert.strictSame(error.response.payload, { the: 'response' })
+        assert.strictSame(error.message, 'Resource Not Found')
+        assert.strictSame(error.statusCode, 404)
       }
 
       myServiceNameScope.done()
@@ -272,7 +269,7 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
@@ -281,11 +278,8 @@ tap.test('serviceBuilder', test => {
         await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
         assert.fail('We can\'t reach this!')
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.strictSame(error.response.statusCode, 205)
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
-        assert.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
+        assert.strictSame(error.message, 'Resource Not Found')
+        assert.strictSame(error.statusCode, 404)
       }
 
       myServiceNameScope.done()
@@ -325,20 +319,18 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo')
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
       const service = serviceBuilder('my-service-name')
 
       try {
-        await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
-        assert.fail('We can\'t reach this!')
+        await service.get('/foo', {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.strictSame(error.response.statusCode, 205)
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.message, 'Invalid status code: 404. Allowed: 200,201,202.')
+        assert.strictSame(error.statusCode, 404)
+        myServiceNameScope.done()
       }
 
       myServiceNameScope.done()
@@ -637,7 +629,7 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
         .replyContentLength()
         .post('/foo', THE_SENT_BODY)
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
@@ -647,11 +639,9 @@ tap.test('serviceBuilder', test => {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202] })
         assert.fail('We can\'t reach this!')
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.equal(error.response.statusCode, 205)
-        assert.strictSame(error.response.payload, { the: 'response' })
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.message, 'Resource Not Found')
+        assert.equal(error.statusCode, 404)
+        myServiceNameScope.done()
       }
 
       myServiceNameScope.done()
@@ -687,7 +677,7 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
         .replyContentLength()
         .post('/foo', THE_SENT_BODY)
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
@@ -697,11 +687,10 @@ tap.test('serviceBuilder', test => {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'BUFFER' })
         assert.fail('We can\'t reach this!')
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.equal(error.response.statusCode, 205)
-        assert.strictSame(error.response.payload, Buffer.from(JSON.stringify({ the: 'response' })))
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.message, 'Resource Not Found')
+        assert.equal(error.statusCode, 404)
+
+        myServiceNameScope.done()
       }
 
       myServiceNameScope.done()
@@ -746,7 +735,7 @@ tap.test('serviceBuilder', test => {
       const myServiceNameScope = nock('http://my-service-name', { reqheaders })
         .replyContentLength()
         .post('/foo', THE_SENT_BODY)
-        .reply(205, { the: 'response' }, {
+        .reply(404, { message: 'Resource Not Found' }, {
           some: 'response-header',
         })
 
@@ -756,10 +745,9 @@ tap.test('serviceBuilder', test => {
         await service.post('/foo', THE_SENT_BODY, {}, { allowedStatusCodes: [200, 201, 202], returnAs: 'STREAM' })
         assert.fail('We can\'t reach this!')
       } catch (error) {
-        assert.strictSame(error.message, 'Invalid status code: 205. Allowed: 200,201,202.')
-        assert.equal(error.response.statusCode, 205)
-        assert.strictSame(error.response.headers.some, 'response-header')
-        assert.ok(error.response.headers['content-length'])
+        assert.strictSame(error.message, 'Invalid status code: 404. Allowed: 200,201,202.')
+        assert.equal(error.statusCode, 404)
+        myServiceNameScope.done()
       }
 
       myServiceNameScope.done()
