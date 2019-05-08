@@ -1,6 +1,6 @@
 # Changes to `custom-plugin-lib`
 
-### TBR
+### v1.0.0-rc.2 (2019-05-08)
 
 - Fix wrong dependencies in `package.json` file
 
