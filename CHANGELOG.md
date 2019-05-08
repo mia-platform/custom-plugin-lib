@@ -1,6 +1,11 @@
 # Changes to `custom-plugin-lib`
 
+### TBR
+
+- Fix wrong encapsulation from fastify for custom functions
+
 ### v1.0.0-rc.0 (2019-05-06)
+
 - Update repository to use lc39 and fastify 2
 - Modify error message on status code validation failure
 

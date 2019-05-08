@@ -18,6 +18,7 @@
 
 const customService = require('../../index')()
 const fs = require('fs')
+const fastifyRoutes = require('fastify-routes')
 
 const schema = {
   body: {
@@ -43,6 +44,7 @@ function customParser(req, done) {
 
 // eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
+  service.register(fastifyRoutes)
   function handler(request, reply) {
     reply.send('Hello world!')
   }
@@ -72,3 +74,12 @@ module.exports = customService(async function clientGroups(service) {
   service.addContentTypeParser('application/custom-type', customParser)
   service.addRawCustomPlugin('POST', '/customValidation', handlerRespondWithBody)
 })
+
+// eslint-disable-next-line require-await
+module.exports.healthinessHandler = async function healthinessHandler(fastify) {
+  fastify.assert.ok(fastify.getServiceProxy)
+  fastify.assert.ok(fastify.routes)
+  return {
+    statusOk: true,
+  }
+}

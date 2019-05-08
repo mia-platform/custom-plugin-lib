@@ -182,6 +182,16 @@ tap.test('Plain Custom Service', test => {
     assert.end()
   })
 
+  test.test('Healtiness handler can see decoration', async assert => {
+    const fastify = await setupFastify(baseEnv)
+    const response = await fastify.inject({
+      method: 'GET',
+      url: '/-/healthz',
+    })
+    assert.strictSame(response.statusCode, 200)
+    assert.end()
+  })
+
   test.end()
 })
 

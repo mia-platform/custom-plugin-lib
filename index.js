@@ -19,6 +19,7 @@
 'use strict'
 
 const fastifyEnv = require('fastify-env')
+const fp = require('fastify-plugin')
 const fastifyFormbody = require('fastify-formbody')
 const Ajv = require('ajv')
 const path = require('path')
@@ -172,7 +173,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
 
-  fastify.register(asyncInitFunction)
+  fastify.register(fp(asyncInitFunction))
   fastify.setErrorHandler(function errorHanlder(error, request, reply) {
     if (error.statusCode) {
       reply.send(error)
@@ -188,10 +189,9 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction) {
     async function index(fastify, opts) {
-      fastify
-        .register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
-        .register(fastifyFormbody)
-      fastify.register(decorateRequestAndFastifyInstance, { asyncInitFunction })
+      fastify.register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
+      fastify.register(fastifyFormbody)
+      fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction })
     }
     index.options = {
       errorHandler: false,
