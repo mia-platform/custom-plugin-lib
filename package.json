@@ -44,14 +44,13 @@
     "fastify-env": "^0.6.2",
     "fastify-formbody": "^3.1.0",
     "fastify-plugin": "^1.5.0",
-    "fastify-routes": "^2.0.3",
     "http-errors": "^1.7.2",
-    "save-dev": "^2.0.0",
     "simple-get": "^3.0.3"
   },
   "devDependencies": {
     "@mia-platform/eslint-config-mia": "1.7.9",
     "eslint": "^5.16.0",
+    "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
     "tap": "^13.1.2",

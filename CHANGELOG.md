@@ -1,5 +1,9 @@
 # Changes to `custom-plugin-lib`
 
+### TBR
+
+- Fix wrong dependencies in `package.json` file
+
 ### v1.0.0-rc.1 (2019-05-08)
 
 - Fix wrong encapsulation from fastify for custom functions
