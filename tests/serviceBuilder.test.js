@@ -35,6 +35,68 @@ tap.test('serviceBuilder', test => {
     nock.enableNetConnect()
   })
 
+  test.test('getHeader', innerTest => {
+    const HEADER_MIA_KEY = 'miaheader'
+    const HEADER_MIA = { [HEADER_MIA_KEY]: 'foo' }
+
+    innerTest.test('injects Mia Header if isMiaHeaderInjected option is missing', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .reply(function response() {
+          assert.equal(this.req.headers[HEADER_MIA_KEY], HEADER_MIA[HEADER_MIA_KEY])
+
+          return { the: 'response' }
+        })
+
+      const service = serviceBuilder('my-service-name', HEADER_MIA)
+      const response = await service.get('/foo', {}, { returnAs: 'JSON' })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('injects Mia Header if isMiaHeaderInjected option is true', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .reply(function response() {
+          assert.equal(this.req.headers[HEADER_MIA_KEY], HEADER_MIA[HEADER_MIA_KEY])
+
+          return { the: 'response' }
+        })
+      const service = serviceBuilder('my-service-name', HEADER_MIA)
+      const response = await service.get('/foo', {}, { returnAs: 'JSON', isMiaHeaderInjected: true })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('does not inject Mia header if isMiaHeaderInjected option is false', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .reply(function response() {
+          assert.notOk(this.req.headers[HEADER_MIA_KEY])
+
+          return { the: 'response' }
+        })
+      const service = serviceBuilder('my-service-name', { [HEADER_MIA_KEY]: 'foo' })
+      const response = await service.get('/foo', {}, { returnAs: 'JSON', isMiaHeaderInjected: false })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.end()
+  })
+
   test.test('get', innerTest => {
     innerTest.test('returnAs: JSON', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
