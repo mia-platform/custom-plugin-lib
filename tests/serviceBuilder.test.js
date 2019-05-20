@@ -41,7 +41,6 @@ tap.test('serviceBuilder', test => {
 
     innerTest.test('injects Mia Header if isMiaHeaderInjected option is missing', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
-        .replyContentLength()
         .get('/foo')
         .reply(function response() {
           assert.equal(this.req.headers[HEADER_MIA_KEY], HEADER_MIA[HEADER_MIA_KEY])
@@ -60,7 +59,6 @@ tap.test('serviceBuilder', test => {
 
     innerTest.test('injects Mia Header if isMiaHeaderInjected option is true', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
-        .replyContentLength()
         .get('/foo')
         .reply(function response() {
           assert.equal(this.req.headers[HEADER_MIA_KEY], HEADER_MIA[HEADER_MIA_KEY])
@@ -78,7 +76,6 @@ tap.test('serviceBuilder', test => {
 
     innerTest.test('does not inject Mia header if isMiaHeaderInjected option is false', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
-        .replyContentLength()
         .get('/foo')
         .reply(function response() {
           assert.notOk(this.req.headers[HEADER_MIA_KEY])
