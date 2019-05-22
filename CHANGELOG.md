@@ -1,5 +1,9 @@
 # Changes to `custom-plugin-lib`
 
+### TBR
+
+- Add new flag for filtering mia header injection
+
 ### v1.0.0-rc.2 (2019-05-08)
 
 - Fix wrong dependencies in `package.json` file
