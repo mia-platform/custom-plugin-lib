@@ -49,7 +49,7 @@
     "simple-get": "^3.0.3"
   },
   "devDependencies": {
-    "@mia-platform/eslint-config-mia": "1.7.9",
+    "@mia-platform/eslint-config-mia": "2.0.0",
     "eslint": "^5.16.0",
     "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
