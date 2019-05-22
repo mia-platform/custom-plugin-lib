@@ -25,11 +25,9 @@ const envSchema = {
 
 const customService = require('../../index')(envSchema)
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
   const customFunctionality = request => request.body
   service.decorate('customFunctionality', customFunctionality)
-  // eslint-disable-next-line require-await
   async function handlerCustom(request, reply) {
     reply.send(this.customFunctionality(request))
   }

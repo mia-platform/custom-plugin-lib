@@ -18,7 +18,6 @@
 
 const customService = require('../../index')()
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
   const proxy = service.getServiceProxy({ port: 3000, protocol: 'https' })
   const res = await proxy.get('/res')

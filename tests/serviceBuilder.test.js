@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 /*
  * Copyright 2018 Mia srl
  *
@@ -15,7 +14,6 @@
  * limitations under the License.
 */
 
-/* eslint-disable max-nested-callbacks */
 'use strict'
 
 const tap = require('tap')
@@ -28,7 +26,6 @@ function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
-// eslint-disable-next-line max-statements
 tap.test('serviceBuilder', test => {
   nock.disableNetConnect()
   test.tearDown(() => {

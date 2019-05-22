@@ -20,7 +20,6 @@ const customService = require('../../index')()
 
 const otherServiceName = 'other-service'
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
   const proxy = service.getDirectServiceProxy(otherServiceName, {
     port: 3000,

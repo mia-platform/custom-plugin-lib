@@ -14,8 +14,6 @@
  * limitations under the License.
 */
 
-/* eslint require-await: 0 */
-/* eslint global-require: 0 */
 'use strict'
 
 const fastifyEnv = require('fastify-env')
@@ -91,7 +89,7 @@ function concatEnvSchemas(schema, otherSchema) {
 
 function getCustomHeaders(headersKeyToProxy, headers) {
   return headersKeyToProxy.reduce((acc, headerKey) => {
-    if (!headers.hasOwnProperty(headerKey)) { // eslint-disable-line no-prototype-builtins
+    if (!{}.hasOwnProperty.call(headers, headerKey)) {
       return acc
     }
     const headerValue = headers[headerKey]
@@ -145,7 +143,6 @@ function getOriginalRequestHeaders() {
   return this.headers
 }
 
-// eslint-disable-next-line max-statements
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction }) {
   const { config } = fastify
 
@@ -195,7 +192,7 @@ function initCustomServiceEnvironment(envSchema = defaultSchema) {
     }
     index.options = {
       errorHandler: false,
-      trustProxy: process.env.TRUSTED_PROXIES, // eslint-disable-line no-process-env
+      trustProxy: process.env.TRUSTED_PROXIES,
     }
 
     index.swaggerDefinition = {

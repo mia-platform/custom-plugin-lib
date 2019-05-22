@@ -39,8 +39,8 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^2.1.1",
-    "@types/node": "^12.0.0",
+    "@mia-platform/lc39": "^2.1.2",
+    "@types/node": "^12.0.2",
     "ajv": "^6.10.0",
     "fastify-env": "^0.6.2",
     "fastify-formbody": "^3.1.0",
@@ -49,12 +49,12 @@
     "simple-get": "^3.0.3"
   },
   "devDependencies": {
-    "@mia-platform/eslint-config-mia": "1.7.9",
+    "@mia-platform/eslint-config-mia": "^2.0.0",
     "eslint": "^5.16.0",
     "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
-    "tap": "^14.0.0",
+    "tap": "^14.1.7",
     "typescript": "^3.4.5"
   },
   "engines": {

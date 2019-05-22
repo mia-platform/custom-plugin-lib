@@ -18,7 +18,6 @@
 
 const customService = require('@mia-platform/custom-plugin-lib')()
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function helloWorldService(service) {
   service.addRawCustomPlugin('GET', '/hello', function handler(request, reply) {
     request.log.trace('requested myuser')

@@ -28,12 +28,12 @@ class BusinessLogic {
         user,
         groups,
       }
-    } else {
-      return {
-        message: `Hello ${userString}!\n`,
-        user,
-        groups,
-      }
+    }
+
+    return {
+      message: `Hello ${userString}!\n`,
+      user,
+      groups,
     }
   }
 }

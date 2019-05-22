@@ -18,7 +18,6 @@
 
 const customService = require('../../index')()
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
   service.addRawCustomPlugin('POST', '/default', async function handler(req) {
     const { some } = req.body

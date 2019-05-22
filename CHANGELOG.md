@@ -3,6 +3,9 @@
 ### TBR
 
 - Add new flag for filtering mia header injection
+- Update @mia-platform/lc39 2.1.1 -> 2.1.2
+- Update @types/node 12.0.0 -> 12.0.2
+- Update eslint configuration
 
 ### v1.0.0-rc.2 (2019-05-08)
 

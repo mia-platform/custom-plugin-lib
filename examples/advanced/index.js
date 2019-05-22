@@ -73,7 +73,6 @@ function handleSum(request, reply) {
   reply.send({ acc })
 }
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function exampleService(service) {
   // retrieve environment variables from config
   const { GROUP_TO_GREET } = service.config

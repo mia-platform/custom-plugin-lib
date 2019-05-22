@@ -42,7 +42,6 @@ function customParser(req, done) {
   })
 }
 
-// eslint-disable-next-line require-await
 module.exports = customService(async function clientGroups(service) {
   service.register(fastifyRoutes)
   function handler(request, reply) {
@@ -75,7 +74,6 @@ module.exports = customService(async function clientGroups(service) {
   service.addRawCustomPlugin('POST', '/customValidation', handlerRespondWithBody)
 })
 
-// eslint-disable-next-line require-await
 module.exports.healthinessHandler = async function healthinessHandler(fastify) {
   fastify.assert.ok(fastify.getServiceProxy)
   fastify.assert.ok(fastify.routes)
