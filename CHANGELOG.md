@@ -1,6 +1,6 @@
 # Changes to `custom-plugin-lib`
 
-### TBR
+### v1.0.0 (2019-05-23)
 
 - Update repository to use lc39 and fastify 2
 - Modify error message on status code validation failure
