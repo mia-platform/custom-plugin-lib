@@ -27,6 +27,11 @@ const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
 const ADDITIONAL_HEADERS_TO_PROXY = 'additionalheader1,additionalheader2'
 
+const X_REQUEST_ID_HEADER_KEY = 'x-request-id'
+const X_FORWARDED_FOR_HEADER_KEY = 'x-forwarded-for'
+const X_FORWARDED_PROTO_HEADER_KEY = 'x-forwarded-proto'
+const X_FORWARDED_HOST_HEADER_KEY = 'x-forwarded-host'
+
 const baseEnv = {
   USERID_HEADER_KEY,
   GROUPS_HEADER_KEY,
@@ -57,6 +62,10 @@ tap.test('', test => {
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
+      [X_REQUEST_ID_HEADER_KEY]: 'request-id',
+      [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
+      [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
+      [X_FORWARDED_HOST_HEADER_KEY]: 'www.hostname.tld',
     }
     const scope = nock(`http://${otherServiceName}`, {
       reqheaders: headers,
@@ -131,6 +140,10 @@ tap.test('', test => {
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
+      [X_REQUEST_ID_HEADER_KEY]: 'request-id',
+      [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
+      [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
+      [X_FORWARDED_HOST_HEADER_KEY]: 'www.hostname.tld',
       additionalheader1: 'header1Value',
     }
     const scope = nock(`http://${otherServiceName}:3000`, {
@@ -167,6 +180,10 @@ tap.test('', test => {
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
+      [X_REQUEST_ID_HEADER_KEY]: 'request-id',
+      [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
+      [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
+      [X_FORWARDED_HOST_HEADER_KEY]: 'www.hostname.tld',
       additionalheader1: 'header1Value',
     }
     const scope = nock(`https://${otherServiceName}:3000`, {
@@ -213,6 +230,10 @@ tap.test('', test => {
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
+      [X_REQUEST_ID_HEADER_KEY]: 'request-id',
+      [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
+      [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
+      [X_FORWARDED_HOST_HEADER_KEY]: 'www.hostname.tld',
       additionalheader1: 'header1Value',
     }
     const scope = nock(`https://${otherServiceName}:3000`, {

@@ -32,10 +32,15 @@ const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const GROUPS_HEADER_KEY = 'GROUPS_HEADER_KEY'
 const CLIENTTYPE_HEADER_KEY = 'CLIENTTYPE_HEADER_KEY'
 const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
-
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
-
 const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
+
+const extraHeadersKeys = [
+  'x-request-id',
+  'x-forwarded-for',
+  'x-forwarded-proto',
+  'x-forwarded-host',
+]
 
 const baseSchema = {
   type: 'object',
@@ -112,8 +117,9 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
 
 function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
+  const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  return serviceBuilder(serviceName, this.getMiaHeaders(), options)
+  return serviceBuilder(serviceName, { ...this.getMiaHeaders(), ...extraHeaders }, options)
 }
 
 function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
@@ -122,8 +128,9 @@ function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
 
 function getServiceBuilderFromRequest(baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
+  const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], this.getMiaHeaders(), options)
+  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], { ...this.getMiaHeaders(), ...extraHeaders }, options)
 }
 
 function getServiceBuilderFromService(baseOptions = {}) {
