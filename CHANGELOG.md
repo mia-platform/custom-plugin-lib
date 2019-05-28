@@ -1,6 +1,6 @@
 # Changes to `custom-plugin-lib`
 
-### TBR
+### v1.0.1 (2019-05-28)
 
 - Improved condition for hinding error messages to users
   to avoid false positives
