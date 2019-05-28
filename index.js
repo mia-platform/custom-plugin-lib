@@ -179,11 +179,11 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.register(fp(asyncInitFunction))
   fastify.setErrorHandler(function errorHanlder(error, request, reply) {
-    if (error.statusCode) {
-      reply.send(error)
-    } else {
+    if (reply.res.statusCode === 500 && !error.statusCode) {
       request.log.error(error)
       reply.send(new Error('Something went wrong'))
+    } else {
+      reply.send(error)
     }
   })
 }

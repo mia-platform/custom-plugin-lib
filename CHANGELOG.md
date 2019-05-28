@@ -1,5 +1,10 @@
 # Changes to `custom-plugin-lib`
 
+### TBR
+
+- Improved condition for hinding error messages to users
+  to avoid false positives
+
 ### v1.0.0 (2019-05-23)
 
 - Update repository to use lc39 and fastify 2
