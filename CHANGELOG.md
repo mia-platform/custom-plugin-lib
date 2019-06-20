@@ -1,5 +1,10 @@
 # Changes to `custom-plugin-lib`
 
+### Unreleased
+
+- Update @mia-platform/lc39 2.1.2 -> 2.2.0
+- Update @types/node 12.0.2 -> 12.0.8
+
 ### v1.0.1 (2019-05-28)
 
 - Improved condition for hinding error messages to users

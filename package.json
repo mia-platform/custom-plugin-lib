@@ -39,8 +39,8 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^2.1.2",
-    "@types/node": "^12.0.2",
+    "@mia-platform/lc39": "^2.2.0",
+    "@types/node": "^12.0.8",
     "ajv": "^6.10.0",
     "fastify-env": "^0.6.2",
     "fastify-formbody": "^3.1.0",
@@ -54,8 +54,8 @@
     "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
-    "tap": "^14.2.0",
-    "typescript": "^3.4.5"
+    "tap": "^14.2.4",
+    "typescript": "^3.5.2"
   },
   "engines": {
     "node": ">=8"
