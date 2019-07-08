@@ -32,5 +32,5 @@ else
   NOW_DATE="$(date -u -I)"
 fi
 
-sed -i.bck "s|### TBR|### v${TAG_VALUE} (${NOW_DATE})|g" "${SOURCE_DIR}/CHANGELOG.md"
+sed -i.bck "s|## Unreleased|## v${TAG_VALUE} - ${NOW_DATE}|g" "${SOURCE_DIR}/CHANGELOG.md"
 rm -fr "${SOURCE_DIR}/CHANGELOG.md.bck"
