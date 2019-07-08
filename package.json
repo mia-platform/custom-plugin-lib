@@ -40,21 +40,21 @@
   },
   "dependencies": {
     "@mia-platform/lc39": "^2.2.0",
-    "@types/node": "^12.0.8",
-    "ajv": "^6.10.0",
-    "fastify-env": "^0.6.2",
+    "@types/node": "^12.6.0",
+    "ajv": "^6.10.1",
+    "fastify-env": "^1.0.1",
     "fastify-formbody": "^3.1.0",
     "fastify-plugin": "^1.6.0",
-    "http-errors": "^1.7.2",
+    "http-errors": "^1.7.3",
     "simple-get": "^3.0.3"
   },
   "devDependencies": {
-    "@mia-platform/eslint-config-mia": "^2.0.0",
-    "eslint": "^5.16.0",
+    "@mia-platform/eslint-config-mia": "^2.0.1",
+    "eslint": "^6.0.1",
     "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
-    "tap": "^14.2.4",
+    "tap": "^14.4.1",
     "typescript": "^3.5.2"
   },
   "engines": {
