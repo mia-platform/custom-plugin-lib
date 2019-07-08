@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update @types/node 12.0.2 -> 12.6.0
 - Update ajv 6.10.0 -> 6.10.1
 - Update http-errors 1.7.2 -> 1.7.3
+- Update fastify-env 0.6.2 -> 1.0.1
 
 ## v1.0.1 - 2019-05-28
 
