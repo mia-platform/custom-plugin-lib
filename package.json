@@ -35,13 +35,13 @@
     "start": "echo 'unable to start the library directly' && exit 1",
     "test": "npm run lint && npm run unit && npm run checkonly && npm run typescript",
     "typescript": "tsc --project ./tests/types/tsconfig.json",
-    "unit": "tap -b -o tap.log tests/*.test.js",
+    "unit": "tap --no-esm -b -o tap.log tests/*.test.js",
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^2.2.0",
-    "@types/node": "^12.6.0",
-    "ajv": "^6.10.1",
+    "@mia-platform/lc39": "^2.2.2",
+    "@types/node": "^12.7.1",
+    "ajv": "^6.10.2",
     "fastify-env": "^1.0.1",
     "fastify-formbody": "^3.1.0",
     "fastify-plugin": "^1.6.0",
@@ -54,7 +54,7 @@
     "fastify-routes": "^2.0.3",
     "nock": "^10.0.6",
     "pre-commit": "^1.2.2",
-    "tap": "^14.4.1",
+    "tap": "^14.6.1",
     "typescript": "^3.5.2"
   },
   "engines": {
