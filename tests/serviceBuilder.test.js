@@ -444,7 +444,7 @@ tap.test('serviceBuilder', test => {
     })
 
     innerTest.test('send Buffer - returnAs: JSON', async assert => {
-      const THE_SENT_BODY = new Buffer('my buffer')
+      const THE_SENT_BODY = Buffer.from('my buffer')
 
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
