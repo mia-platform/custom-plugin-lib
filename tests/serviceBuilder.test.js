@@ -43,7 +43,7 @@ tap.test('serviceBuilder', test => {
         },
       })
         .get('/foo')
-        .reply(() => ({ the: 'response' }))
+        .reply(200, { the: 'response' })
 
       const service = serviceBuilder('my-service-name', HEADER_MIA)
       const response = await service.get('/foo', {}, { returnAs: 'JSON' })
@@ -61,7 +61,7 @@ tap.test('serviceBuilder', test => {
         },
       })
         .get('/foo')
-        .reply(() => ({ the: 'response' }))
+        .reply(200, { the: 'response' })
 
       const service = serviceBuilder('my-service-name', HEADER_MIA)
       const response = await service.get('/foo', {}, { returnAs: 'JSON', isMiaHeaderInjected: true })
@@ -77,7 +77,7 @@ tap.test('serviceBuilder', test => {
         badheaders: [HEADER_MIA_KEY],
       })
         .get('/foo')
-        .reply(() => ({ the: 'response' }))
+        .reply(200, { the: 'response' })
 
       const service = serviceBuilder('my-service-name', { [HEADER_MIA_KEY]: 'foo' })
       const response = await service.get('/foo', {}, { returnAs: 'JSON', isMiaHeaderInjected: false })
