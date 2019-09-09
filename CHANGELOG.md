@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update @types/node 12.7.1 -> 12.7.4
+- Moved URL construction from deprecated url.format to the new WHATWG API
 
 ## v1.0.4 - 2019-08-08
 
