@@ -153,7 +153,7 @@ function getOriginalRequestHeaders() {
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction }) {
   const { config } = fastify
 
-  const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
+  const ajv = new Ajv({ coerceTypes: false, useDefaults: true })
   fastify.setSchemaCompiler(schema => ajv.compile(schema))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
