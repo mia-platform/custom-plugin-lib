@@ -32,9 +32,19 @@ declare namespace customPlugin {
 
   type AsyncInitFunction = (service: DecoratedFastify) => Promise<void>
 
+  type RawCustomPluginAdvancedConfig = Pick<fastify.RouteShorthandOptions,
+    'schema' |
+    'attachValidation' |
+    'schemaCompiler' |
+    'bodyLimit' |
+    'logLevel' |
+    'config' |
+    'prefixTrailingSlash' 
+  >
+
   interface DecoratedFastify extends fastify.FastifyInstance {
     config: object,
-    addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas): DecoratedFastify,
+    addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
     getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
