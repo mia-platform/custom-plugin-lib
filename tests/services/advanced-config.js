@@ -26,7 +26,16 @@ module.exports = customService(async function clientGroups(service) {
     })
   }
 
-  service.addRawCustomPlugin('POST', '/advanced-config', handlerAdvancedConfig, {
+  const advancedConfig = {
+    attachValidation: true,
+    config: { myConfig: [1, 2, 3, 4] },
+    method: 'overwritten property',
+    path: 'overwritten property',
+    handler: 'overwritten property',
+    schema: 'overwritten property',
+  }
+
+  const schema = {
     body: {
       type: 'object',
       additionalProperties: false,
@@ -35,9 +44,6 @@ module.exports = customService(async function clientGroups(service) {
         foo: { type: 'number' },
       },
     },
-  },
-  {
-    attachValidation: true,
-    config: { myConfig: [1, 2, 3, 4] },
-  })
+  }
+  service.addRawCustomPlugin('POST', '/advanced-config', handlerAdvancedConfig, schema, advancedConfig)
 })

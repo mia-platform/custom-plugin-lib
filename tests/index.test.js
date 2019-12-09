@@ -262,9 +262,27 @@ tap.test('Advanced config', test => {
     assert.strictSame(response.statusCode, 200)
     assert.ok(/application\/json/.test(response.headers['content-type']))
     assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+
     assert.match(parsedPayload.error, /foo/, 'route can access the validation error')
     assert.match(parsedPayload.config, { myConfig: [1, 2, 3, 4] }, 'route can access context')
+
+    assert.test('part of advanced config is overwritten', (assert) => {
+      const {
+        method,
+        path,
+        handler,
+        schema,
+      } = parsedPayload.config
+
+      assert.notEqual(method, 'overwritten property')
+      assert.notEqual(path, 'overwritten property')
+      assert.notEqual(handler, 'overwritten property')
+      assert.notEqual(schema, 'overwritten property')
+
+      assert.end()
+    })
     assert.end()
   })
+
   test.end()
 })
