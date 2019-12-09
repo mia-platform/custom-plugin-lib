@@ -86,6 +86,8 @@ In the async initialization function you can also access the `fastify` instance,
 see [here][fastify-ecosystem] for a list of currently available plugins.  
 In addition, you can register additional [`content-type` parsers][fastify-parsers].
 
+NB: the fifth parameter of `rawCustomPlugin` should be used wisely. See tests for that.
+
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.
