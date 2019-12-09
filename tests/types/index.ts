@@ -87,6 +87,19 @@ a(async function (service) {
 
   console.log(service.config)
 
+  service.addRawCustomPlugin('POST', '/path-attach-validation', function handlerPath1(request, reply) {
+    reply.send({ hi: 'hi' })
+  }, {
+    body: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['foo'],
+      properties: {
+        foo: { type: 'number' },
+      },
+    }
+  }, { attachValidation: true })
+
   service.addRawCustomPlugin('GET', '/path1', function handlerPath1(request, reply) {
     console.log(this.config)
     if (request.getUserId() === null) {

@@ -235,5 +235,54 @@ tap.test('Advanced Custom Service', test => {
     assert.end()
   })
 
+
+  test.end()
+})
+
+tap.test('Advanced config', test => {
+  async function setupFastify(envVariables) {
+    const fastify = await lc39('./tests/services/advanced-config.js', {
+      logLevel: 'silent',
+      envVariables,
+    })
+    return fastify
+  }
+
+  test.test('it accepts advacend config', async assert => {
+    const fastify = await setupFastify(baseEnv)
+
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/advanced-config',
+      body: {},
+    })
+
+    const parsedPayload = JSON.parse(response.payload)
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+
+    assert.match(parsedPayload.error, /foo/, 'route can access the validation error')
+    assert.match(parsedPayload.config, { myConfig: [1, 2, 3, 4] }, 'route can access context')
+
+    assert.test('part of advanced config is overwritten', (assert) => {
+      const {
+        method,
+        path,
+        handler,
+        schema,
+      } = parsedPayload.config
+
+      assert.notEqual(method, 'overwritten property')
+      assert.notEqual(path, 'overwritten property')
+      assert.notEqual(handler, 'overwritten property')
+      assert.notEqual(schema, 'overwritten property')
+
+      assert.end()
+    })
+    assert.end()
+  })
+
   test.end()
 })
