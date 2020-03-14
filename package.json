@@ -59,7 +59,7 @@
     "typescript": "^3.6.2"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "eslintConfig": {
     "extends": "@mia-platform/eslint-config-mia"
