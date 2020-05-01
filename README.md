@@ -101,8 +101,8 @@ all the options accepted by the getDirectServiceProxy can be passed (es: `{ port
 ### getServiceProxy
 It need the MICROSERVICE_GATEWAY_SERVICE_NAME so you need to pass it like this:
 ``` javascript
-const { getServiceProxy } = require('@mia-platform/custom-plugin-lib')(MICROSERVICE_GATEWAY_SERVICE_NAME)
-const myServiceProxy = getServiceProxy(MY_SERVICE_NAME)
+const { getServiceProxy } = require('@mia-platform/custom-plugin-lib')
+const myServiceProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME)
 ```
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
