@@ -216,3 +216,8 @@ function initCustomServiceEnvironment(envSchema = defaultSchema) {
 }
 
 module.exports = initCustomServiceEnvironment
+module.exports.getDirectServiceProxy = getDirectlyServiceBuilderFromService
+module.exports.getServiceProxy = (microserviceGatewayServiceName) => {
+  this.MICROSERVICE_GATEWAY_SERVICE_NAME = microserviceGatewayServiceName
+  return getServiceBuilderFromService.bind(this)
+}
