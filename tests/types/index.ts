@@ -30,6 +30,8 @@ cpl({
 cpl()
 
 const a = cpl()
+const { getDirectServiceProxy, getServiceProxy } = cpl
+
 
 async function invokeSomeApis(service: cpl.Service) {
   service.get('/path')
@@ -136,6 +138,8 @@ a(async function (service) {
     const proxiedServiceWithPrefix: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', prefix: '/my-prefix'})
     await invokeSomeApis(proxiedServiceWithPrefix)
 
+    await invokeProxies()
+    
     return { 'aa': 'boo' }
   }, {
     headers: {
@@ -220,3 +224,10 @@ a(async function (service) {
     return request.abortChain(200, { final: 'body' }, { some: 'other headers' })
   })
 })
+
+async function invokeProxies() {
+  const directServiceProxy = getDirectServiceProxy('service_name', { port:3000 })
+  const serviceProxy = getServiceProxy('microservice-gateway', { port: 3000 })
+  await directServiceProxy.get('/path')
+  await serviceProxy.get('/path')
+}
