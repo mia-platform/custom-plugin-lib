@@ -139,7 +139,7 @@ a(async function (service) {
     await invokeSomeApis(proxiedServiceWithPrefix)
 
     await invokeProxies()
-    
+
     return { 'aa': 'boo' }
   }, {
     headers: {
