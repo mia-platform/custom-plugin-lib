@@ -15,7 +15,6 @@ tap.test('getDirectServiceProxy available for testing', async t => {
 
   const RETURN_MESSAGE = 'OK'
   const customProxy = getDirectServiceProxy(MY_AWESOME_SERVICE_PROXY_URL)
-
   const awesomeServiceScope = nock(`http://${MY_AWESOME_SERVICE_PROXY_URL}:80`)
     .get('/test-endpoint')
     .reply(200, {
@@ -60,9 +59,8 @@ tap.test('getServiceProxy available for testing', async t => {
   })
 
   const RETURN_MESSAGE = 'OK'
-  const customProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME)(MY_AWESOME_SERVICE_PROXY_URL)
-
-  const microserviceScope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}`)
+  const customProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME, { port: 3000 })
+  const microserviceScope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`)
     .get('/test-endpoint')
     .reply(200, {
       message: RETURN_MESSAGE,
