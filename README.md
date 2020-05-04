@@ -88,6 +88,22 @@ In addition, you can register additional [`content-type` parsers][fastify-parser
 
 NB: the fifth parameter of `rawCustomPlugin` should be used wisely. See tests for that.
 
+## Testing
+CustomPlugin expose getDirectServiceProxy and getServiceProxy for testing purpose:
+### getDirectServiceProxy
+Import the function in you test:
+``` javascript
+const { getDirectServiceProxy } = require('@mia-platform/custom-plugin-lib') 
+const myServiceProxy = getDirectServiceProxy(MY_SERVICE_NAME)
+ ```
+all the options accepted by the getDirectServiceProxy can be passed (es: `{ port: CUSTOM_PORT }`).
+
+### getServiceProxy
+It need the MICROSERVICE_GATEWAY_SERVICE_NAME so you need to pass it like this:
+``` javascript
+const { getServiceProxy } = require('@mia-platform/custom-plugin-lib')
+const myServiceProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME)
+```
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.

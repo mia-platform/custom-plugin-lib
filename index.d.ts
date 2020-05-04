@@ -24,6 +24,8 @@ declare function customPlugin(envSchema?: customPlugin.environmentSchema): custo
 declare namespace customPlugin {
   type CustomService = (asyncInitFunction: AsyncInitFunction) => any
 
+  function getDirectServiceProxy(serviceName: string, options?: InitServiceOptions): Service
+  function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   interface environmentSchema {
     type: 'object',
     required?: string[],
