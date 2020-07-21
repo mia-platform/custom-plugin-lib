@@ -1,6 +1,6 @@
 <div align="center">
 
-# Custom Plugin Node Library
+# The Mia Service Node Library
 
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
@@ -10,46 +10,19 @@
 
 </div>
 
-**The Mia-Platform Plugin Node Library**
-
-This library is intented to ease the creation of new services to deploy
+This library is intended to ease the [creation of new services](https://docs.mia-platform.eu/development_suite/api-console/api-design/plugin_baas_4/) to deploy
 on [Mia-Platform][mia-platform].  
-Is highly copled with [`lc39`][lc39] and on [Fastify][fastify].
+Built on [`Fastify`][fastify], it takes advantage of Mia-Platform Node.js service launcher [`lc39`][lc39].
 
-## Getting Started
+# Getting Started
+You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). In the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) you can find some examples and boilerplates of the library.
 
-### Install
-
-To install the package you can run:
-
-```sh
-npm install @mia-platform/custom-plugin-lib --save
-```
-
-### Examples
-
-Defining a new service that integrate with the platform is as simple as in this
-[example](examples/basic/index.js).  
-Please see also a more [advanced example](examples/advanced/index.js) to see how to require
-more environment variables, and to specify schema definitions for validation and swagger documentation.
-
-For using one of the two example provided you can move to one of the two directories and run:
-
-```sh
-npm run start:local
-```
-
-This command will launch the service on `localhost:3000` with the environment variables defined
-in this [file](examples/default.env).
-Now you can consult the swagger documentation of the service at
-[this](http://localhost:3000/documentation/) address.
-
-### Local Development
+## Setup the local development environment
 
 To develop the service locally you need:
-- Node 8+
+- Node.js 8+
 
-To setup node, please if possible try to use [nvm][nvm], so you can manage multiple versions easily.
+To setup node.js, we suggest to use [nvm][nvm], so you can manage multiple versions easily.
 Once you have installed nvm, you can go inside the directory of the project and simply run
 `nvm install`, the `.nvmrc` file will install and select the correct version
 if you don’t already have it.
@@ -63,50 +36,85 @@ npm run coverage
 This two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
 page in `coverage/lcov-report/index.html`.
 
-## `rawCustomPlugin`
-Defining a custom plugin that uses the platform’s services is as simple as
-in this [helloWorld](examples/basic/helloWorld.js) example.
-This library exports a function that optionally takes a schema of the required environment variables
-(you can find the reference [here][fastify-env]).
-This function returns a `customService` function, that expects an async function to initialize and configure
-the service (provided as the only argument). This service is a [fastify][fastify] instance,
-that also contains the method `addRawCustomPlugin`, that allows you to add a route.
-Multiple routes can be added in this way.  
-For each route you have to specify an async handler. You should always return something (strings, objects, streams),
-unless you set the response status code to 204. Please read [here][fastify-async] for further information
-about async handlers.  
-You must also specify the http method, and the path of the hander. Optionally you can indicate the JSONSchemas
-to validate the querystring, the parameters, the payload, the response.  
-In addition to validation, you will also have a swagger documentation available at the `/documentation/` path.
+## Install module
 
-Thanks to TypeScript's type definitions, editors can actually provide autocompletion for the additional methods
-of the request object such as `getUserId` or `getGroups`.
+To install the package with npm:
 
-In the async initialization function you can also access the `fastify` instance, so you can register any plugin,
-see [here][fastify-ecosystem] for a list of currently available plugins.  
-In addition, you can register additional [`content-type` parsers][fastify-parsers].
-
-NB: the fifth parameter of `rawCustomPlugin` should be used wisely. See tests for that.
-
-## Testing
-CustomPlugin expose getDirectServiceProxy and getServiceProxy for testing purpose:
-### getDirectServiceProxy
-Import the function in you test:
-``` javascript
-const { getDirectServiceProxy } = require('@mia-platform/custom-plugin-lib') 
-const myServiceProxy = getDirectServiceProxy(MY_SERVICE_NAME)
- ```
-all the options accepted by the getDirectServiceProxy can be passed (es: `{ port: CUSTOM_PORT }`).
-
-### getServiceProxy
-It need the MICROSERVICE_GATEWAY_SERVICE_NAME so you need to pass it like this:
-``` javascript
-const { getServiceProxy } = require('@mia-platform/custom-plugin-lib')
-const myServiceProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME)
+```sh
+npm i @mia-platform/custom-plugin-lib --save
 ```
+To install with Yarn:
+
+```sh
+yarn add @mia-platform/custom-plugin-lib
+```
+## Define a Custom Service
+
+You can define a new Custom Service that integrates with the platform simply writing this:
+```js
+const customService = require('@mia-platform/custom-plugin-lib')()
+
+module.exports = customService(async function helloWorldService(service) {
+  service.addRawCustomPlugin('GET', '/hello', function handler(request, reply) {
+    request.log.trace('requested myuser')
+    // if the user is not logged, this method returns a falsy value
+    const user = request.getUserId() || 'World'
+    reply.send({
+      hello: `${user}!`,
+    })
+  })
+}) 
+```
+- The library exports a function, `customService`, that expects an async function to initialize and configure the `service`. Optionally can take a schema of the required environment variables (you can find the reference [here][fastify-env]).
+- `service` is a [Fastify instance](https://www.fastify.io/docs/latest/Server/), upon which, you can call `addRawCustomPlugin` method that allows you to add your route. You can use  *service* to register any Fastify plugin, see [here][fastify-ecosystem] for a list of currently available plugins.
+
+- `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and an handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
+Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
+
+To get more info about Custom Services can you look at the [related section](./docs/customService.md).
+
+## Examples
+Please see also a more [advanced example](examples/advanced/index.js) to see how to require
+more environment variables, and to specify schema definitions for validation and swagger documentation.
+
+To run directly the [examples](examples) you can move to specific example folder and run:
+
+```sh
+npm run start:local
+```
+
+This command will launch the service on `localhost:3000` with the environment variables defined
+in this [file](examples/default.env).
+Now you can consult the swagger documentation of the service at
+[http://localhost:3000/documentation/](http://localhost:3000/documentation/).
+
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.
+
+# How to
+
+* <a href="./docs/customService.md"><code><b>Create a custom service</b></code></a>
+* <a href="./docs/Routes.md#declare-routes"><code><b>Declare routes</b></code></a>
+* <a href="./docs/Decorators.md"><code><b>Declare decorators</b></code></a>
+* <a href="./docs/HTTPClient.md"><code><b>Call the other services on the Platform project</b></code></a>
+* <a href="./docs/ApiDoc.md"><code><b>API documentation</b></code></a>
+* <a href="./docs/Testing.md"><code><b>Testing</b></code></a>
+* <a href="./docs/Logging.md#logging"><code><b>Logging</b></code></a>
+
+[17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[18]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[19]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[20]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+[22]: https://developer.mozilla.org/docs/Web/API/Comment/Comment
+
+[23]: https://daringfireball.net/projects/markdown/
 
 [travis-svg]: https://travis-ci.org/mia-platform/custom-plugin-lib.svg?branch=master
 [travis-org]: https://travis-ci.org/mia-platform/custom-plugin-lib
