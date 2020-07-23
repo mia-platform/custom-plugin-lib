@@ -100,7 +100,7 @@ tap.test('Plain Custom Service', test => {
     assert.ok(/charset=utf-8/.test(response.headers['content-type']))
     assert.strictSame(JSON.parse(response.payload), {
       userId: null,
-      userProperties: {},
+      userProperties: null,
       userGroups: [],
       clientType: null,
       backoffice: false,
