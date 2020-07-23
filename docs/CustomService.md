@@ -18,7 +18,7 @@ const customService = require('@mia-platform/custom-plugin-lib')({
 
 > **_More examples?_** Go [here](../examples/advanced/index.js#L46) to see another use cases.
 
----
+
 
 You can configure the environment variables from DevOps console, in your service configuration. To further detail see [Mia-Platform documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/#environment-variable-configuration).  
 
