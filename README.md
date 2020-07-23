@@ -1,6 +1,6 @@
 <div align="center">
 
-# The Mia Service Node Library
+# Mia Service Node Library
 
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
@@ -77,7 +77,7 @@ To get more info about Custom Services can you look at the [related section](./d
 Please see also a more [advanced example](examples/advanced/index.js) to see how to require
 more environment variables, and to specify schema definitions for validation and swagger documentation.
 
-To run directly the [examples](examples) you can move to specific example folder and run:
+To run the [examples] directly you can move to specific example folder and run:
 
 ```sh
 npm run start:local
@@ -88,9 +88,17 @@ in this [file](examples/default.env).
 Now you can consult the swagger documentation of the service at
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/).
 
-## Configuration
-To use the library, you should specify the environment variables listed [here](index.js#L22),
-other variables can be specified by setting your envSchema when calling the plugin.
+## Environment Variables configuration
+To works correctly, this library needs some specific environment variables:
+
+* `USERID_HEADER_KEY`
+* `USER_PROPERTIES_HEADER_KEY`
+* `GROUPS_HEADER_KEY`
+* `CLIENTTYPE_HEADER_KEY`
+* `BACKOFFICE_HEADER_KEY`
+* `MICROSERVICE_GATEWAY_SERVICE_NAME`
+
+Other variables can be specified by setting your envSchema when calling the plugin.
 
 # How to
 
