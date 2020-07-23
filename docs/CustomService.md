@@ -15,6 +15,10 @@ const customService = require('@mia-platform/custom-plugin-lib')({
   },
 });
 ```
+
+> **_More examples?_** Go [here](../examples/advanced/index.js#L46) to see another use cases.
+
+
 You can configure the environment variables from DevOps console, in your service configuration. To further detail see [Mia-Platform documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/#environment-variable-configuration).  
 
 The function expects an async function to initialize and configure the `service`, a [Fastify instance](https://www.fastify.io/docs/latest/Server/).   
@@ -26,3 +30,5 @@ module.exports = customService(async function handler(service) {
 })
 ```
 Upon `service`, you can you can add [routes](Routes.md) and [decorators](Decorators.md). 
+
+

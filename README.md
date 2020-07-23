@@ -15,7 +15,7 @@ on [Mia-Platform][mia-platform].
 Built on [`Fastify`][fastify], it takes advantage of Mia-Platform Node.js service launcher [`lc39`][lc39].
 
 # Getting Started
-You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). In the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) you can find some examples and boilerplates that using this library.
+You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). Even in  the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) repository, you can find some examples and boilerplates that using this library.
 
 ## Setup the local development environment
 
@@ -68,10 +68,25 @@ module.exports = customService(async function helloWorldService(service) {
 - The library exports a function, `customService`, that expects an async function to initialize and configure the `service`. Optionally can take a schema of the required environment variables (you can find the reference [here][fastify-env]).
 - `service` is a [Fastify instance](https://www.fastify.io/docs/latest/Server/), upon which, you can call `addRawCustomPlugin` method that allows you to add your route. You can use  *service* to register any Fastify plugin, see [here][fastify-ecosystem] for a list of currently available plugins.
 
-- `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and an handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
+- `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and a handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
 Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
 
 To get more info about Custom Services can you look at the [related section](./docs/CustomService.md).
+
+## Environment Variables configuration
+To works correctly, this library needs some specific environment variables:
+
+* `USERID_HEADER_KEY`
+* `USER_PROPERTIES_HEADER_KEY`
+* `GROUPS_HEADER_KEY`
+* `CLIENTTYPE_HEADER_KEY`
+* `BACKOFFICE_HEADER_KEY`
+* `MICROSERVICE_GATEWAY_SERVICE_NAME`
+
+If you create the service from the Platform, they are already defined. To change them you have to [do from DevOps console](https://docs.mia-platform.eu/development_suite/api-console/api-design/services#environment-variable-configuration).  
+In local mode you have to define the variables yourself.
+
+Other variables can be specified by setting your envSchema when calling the plugin.
 
 ## Examples
 Please see also a more [advanced example](examples/advanced/index.js) to see how to require
@@ -87,18 +102,6 @@ This command will launch the service on `localhost:3000` with the environment va
 in this [file](examples/default.env).
 Now you can consult the swagger documentation of the service at
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/).
-
-## Environment Variables configuration
-To works correctly, this library needs some specific environment variables:
-
-* `USERID_HEADER_KEY`
-* `USER_PROPERTIES_HEADER_KEY`
-* `GROUPS_HEADER_KEY`
-* `CLIENTTYPE_HEADER_KEY`
-* `BACKOFFICE_HEADER_KEY`
-* `MICROSERVICE_GATEWAY_SERVICE_NAME`
-
-Other variables can be specified by setting your envSchema when calling the plugin.
 
 # How to
 

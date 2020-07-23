@@ -115,3 +115,6 @@ To abort the decorator chain, you can call on the `request` the method:
 * `finalStatusCode` - the final returned status code.
 * `finalBody` - the final returned body.
 * `finalHeaders` - the final returned headers.
+
+
+> **_More examples?_** Go [here](../examples/advanced/index.js) to see another decorators implementations.

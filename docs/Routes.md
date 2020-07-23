@@ -32,6 +32,8 @@ module.exports = customService(async function handler(service) {
 }) 
 ```
 
+> **_More examples?_** Go [here](../examples/advanced/index.js#L86) to see another `addRawCustomPlugin` uses case.
+
 - The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is automatically decorated, indeed we can call `request.getUserId()`.
 
     The instance of `Request` is decorated with functions:
