@@ -32,7 +32,7 @@ module.exports = customService(async function handler(service) {
 }) 
 ```
 
-- The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is automatically decorated, indeed we can call ```request.getUserId()```.
+- The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is automatically decorated, indeed we can call `request.getUserId()`.
 
     The instance of `Request` is decorated with functions:
 
@@ -47,7 +47,11 @@ module.exports = customService(async function handler(service) {
       * *CLIENTTYPE_HEADER_KEY*
       * *BACKOFFICE_HEADER_KEY*
 
-- The second parameter is [Reply](https://www.fastify.io/docs/latest/Reply/). Use this object to reply to the request.
+- The second parameter is a [Reply instance](https://www.fastify.io/docs/latest/Reply/). Use this object to reply to the request. Its main methods are the following:
+  * `headers(object)()` - Sets the headers of the response.
+  * `code(statusCode)` - sets the HTTP status code of the response.
+  * `send(data)` - sends the payload `data` to the end user.
+
 - Inside the handler scope it's possible to access Fastify instance using `this`.
 
 
