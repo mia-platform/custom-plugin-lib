@@ -10,12 +10,12 @@
 
 </div>
 
-This library is intended to ease the [creation of new services](https://docs.mia-platform.eu/development_suite/api-console/api-design/plugin_baas_4/) to deploy
+This library is intended to ease the [creation of new services](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/) to deploy
 on [Mia-Platform][mia-platform].  
 Built on [`Fastify`][fastify], it takes advantage of Mia-Platform Node.js service launcher [`lc39`][lc39].
 
 # Getting Started
-You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). In the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) you can find some examples and boilerplates of the library.
+You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). In the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) you can find some examples and boilerplates that using this library.
 
 ## Setup the local development environment
 
@@ -71,7 +71,7 @@ module.exports = customService(async function helloWorldService(service) {
 - `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and an handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
 Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
 
-To get more info about Custom Services can you look at the [related section](./docs/customService.md).
+To get more info about Custom Services can you look at the [related section](./docs/CustomService.md).
 
 ## Examples
 Please see also a more [advanced example](examples/advanced/index.js) to see how to require
@@ -94,7 +94,7 @@ other variables can be specified by setting your envSchema when calling the plug
 
 # How to
 
-* <a href="./docs/customService.md"><code><b>Create a custom service</b></code></a>
+* <a href="./docs/CustomService.md"><code><b>Create a custom service</b></code></a>
 * <a href="./docs/Routes.md#declare-routes"><code><b>Declare routes</b></code></a>
 * <a href="./docs/Decorators.md"><code><b>Declare decorators</b></code></a>
 * <a href="./docs/HTTPClient.md"><code><b>Call the other services on the Platform project</b></code></a>
