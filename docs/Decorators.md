@@ -23,13 +23,13 @@ documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Ro
 const customService = require('@mia-platform/custom-plugin-lib')()
 
 module.exports = customService(async function handler(service) {
-  service.addPreDecorator('/checkwho', function checkWhoHandler(request) {
-    const defaultWho = 'John Doe'
+service.addPreDecorator('/checkwho', function checkWhoHandler(request) {
+  const defaultWho = 'John Doe'
     const body = request.getOriginalRequestBody()
     const { who } = body
     const newBody = {
-        ...body,
-        who: who || request.getUserId() || defaultWho,
+      ...body,
+      who: who || request.getUserId() || defaultWho,
     }
     // Set original request with retrieved data
     return request.changeOriginalRequest().setBody(newBody)
@@ -58,8 +58,8 @@ The first parameter of the handler function is [Request](https://www.fastify.io/
     POST decorator
 */
 service.addPostDecorator('/notify', function notifyHandler(request) {
-    // Get "notifications" setting from the request querystring
-    const { notifications } = request.getOriginalRequestQuery()
+  // Get "notifications" setting from the request querystring
+  const { notifications } = request.getOriginalRequestQuery()
     //
     if(!notifications)  {
       // It's not necessary to send notification
@@ -67,12 +67,12 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
       return req.leaveOriginalResponseUnmodified()
     }
     else {
-        const notifier=new Notifier()
-        // Try to send a notification
-        const response = await notifier.send({ text: `${who} says: ${mymsg}`})
-        // Adds to original response body the time of notification send
-        return request.changeOriginalResponse().setBody(
-            {...req.getOriginalRequestBody(),notifySendedAt:new Date() })
+      const notifier=new Notifier()
+      // Try to send a notification
+      const response = await notifier.send({ text: `${who} says: ${mymsg}`})
+      // Adds to original response body the time of notification send
+      return request.changeOriginalResponse().setBody(
+          {...req.getOriginalRequestBody(),notifySendedAt:new Date() })
     }
 ) 
 
@@ -80,9 +80,9 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
     CATCH decorator
 */
 service.addPostDecorator('/catch', function exceptionHandler(request) {
-    return request.changeOriginalResponse()
-                  .setBody({msg:"Error" })
-                  .setStatusCode(500)
+  return request.changeOriginalResponse()
+                .setBody({msg:"Error" })
+                .setStatusCode(500)
 }) 
 ```
 

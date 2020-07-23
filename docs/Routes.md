@@ -25,6 +25,7 @@ const customService = require('@mia-platform/custom-plugin-lib')()
 module.exports = customService(async function handler(service) {
   service.addRawCustomPlugin('GET', '/hello', function helloHandler(request, reply) {
     const user = request.getUserId() || 'World'
+    
     reply.send({
       hello: `${user}!`,
     })

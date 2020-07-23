@@ -13,7 +13,7 @@ const customService = require('@mia-platform/custom-plugin-lib')({
   properties: {
     ENV_VAR: { type: 'string' },
   },
-});
+})
 ```
 
 > **_More examples?_** Go [here](../examples/advanced/index.js#L46) to see another use cases.

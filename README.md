@@ -89,8 +89,9 @@ In local mode you have to define the variables yourself.
 Other variables can be specified by setting your envSchema when calling the plugin.
 
 ## Examples
-Please see also a more [advanced example](examples/advanced/index.js) to see how to require
-more environment variables, and to specify schema definitions for validation and swagger documentation.
+You can see an [advanced example](examples/advanced/index.js) to see different use cases of the library.
+
+To other examples of library use you can some repository that depend from [](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D).
 
 To run the [examples] directly you can move to specific example folder and run:
 
@@ -102,6 +103,8 @@ This command will launch the service on `localhost:3000` with the environment va
 in this [file](examples/default.env).
 Now you can consult the swagger documentation of the service at
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/).
+
+To other examples of library use, you can see [some repositories](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) that depend on it.
 
 # How to
 

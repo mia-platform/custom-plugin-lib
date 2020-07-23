@@ -14,29 +14,29 @@ Each method creates a log with the homonym level.
 
 ```js
 service.addPostDecorator('/notify', function notifyHandler(request) {
-    // Get "notifications" setting from the request querystring
-    const { notifications } = request.getOriginalRequestQuery()
-    //
-    if(!notifications)  {
-      return req.leaveOriginalResponseUnmodified()
-    }
-    else {
-        try {
-        const notifier=new Notifier()
-        const response = await notifier.send({ text: `${who} says: ${mymsg}`})
-        const sendedAt = new Date();
+  // Get "notifications" setting from the request querystring
+  const { notifications } = request.getOriginalRequestQuery()
+  //
+  if(!notifications)  {
+    return req.leaveOriginalResponseUnmodified()
+  }
+  else {
+      try {
+      const notifier=new Notifier()
+      const response = await notifier.send({ text: `${who} says: ${mymsg}`})
+      const sendedAt = new Date();
 
-        // Log at "INFO" level
-        req.log.info({ statusCode: response.statusCode }, 'Notify sent')
+      // Log at "INFO" level
+      req.log.info({ statusCode: response.statusCode }, 'Notify sent')
 
-        return request.changeOriginalResponse().setBody(
-            {...req.getOriginalRequestBody(),notifySendedAt:sendedAt})
+      return request.changeOriginalResponse().setBody(
+        {...req.getOriginalRequestBody(),notifySendedAt:sendedAt})
 
-        } catch (error) {
-            // Log at "ERROR" level
-            req.log.error('Error sending notification', error)
-        }
-    }
+      } catch (error) {
+          // Log at "ERROR" level
+          req.log.error('Error sending notification', error)
+      }
+  }
 ) 
 ```
 

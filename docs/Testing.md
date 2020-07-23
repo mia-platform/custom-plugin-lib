@@ -41,8 +41,8 @@ const index = customPlugin(async service => {
 const createTestServer = () => {
   // Silent => trace for enabliing logs
   const createdServer = fastify({ logger: { level: 'silent' } })
-  createdServer.register(index)
   
+  createdServer.register(index)
   return createdServer
 }
 
