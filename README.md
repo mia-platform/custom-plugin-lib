@@ -94,7 +94,7 @@ other variables can be specified by setting your envSchema when calling the plug
 
 # How to
 
-* <a href="./docs/CustomService.md"><code><b>Create a custom service</b></code></a>
+* <a href="./docs/CustomService.md"><code><b>Create a Custom Service</b></code></a>
 * <a href="./docs/Routes.md#declare-routes"><code><b>Declare routes</b></code></a>
 * <a href="./docs/Decorators.md"><code><b>Declare decorators</b></code></a>
 * <a href="./docs/HTTPClient.md"><code><b>Call the other services on the Platform project</b></code></a>

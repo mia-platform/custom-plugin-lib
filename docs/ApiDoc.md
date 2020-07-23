@@ -47,6 +47,6 @@ const schema = {
 }
 
 module.exports = customService(async function exampleService(service) {
-  service.addRawCustomPlugin('GET', '/endpoint', function handler(request,remply) { ...}, schema)
+  service.addRawCustomPlugin('GET', '/endpoint', function handler(request,reply) { ... }, schema)
 })
 ```

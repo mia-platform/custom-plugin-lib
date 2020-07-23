@@ -48,7 +48,7 @@ module.exports = customService(async function handler(service) {
       * *BACKOFFICE_HEADER_KEY*
 
 - The second parameter is a [Reply instance](https://www.fastify.io/docs/latest/Reply/). Use this object to reply to the request. Its main methods are the following:
-  * `headers(object)()` - Sets the headers of the response.
+  * `headers(object)` - sets the headers of the response.
   * `code(statusCode)` - sets the HTTP status code of the response.
   * `send(data)` - sends the payload `data` to the end user.
 

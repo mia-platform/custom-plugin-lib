@@ -1,6 +1,6 @@
 # Declare decorators
 
-Decorators are particular endpoint that a microservice can expose. Using the DevOps console you can manage your decorators and link them to your endpoint routes.  To know how manage decorators see this [documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/).
+Decorators are particular endpoint that a microservice can expose. Using the DevOps console you can manage your decorators and link them to your endpoint routes.  To know how to manage decorators see this [documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/decorators/).
 
 Decorators allow you to perform custom actions upon specific API handler invocations. There are three types of decorators:
 
@@ -15,8 +15,8 @@ You can declare a decorator with these methods
 whose arguments are, in order
 
 * `path` - the route path (e.g.,` /status /alive`).
-* [`handler`](#handlers) - function that contains the actual behavior. It must respect the same interface defined in the
-documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Routes/#async-await).
+* `handler`- function that contains the actual behavior. It must respect the same interface defined in the
+documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Routes/#routes-config).
 
 ## PRE decorators
 ```js
@@ -37,18 +37,18 @@ module.exports = customService(async function handler(service) {
 }) 
 ```
 
-The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the [`addRawCustomPlugin` method](Routes.md), in addition, the following methods are added:
+The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the `addRawCustomPlugin` method, in addition, with the following methods:
 * `getOriginalRequest()` - returns the original request.
-* `getOriginalRequestMethod()` - returns the original request method.
+* `getOriginalRequestMethod()` - returns the original request HTTP method.
 * `getOriginalRequestPath()` - returns the path of the original request.
 * `getOriginalRequestHeaders()` - returns the headers of the original request.
 * `getOriginalRequestQuery()` - returns the querystring of the original request.
 * `getOriginalRequestBody()` - returns the body of the original request.
 * `changeOriginalRequest()`- returns a builder object with following methods: 
-    * `setBody(newBody)` - modify the body of the original request
-    * `setHeaders(newHeaders)` - modify the headers of the original request
-    * `setQuery(newPath)` - modify the querystring of the original request
-* `leaveOriginalRequestUnmodified` - leave the original request unmodified 
+    * `setBody(newBody)` - modify the body of the original request.
+    * `setHeaders(newHeaders)` - modify the headers of the original request.
+    * `setQuery(newPath)` - modify the querystring of the original request.
+* `leaveOriginalRequestUnmodified` - leave the original request unmodified .
 
 ## POST and CATCH decorators
 
@@ -62,7 +62,7 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
     const { notifications } = request.getOriginalRequestQuery()
     //
     if(!notifications)  {
-        // It's not necessary to send notification
+      // It's not necessary to send notification
       // leave the original response unmodified
       return req.leaveOriginalResponseUnmodified()
     }
@@ -86,7 +86,7 @@ service.addPostDecorator('/catch', function exceptionHandler(request) {
 }) 
 ```
 
-Even in this case the first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the [`addRawCustomPlugin` method](Routes.md), in addition, the following methods are added:
+Even in this case the first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the `addRawCustomPlugin` method, in addition, with the following methods:
 * `getOriginalRequest()` - returns the original request.
 *  `getOriginalRequestMethod()` - returns the original request method.
 *  `getOriginalRequestPath()` - returns the path of the original request.
