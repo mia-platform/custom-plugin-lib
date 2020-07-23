@@ -1,6 +1,6 @@
 <div align="center">
 
-# Mia Service Node Library
+# Mia Service Node.js Library
 
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
