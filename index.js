@@ -57,7 +57,7 @@ const baseSchema = {
       type: 'string',
       description: 'the header key to get the user permissions',
       minLength: 1,
-      deafult: 'miauserproperties',
+      default: 'miauserproperties',
     },
     [GROUPS_HEADER_KEY]: {
       type: 'string',
