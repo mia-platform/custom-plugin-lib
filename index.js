@@ -144,9 +144,11 @@ function getServiceBuilderFromService(baseOptions = {}) {
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
 }
 
+// TODO: test this
 function getMiaHeaders() {
   return {
     [this.USERID_HEADER_KEY]: this.getUserId(),
+    [this.USER_PROPERTIES_HEADER_KEY]: JSON.stringify(this.getUserProperties()),
     [this.GROUPS_HEADER_KEY]: this.getGroups().join(','),
     [this.CLIENTTYPE_HEADER_KEY]: this.getClientType(),
     [this.BACKOFFICE_HEADER_KEY]: this.isFromBackOffice() ? '1' : '',
