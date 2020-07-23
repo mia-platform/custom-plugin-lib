@@ -55,7 +55,7 @@ declare namespace customPlugin {
 
   interface DecoratedRequest extends fastify.FastifyRequest<http.IncomingMessage> {
     getUserId: () => string | null,
-    getUserProperties: () => object,
+    getUserProperties: () => object | null,
     getGroups: () => string[],
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
