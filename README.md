@@ -1,6 +1,6 @@
 <div align="center">
 
-# Mia Service Node.js Library
+# Mia service Node.js Library
 
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
@@ -20,7 +20,7 @@ You can use this module in your projects or, from the [DevOps Console](https://d
 ## Setup the local development environment
 
 To develop the service locally you need:
-- Node.js 8+
+- Node.js v12 LTS or later.
 
 To setup node.js, we suggest to use [nvm][nvm], so you can manage multiple versions easily.
 Once you have installed nvm, you can go inside the directory of the project and simply run
