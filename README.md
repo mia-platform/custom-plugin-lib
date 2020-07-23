@@ -80,7 +80,7 @@ to validate the querystring, the parameters, the payload, the response.
 In addition to validation, you will also have a swagger documentation available at the `/documentation/` path.
 
 Thanks to TypeScript's type definitions, editors can actually provide autocompletion for the additional methods
-of the request object such as `getUserId` or `getGroups` and `getUserProperties`
+of the request object such as `getUserId` or `getGroups` or `getUserProperties`
 
 In the async initialization function you can also access the `fastify` instance, so you can register any plugin,
 see [here][fastify-ecosystem] for a list of currently available plugins.  
