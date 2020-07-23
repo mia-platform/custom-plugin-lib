@@ -52,6 +52,7 @@ module.exports = customService(async function clientGroups(service) {
     reply.send({
       userId: request.getUserId(),
       userGroups: request.getGroups(),
+      userProperties: request.getUserProperties(),
       clientType: request.getClientType(),
       backoffice: request.isFromBackOffice(),
     })

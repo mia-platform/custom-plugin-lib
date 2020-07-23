@@ -19,6 +19,7 @@
 const customService = require('../../index')()
 
 const USERID_HEADER_KEY = 'userid-header-key'
+const USER_PROPERTIES_HEADER_KEY = 'miauserproperties'
 const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
@@ -56,6 +57,7 @@ module.exports = customService(async function clientGroups(service) {
 
   function accessDataHandler(request) {
     this.assert.equal(request.getUserId(), 'userid')
+    this.assert.deepEqual(request.getUserProperties(), { prop1: 'value1' })
     this.assert.deepEqual(request.getGroups(), ['group-to-greet', 'group'])
     this.assert.equal(request.getClientType(), 'CMS')
     this.assert.equal(request.isFromBackOffice(), true)
@@ -68,6 +70,7 @@ module.exports = customService(async function clientGroups(service) {
       headers: {
         [CLIENTTYPE_HEADER_KEY]: 'CMS',
         [USERID_HEADER_KEY]: 'userid',
+        [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
         [GROUPS_HEADER_KEY]: 'group-to-greet,group',
         [BACKOFFICE_HEADER_KEY]: '1',
         my: 'headers',
@@ -77,6 +80,7 @@ module.exports = customService(async function clientGroups(service) {
     this.assert.deepEqual(request.getOriginalRequestHeaders(), {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
+      [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '1',
       my: 'headers',
