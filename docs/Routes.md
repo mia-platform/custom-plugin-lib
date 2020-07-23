@@ -17,7 +17,7 @@ The format is the one accepted by [fastify](https://www.fastify.io/docs/latest/V
 
 To get more info about how to declare a route can you look at the related [Fastify documentation](https://github.com/fastify/fastify/blob/master/docs/Routes.md).
 
-Example:
+## Example
 
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
@@ -25,7 +25,7 @@ const customService = require('@mia-platform/custom-plugin-lib')()
 module.exports = customService(async function handler(service) {
   service.addRawCustomPlugin('GET', '/hello', function helloHandler(request, reply) {
     const user = request.getUserId() || 'World'
-    
+
     reply.send({
       hello: `${user}!`,
     })

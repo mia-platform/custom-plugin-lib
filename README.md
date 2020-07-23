@@ -84,16 +84,17 @@ To works correctly, this library needs some specific environment variables:
 * `MICROSERVICE_GATEWAY_SERVICE_NAME`
 
 If you create the service from the Platform, they are already defined. To change them you have to [do from DevOps console](https://docs.mia-platform.eu/development_suite/api-console/api-design/services#environment-variable-configuration).  
-In local mode you have to define the variables yourself.
+In local, the environment variables are defined
+in this [file](examples/default.env).
 
 Other variables can be specified by setting your envSchema when calling the plugin.
 
 ## Examples
-You can see an [advanced example](examples/advanced/index.js) to see different use cases of the library.
+You can see an [advanced example](examples/advanced/  ) to see different use cases of the library.
 
 To other examples of library use you can some repository that depend from [](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D).
 
-To run the [examples] directly you can move to specific example folder and run:
+To run the [examples](examples) directly you can move to specific example folder and run:
 
 ```sh
 npm run start:local
@@ -108,13 +109,13 @@ To other examples of library use, you can see [some repositories](https://github
 
 # How to
 
-* <a href="./docs/CustomService.md"><code><b>Create a Custom Service</b></code></a>
-* <a href="./docs/Routes.md#declare-routes"><code><b>Declare routes</b></code></a>
-* <a href="./docs/Decorators.md"><code><b>Declare decorators</b></code></a>
-* <a href="./docs/HTTPClient.md"><code><b>Call the other services on the Platform project</b></code></a>
-* <a href="./docs/ApiDoc.md"><code><b>API documentation</b></code></a>
-* <a href="./docs/Testing.md"><code><b>Testing</b></code></a>
-* <a href="./docs/Logging.md#logging"><code><b>Logging</b></code></a>
+* <a href="./docs/CustomService.md"><b>Create a Custom Service</b></a>
+* <a href="./docs/Routes.md#declare-routes"><b>Declare routes</b></a>
+* <a href="./docs/Decorators.md"><b>Declare decorators</b></a>
+* <a href="./docs/HTTPClient.md"><b>Call the other services on the Platform project</b></a>
+* <a href="./docs/ApiDoc.md"><b>API documentation</b></a>
+* <a href="./docs/Testing.md"><b>Testing</b></a>
+* <a href="./docs/Logging.md#logging"><b>Logging</b></a>
 
 [17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
