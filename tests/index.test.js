@@ -22,6 +22,7 @@ const lc39 = require('@mia-platform/lc39')
 const fs = require('fs')
 const { promisify } = require('util')
 
+const USER_PROPERTIES_HEADER_KEY = 'miauserproperties'
 const USERID_HEADER_KEY = 'userid-header-key'
 const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
@@ -30,6 +31,7 @@ const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
 
 const baseEnv = {
   USERID_HEADER_KEY,
+  USER_PROPERTIES_HEADER_KEY,
   GROUPS_HEADER_KEY,
   CLIENTTYPE_HEADER_KEY,
   BACKOFFICE_HEADER_KEY,
@@ -68,6 +70,7 @@ tap.test('Plain Custom Service', test => {
         [CLIENTTYPE_HEADER_KEY]: 'CMS',
         [GROUPS_HEADER_KEY]: 'group-name,group-to-greet',
         [USERID_HEADER_KEY]: 'Mark',
+        [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1', prop2: 'value2' }),
       },
     })
 
@@ -77,6 +80,7 @@ tap.test('Plain Custom Service', test => {
     assert.strictSame(JSON.parse(response.payload), {
       userId: 'Mark',
       userGroups: ['group-name', 'group-to-greet'],
+      userProperties: { prop1: 'value1', prop2: 'value2' },
       clientType: 'CMS',
       backoffice: false,
     })
@@ -96,6 +100,7 @@ tap.test('Plain Custom Service', test => {
     assert.ok(/charset=utf-8/.test(response.headers['content-type']))
     assert.strictSame(JSON.parse(response.payload), {
       userId: null,
+      userProperties: {},
       userGroups: [],
       clientType: null,
       backoffice: false,

@@ -29,6 +29,7 @@ const addPreDecorator = require('./lib/preDecorator')
 const addPostDecorator = require('./lib/postDecorator')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
+const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
 const GROUPS_HEADER_KEY = 'GROUPS_HEADER_KEY'
 const CLIENTTYPE_HEADER_KEY = 'CLIENTTYPE_HEADER_KEY'
 const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
@@ -51,6 +52,12 @@ const baseSchema = {
       type: 'string',
       description: 'the header key to get the user id',
       minLength: 1,
+    },
+    [USER_PROPERTIES_HEADER_KEY]: {
+      type: 'string',
+      description: 'the header key to get the user permissions',
+      minLength: 1,
+      deafult: 'miauserproperties',
     },
     [GROUPS_HEADER_KEY]: {
       type: 'string',
@@ -157,6 +164,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.setSchemaCompiler(schema => ajv.compile(schema))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
+  fastify.decorateRequest(USER_PROPERTIES_HEADER_KEY, config[USER_PROPERTIES_HEADER_KEY])
   fastify.decorateRequest(GROUPS_HEADER_KEY, config[GROUPS_HEADER_KEY])
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
