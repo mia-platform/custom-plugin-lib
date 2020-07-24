@@ -105,7 +105,7 @@ in this [file](examples/default.env).
 Now you can consult the swagger documentation of the service at
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/).
 
-To other examples of library use, you can see [some repositories](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) that depend on it.
+For other examples of library use, you can see [some repositories](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) that depend on it.
 
 # How to
 
