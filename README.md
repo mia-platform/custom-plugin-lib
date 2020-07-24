@@ -111,7 +111,7 @@ For other examples of library use, you can see [some repositories](https://githu
 
 * <a href="./docs/CustomService.md"><b>Create a Custom Service</b></a>
 * <a href="./docs/Routes.md#declare-routes"><b>Declare routes</b></a>
-* <a href="./docs/Decorators.md"><b>Declare decorators</b></a>
+* <a href="./docs/Decorators.md"><b>Add decorators</b></a>
 * <a href="./docs/HTTPClient.md"><b>Call the other services on the Platform project</b></a>
 * <a href="./docs/ApiDoc.md"><b>API documentation</b></a>
 * <a href="./docs/Testing.md"><b>Testing</b></a>
