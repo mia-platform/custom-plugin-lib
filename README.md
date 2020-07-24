@@ -80,7 +80,7 @@ to validate the querystring, the parameters, the payload, the response.
 In addition to validation, you will also have a swagger documentation available at the `/documentation/` path.
 
 Thanks to TypeScript's type definitions, editors can actually provide autocompletion for the additional methods
-of the request object such as `getUserId` or `getGroups`.
+of the request object such as `getUserId` or `getGroups` or `getUserProperties`
 
 In the async initialization function you can also access the `fastify` instance, so you can register any plugin,
 see [here][fastify-ecosystem] for a list of currently available plugins.  
@@ -88,6 +88,22 @@ In addition, you can register additional [`content-type` parsers][fastify-parser
 
 NB: the fifth parameter of `rawCustomPlugin` should be used wisely. See tests for that.
 
+## Testing
+CustomPlugin expose getDirectServiceProxy and getServiceProxy for testing purpose:
+### getDirectServiceProxy
+Import the function in you test:
+``` javascript
+const { getDirectServiceProxy } = require('@mia-platform/custom-plugin-lib') 
+const myServiceProxy = getDirectServiceProxy(MY_SERVICE_NAME)
+ ```
+all the options accepted by the getDirectServiceProxy can be passed (es: `{ port: CUSTOM_PORT }`).
+
+### getServiceProxy
+It need the MICROSERVICE_GATEWAY_SERVICE_NAME so you need to pass it like this:
+``` javascript
+const { getServiceProxy } = require('@mia-platform/custom-plugin-lib')
+const myServiceProxy = getServiceProxy(MICROSERVICE_GATEWAY_SERVICE_NAME)
+```
 ## Configuration
 To use the library, you should specify the environment variables listed [here](index.js#L22),
 other variables can be specified by setting your envSchema when calling the plugin.
