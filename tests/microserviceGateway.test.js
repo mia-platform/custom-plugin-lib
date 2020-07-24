@@ -21,6 +21,7 @@ const nock = require('nock')
 const lc39 = require('@mia-platform/lc39')
 
 const USERID_HEADER_KEY = 'userid-header-key'
+const USER_PROPERTIES_HEADER_KEY = 'miauserproperties'
 const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
@@ -29,6 +30,7 @@ const ADDITIONAL_HEADERS_TO_PROXY = 'additionalheader1,additionalheader2'
 
 const baseEnv = {
   USERID_HEADER_KEY,
+  USER_PROPERTIES_HEADER_KEY,
   GROUPS_HEADER_KEY,
   CLIENTTYPE_HEADER_KEY,
   BACKOFFICE_HEADER_KEY,
@@ -54,6 +56,7 @@ tap.test('Call microservice gateway proxy', test => {
     const headers = {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
+      [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
     }
@@ -171,6 +174,7 @@ tap.test('Call microservice gateway proxy', test => {
     const headers = {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
+      [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
       [BACKOFFICE_HEADER_KEY]: '',
       additionalheader1: 'header1value',

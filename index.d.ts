@@ -41,7 +41,7 @@ declare namespace customPlugin {
     'bodyLimit' |
     'logLevel' |
     'config' |
-    'prefixTrailingSlash' 
+    'prefixTrailingSlash'
   >
 
   interface DecoratedFastify extends fastify.FastifyInstance {
@@ -55,12 +55,14 @@ declare namespace customPlugin {
 
   interface DecoratedRequest extends fastify.FastifyRequest<http.IncomingMessage> {
     getUserId: () => string | null,
+    getUserProperties: () => object | null,
     getGroups: () => string[],
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
     getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
     USERID_HEADER_KEY: string,
+    USER_PROPERTIES_HEADER_KEY: string,
     GROUPS_HEADER_KEY: string,
     CLIENTTYPE_HEADER_KEY: string,
     BACKOFFICE_HEADER_KEY: string
