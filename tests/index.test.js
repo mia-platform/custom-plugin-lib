@@ -87,6 +87,35 @@ tap.test('Plain Custom Service', test => {
     assert.end()
   })
 
+  test.test('Access platform "miauserproperties" - when USER_PROPERTIES_HEADER_KEY NOT defined - uses default header key', async assert => {
+    const envarWithoutUserProperties = {
+      ...baseEnv,
+    }
+    delete envarWithoutUserProperties.USER_PROPERTIES_HEADER_KEY
+
+    const fastify = await setupFastify(envarWithoutUserProperties)
+
+    const response = await fastify.inject({
+      method: 'GET',
+      url: '/platform-values',
+      headers: {
+        'miauserproperties': JSON.stringify({ prop1: 'value1', prop2: 'value2' }),
+      },
+    })
+
+    assert.strictSame(response.statusCode, 200)
+    assert.ok(/application\/json/.test(response.headers['content-type']))
+    assert.ok(/charset=utf-8/.test(response.headers['content-type']))
+    assert.strictSame(JSON.parse(response.payload), {
+      userId: null,
+      userGroups: [],
+      userProperties: { prop1: 'value1', prop2: 'value2' },
+      clientType: null,
+      backoffice: false,
+    })
+    assert.end()
+  })
+
   test.test('Access platform values when not declared', async assert => {
     const fastify = await setupFastify(baseEnv)
     const response = await fastify.inject({
