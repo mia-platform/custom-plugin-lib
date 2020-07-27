@@ -16,7 +16,6 @@ Each method creates a log with the homonym level.
 service.addPostDecorator('/notify', function notifyHandler(request) {
   // Get "notifications" setting from the request querystring
   const { notifications } = request.getOriginalRequestQuery()
-  //
   if(!notifications)  {
     return req.leaveOriginalResponseUnmodified()
   }
