@@ -19,23 +19,21 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
   if(!notifications)  {
     return req.leaveOriginalResponseUnmodified()
   }
-  else {
-      try {
-      const notifier = new Notifier()
-      const response = await notifier.send({ text: `${who} says: ${mymsg}`})
-      const sendedAt = new Date();
 
-      // Log at "INFO" level
-      req.log.info({ statusCode: response.statusCode }, 'Notify sent')
+  try {
+    const notifier = new Notifier()
+    const response = await notifier.send({ text: `${who} says: ${mymsg}`})
+    const sendedAt = new Date();
 
-      return request.changeOriginalResponse().setBody(
-        { ...req.getOriginalRequestBody(), notifySendedAt:sendedAt}
+    // Log at "INFO" level
+    req.log.info({ statusCode: response.statusCode }, 'Notify sent')
+
+    return request.changeOriginalResponse().setBody(
+      { ...req.getOriginalRequestBody(), notifySendedAt:sendedAt}
     )
-
-      } catch (error) {
-          // Log at "ERROR" level
-          req.log.error('Error sending notification', error)
-      }
+  } catch (error) {
+    // Log at "ERROR" level
+    req.log.error('Error sending notification', error)
   }
 ) 
 ```
