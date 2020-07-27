@@ -1,7 +1,7 @@
 # Call the other services on the Platform project
 You can call any service or any endpoint defined on the Platform project, obtaining and using a proxy object. 
 
-For example, if you need to connect to a CRUD, you have to use a Proxy towards the crud-service.
+For example, if you need to connect to a CRUD, you have to use a Proxy towards the `crud-service`.
 
 You can get a proxy calling these methods booth on `Request`(the first argument of handler) and `Service` (the Fastify instance):
 
