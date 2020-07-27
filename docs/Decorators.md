@@ -66,22 +66,19 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
       // leave the original response unmodified
       return req.leaveOriginalResponseUnmodified()
     }
-    else {
-      const notifier=new Notifier()
-      // Try to send a notification
-      const response = await notifier.send({ text: `${who} says: ${mymsg}`})
-      // Adds to original response body the time of notification send
-      return request.changeOriginalResponse().setBody(
-          {...req.getOriginalRequestBody(),notifySendedAt:new Date() })
-    }
-) 
+    const notifier=new Notifier()
+    // Try to send a notification
+    const response = await notifier.send({ text: `${who} says: ${mymsg}`})
+    // Adds to original response body the time of notification send
+    return request.changeOriginalResponse().setBody(
+        { ...req.getOriginalRequestBody(),notifySendedAt:new Date() })
 
 /*
     CATCH decorator
 */
 service.addPostDecorator('/catch', function exceptionHandler(request) {
   return request.changeOriginalResponse()
-                .setBody({msg:"Error" })
+                .setBody({msg:"Error"})
                 .setStatusCode(500)
 }) 
 ```

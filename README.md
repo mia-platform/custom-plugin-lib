@@ -90,7 +90,7 @@ in this [file](examples/default.env).
 Other variables can be specified by setting your envSchema when calling the plugin.
 
 ## Examples
-You can see an [advanced example](examples/advanced/  ) to see different use cases of the library.
+You can see an [advanced example](examples/advanced/) to see different use cases of the library.
 
 To see other examples of library use you can visit [GitHub dependant repository graph](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) and check all packages that depends on it.
 
@@ -104,8 +104,6 @@ This command will launch the service on `localhost:3000` with the environment va
 in this [file](examples/default.env).
 Now you can consult the swagger documentation of the service at
 [http://localhost:3000/documentation/](http://localhost:3000/documentation/).
-
-For other examples of library use, you can see [some repositories](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) that depend on it.
 
 # How to
 
