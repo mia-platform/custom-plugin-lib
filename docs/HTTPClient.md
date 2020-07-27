@@ -1,5 +1,5 @@
 # Call the other services on the Platform project
-You can call any service or any endpoints defined on the Platform project, obtaining and using a proxy object. 
+You can call any service or any endpoint defined on the Platform project, obtaining and using a proxy object. 
 
 For example, if you need to connect to a CRUD, you have to use a Proxy towards the crud-service.
 
