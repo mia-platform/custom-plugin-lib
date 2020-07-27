@@ -15,7 +15,7 @@ on [Mia-Platform][mia-platform].
 Built on [`Fastify`][fastify], it takes advantage of Mia-Platform Node.js service launcher [`lc39`][lc39].
 
 # Getting Started
-You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). Even in  the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) repository, you can find some examples and boilerplates that using this library.
+You can use this module in your projects or, from the [DevOps Console](https://docs.mia-platform.eu/development_suite/overview-dev-suite/), get started quickly and easily with a [ready-to-use microservice template](https://docs.mia-platform.eu/development_suite/api-console/api-design/custom_microservice_get_started/). Even in the [Mia-Platform Marketplace](https://github.com/mia-platform-marketplace) repository, you can find some examples and templates that using this library.
 
 ## Setup the local development environment
 
