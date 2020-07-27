@@ -31,7 +31,7 @@ service.addPreDecorator('/checkwho', function checkWhoHandler(request) {
       ...body,
       who: who || request.getUserId() || defaultWho,
     }
-    // Set original request with retrieved data
+    // Set original request with retrieved data, the target microservice will receive your newly defined body.
     return request.changeOriginalRequest().setBody(newBody)
   })
 }) 
