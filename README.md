@@ -66,7 +66,7 @@ module.exports = customService(async function helloWorldService(service) {
 }) 
 ```
 - The library exports a function, `customService`, that expects an async function to initialize and configure the `service`. Optionally can take a schema of the required environment variables (you can find the reference [here][fastify-env]).
-- `service` is a [Fastify instance](https://www.fastify.io/docs/latest/Server/), upon which, you can call `addRawCustomPlugin` method that allows you to add your route. You can use  *service* to register any Fastify plugin, see [here][fastify-ecosystem] for a list of currently available plugins.
+- `service` is a [Fastify instance](https://www.fastify.io/docs/latest/Server/), that is decorated by the library to help you interact with Mia-Platform resources. You can use  *service* to register any Fastify routes, custom decorations and plugin, see [here][fastify-ecosystem] for a list of currently available plugins.
 
 - `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and a handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
 Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
