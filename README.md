@@ -83,7 +83,7 @@ To works correctly, this library needs some specific environment variables:
 * `BACKOFFICE_HEADER_KEY`
 * `MICROSERVICE_GATEWAY_SERVICE_NAME`
 
-If you create the service from the Platform, they are already defined. To change them you have to [do from DevOps console](https://docs.mia-platform.eu/development_suite/api-console/api-design/services#environment-variable-configuration).  
+When creating a new service  from Mia-Platform DevOps Console, they come already defined but you can always change or add them anytime as described [in the DevOps console documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services#environment-variable-configuration).  
 In local, the environment variables are defined
 in this [file](examples/default.env).
 
