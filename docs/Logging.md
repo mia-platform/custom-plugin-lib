@@ -21,7 +21,7 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
   }
   else {
       try {
-      const notifier=new Notifier()
+      const notifier = new Notifier()
       const response = await notifier.send({ text: `${who} says: ${mymsg}`})
       const sendedAt = new Date();
 
