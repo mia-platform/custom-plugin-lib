@@ -33,7 +33,7 @@ npm i
 npm run coverage
 ```
 
-This two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
+These two commands, will install the dependencies and run the tests with the coverage report that you can view as an HTML
 page in `coverage/lcov-report/index.html`.
 
 ## Install module
