@@ -63,12 +63,14 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
       // leave the original response unmodified
       return req.leaveOriginalResponseUnmodified()
     }
-    const notifier=new Notifier()
+    
+    const notifier = new Notifier()
     // Try to send a notification
     const response = await notifier.send({ text: `${who} says: ${mymsg}`})
     // Adds to original response body the time of notification send
     return request.changeOriginalResponse().setBody(
-        { ...req.getOriginalRequestBody(),notifySendedAt:new Date() })
+        { ...req.getOriginalRequestBody(),notifySendedAt:new Date() }
+    )
 
 /*
     CATCH decorator
