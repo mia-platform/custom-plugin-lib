@@ -60,7 +60,6 @@ The first parameter of the handler function is [Request](https://www.fastify.io/
 service.addPostDecorator('/notify', function notifyHandler(request) {
   // Get "notifications" setting from the request querystring
   const { notifications } = request.getOriginalRequestQuery()
-    //
     if(!notifications)  {
       // It's not necessary to send notification
       // leave the original response unmodified
