@@ -29,7 +29,8 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
       req.log.info({ statusCode: response.statusCode }, 'Notify sent')
 
       return request.changeOriginalResponse().setBody(
-        {...req.getOriginalRequestBody(),notifySendedAt:sendedAt})
+        { ...req.getOriginalRequestBody(), notifySendedAt:sendedAt}
+    )
 
       } catch (error) {
           // Log at "ERROR" level
