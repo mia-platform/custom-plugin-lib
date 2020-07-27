@@ -3,7 +3,7 @@ You can call any service or any endpoint defined on the Platform project, obtain
 
 For example, if you need to connect to a CRUD, you have to use a Proxy towards the `crud-service`.
 
-You can get a proxy calling these methods booth on `Request`(the first argument of handler) and `Service` (the Fastify instance):
+You can get a proxy calling these methods both on `Request`(the first argument of handler) and `Service` (the Fastify instance):
 
 * `getServiceProxy(options)` - returns a proxy  passing through the [Microservice Gateway](https://docs.mia-platform.eu/runtime_suite/microservice-gateway/).  
     * `options` - is an object with the following optional fields:
