@@ -23,7 +23,7 @@ const customService = require('@mia-platform/custom-plugin-lib')({
 You can configure the environment variables from DevOps console, in your service configuration. For further detail see [Mia-Platform documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/#environment-variable-configuration).  
 
 The function expects an async function to initialize and configure the `service`, a [Fastify instance](https://www.fastify.io/docs/latest/Server/).   
-You can get the environment variables from `service.config`:
+You can access the environment variables values from `service.config`:
 ```js
 module.exports = customService(async function handler(service) {
   const { ENV_VAR } = service.config
@@ -31,4 +31,3 @@ module.exports = customService(async function handler(service) {
 })
 ```
 Upon `service`, you can you can add [routes](Routes.md) and [decorators](Decorators.md). 
-
