@@ -12,7 +12,7 @@ You can add a decorator with these methods:
 *  ```addPreDecorator(path, handler)```
 *  ```addPostDecorator(path, handler)```
 
-whose arguments are, in order
+whose arguments are, in order:
 
 * `path` - the route path (e.g.,` /status /alive`).
 * `handler`- function that contains the actual behavior. It must respect the same interface defined in the
