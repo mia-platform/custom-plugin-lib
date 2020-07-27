@@ -92,7 +92,7 @@ Other variables can be specified by setting your envSchema when calling the plug
 ## Examples
 You can see an [advanced example](examples/advanced/  ) to see different use cases of the library.
 
-To see other examples of library use you can visit [some repository](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) that depends on it.
+To see other examples of library use you can visit [GitHub dependant repository graph](https://github.com/mia-platform/custom-plugin-lib/network/dependents?package_id=UGFja2FnZS00NTc2OTY4OTE%3D) and check all packages that depends on it.
 
 To run the [examples](examples) directly you can move to specific example folder and run:
 
