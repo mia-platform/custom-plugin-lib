@@ -36,7 +36,6 @@ service.addPreDecorator('/checkwho', function checkWhoHandler(request) {
   })
 }) 
 ```
-
 The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the `addRawCustomPlugin` method, in addition, with the following methods:
 * `getOriginalRequest()` - returns the original request.
 * `getOriginalRequestMethod()` - returns the original request HTTP method.
@@ -51,7 +50,6 @@ The first parameter of the handler function is [Request](https://www.fastify.io/
 * `leaveOriginalRequestUnmodified` - leave the original request unmodified .
 
 ## POST and CATCH decorators
-
 ```js
 ...
 /*

@@ -11,7 +11,6 @@ and responses to a route must conform to the format accepted by
 [Fastify](https://www.fastify.io/docs/latest/Validation-and-Serialization).
 
 ## Example
-
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
 

@@ -43,7 +43,6 @@ The params to be passed to these functions are:
 All methods return a *Promise object*.
 
 ## Examples
-
 ```js
 // Example of a request towards `tokens-collection` endpoint passing through Microservice Gateway
 async function tokenGeneration(request, response) {
@@ -56,7 +55,6 @@ async function tokenGeneration(request, response) {
   // ...
 }
 ```
-
 ```js
 // and bypassing Microservice Gateway
 async function tokenGeneration(request, response) {
