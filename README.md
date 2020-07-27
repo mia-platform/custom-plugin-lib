@@ -22,7 +22,7 @@ You can use this module in your projects or, from the [DevOps Console](https://d
 To develop the service locally you need:
 - Node.js v12 LTS or later.
 
-To setup node.js, we suggest to use [nvm][nvm], so you can manage multiple versions easily.
+To setup node.js, we suggest using [nvm][nvm], so you can manage multiple versions easily.
 Once you have installed nvm, you can go inside the directory of the project and simply run
 `nvm install`, the `.nvmrc` file will install and select the correct version
 if you don’t already have it.
