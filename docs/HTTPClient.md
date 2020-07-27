@@ -9,7 +9,7 @@ You can get a proxy calling these methods both on `Request`(the first argument o
     * `options` - is an object with the following optional fields:
         * `port` - an integer that identifies the port of the service to be queried.
         * `protocol` - a string that identifies the protocol to use (only `http` and `https` are supported, the default value is `http`).
-        * `headers` - an object that represents the set of headers to forward to the service.
+        * `headers` - an object that represents the set of headers to send to the service;
         * `prefix` - a string representing the prefix of the service call path.
 * `getDirectServiceProxy(serviceName, options)` - returns a direct proxy to the service.
     *  `serviceName` - The name of the service to call. You can't specify the port here, you have to do in `options.port`.
