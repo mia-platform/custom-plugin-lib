@@ -8,7 +8,7 @@ Decorators allow you to perform custom actions upon specific API handler invocat
  * **POST**: invoked *after* the successful execution of configured route handler (a 2xx status code is returned).
  * **CATCH**: invoked after the failure of the configured route handler (any other error status code, 4xx or 5xx).
 
-You can add a decorator with these methods
+You can add a decorator with these methods:
 *  ```addPreDecorator(path, handler)```
 *  ```addPostDecorator(path, handler)```
 
