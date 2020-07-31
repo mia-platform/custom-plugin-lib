@@ -46,7 +46,7 @@
     "ajv": "^6.12.0",
     "fastify-env": "^1.0.1",
     "fastify-formbody": "^3.1.0",
-    "fastify-plugin": "^1.6.1",
+    "fastify-plugin": "^2.0.3",
     "http-errors": "^1.7.3",
     "simple-get": "^3.1.0"
   },
