@@ -626,9 +626,12 @@ tap.test('serviceBuilder', test => {
     })
 
     innerTest.test('on TCP error rejects the promise', async assert => {
-      nock.enableNetConnect('unresolved-hostname-i-hope-so')
-
-      const service = serviceBuilder('unresolved-hostname-i-hope-so')
+      const myServiceNameScope = nock('http://unresolved-hostname')
+        .post('/foo')
+        .replyWithError({
+          code: 'ENOTFOUND',
+        })
+      const service = serviceBuilder('unresolved-hostname')
 
       try {
         await service.post('/foo', { the: 'sent body' }, {}, { returnAs: 'BUFFER' })
@@ -636,6 +639,7 @@ tap.test('serviceBuilder', test => {
       } catch (error) {
         assert.equal(error.code, 'ENOTFOUND')
       }
+      myServiceNameScope.done()
       assert.end()
     })
 
