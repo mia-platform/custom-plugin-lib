@@ -48,7 +48,7 @@
     "fastify-formbody": "^3.1.0",
     "fastify-plugin": "^1.6.1",
     "http-errors": "^1.7.3",
-    "simple-get": "^3.1.0"
+    "simple-get": "^4.0.0"
   },
   "devDependencies": {
     "@mia-platform/eslint-config-mia": "^3.0.0",
