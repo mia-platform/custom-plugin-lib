@@ -27,3 +27,9 @@ jobs:
     - run: npm i
     - run: npm run build --if-present
     - run: npm test
+    - run: npm run coverage
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
