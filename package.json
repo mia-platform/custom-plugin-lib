@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@mia-platform/eslint-config-mia": "^3.0.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.6.0",
     "fastify-routes": "^2.0.3",
     "nock": "^13.0.3",
     "pre-commit": "^1.2.2",
