@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v2.0.0 - 2020-09-17
 
-BREAKING CHANGES
+### BREAKING CHANGES
 
 - Update @mia-platform/lc39 2.2.2 -> 3.1.0
 - Dropped support to Node 8
