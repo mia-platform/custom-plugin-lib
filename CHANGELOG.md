@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Update @mia-platform/lc39 2.4.0 -> 3.1.0
 - Added `getUserProperties` to decorated `fastify.Request`, which returns the user properties
 
 ### Changed
