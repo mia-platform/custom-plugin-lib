@@ -6,7 +6,6 @@
 [![javascript style guide][standard-mia-svg]][standard-mia]
 [![Coverage Status][coverall-svg]][coverall-io]  
 [![NPM version][npmjs-svg]][npmjs-com]
-[![Greenkeeper badge][greenkeeper-svg]][greenkeeper-io]
 
 </div>
 
@@ -137,8 +136,6 @@ Now you can consult the swagger documentation of the service at
 [coverall-io]: https://coveralls.io/github/mia-platform/custom-plugin-lib
 [npmjs-svg]: https://img.shields.io/npm/v/@mia-platform/custom-plugin-lib.svg?logo=npm
 [npmjs-com]: https://www.npmjs.com/package/@mia-platform/custom-plugin-lib
-[greenkeeper-svg]: https://badges.greenkeeper.io/mia-platform/custom-plugin-lib.svg
-[greenkeeper-io]: https://greenkeeper.io/
 
 [mia-platform]: https://www.mia-platform.eu/
 [lc39]: https://github.com/mia-platform/lc39
