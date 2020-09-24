@@ -1,6 +1,6 @@
 {
   "name": "@mia-platform/custom-plugin-lib",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Library that allows you to define Mia-Platform custom plugins easily",
   "keywords": [
     "mia-platform",
@@ -41,7 +41,7 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^3.1.0",
+    "@mia-platform/lc39": "^3.1.1",
     "@types/node": "^13.9.1",
     "ajv": "^6.12.0",
     "fastify-env": "^1.0.1",
