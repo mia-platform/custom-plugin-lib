@@ -12,8 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### BREAKING CHANGES
 
-- Update @mia-platform/lc39 2.2.2 -> 3.1.0
 - Dropped support to Node 8
+- Update @mia-platform/lc39 2.2.2 -> 3.1.0. 
+
+    This update bring this breaking change:
+    * Request and response logged information are now compliant with Mia-Platform logging guidelines. To see the guidelines, please check [Mia Platform Docs](https://docs.mia-platform.eu/docs/development_suite/monitoring-dashboard/dev_ops_guide/log). You can find the implementation details [here](https://github.com/mia-platform/lc39/blob/master/lib/custom-logger.js)
 
 ### Added
 
