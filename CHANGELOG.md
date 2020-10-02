@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v2.0.2 - 2020-09-29
 
+## [Unrealeased]
+
+- [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.3
+
 ### Added
 
   - [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.2
