@@ -4,10 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unrealeased]
-
-- [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.3
-
 ## v2.0.4 - 2020-10-08
 
   - update lc39 to 3.1.4
@@ -31,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### BREAKING CHANGES
 
 - Dropped support to Node 8
-- Update @mia-platform/lc39 2.2.2 -> 3.1.0. 
+- Update @mia-platform/lc39 2.2.2 -> 3.1.0.
 
     This update bring this breaking change:
     * Request and response logged information are now compliant with Mia-Platform logging guidelines. To see the guidelines, please check [Mia Platform Docs](https://docs.mia-platform.eu/docs/development_suite/monitoring-dashboard/dev_ops_guide/log). You can find the implementation details [here](https://github.com/mia-platform/lc39/blob/master/lib/custom-logger.js)
