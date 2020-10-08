@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.3
 
-## Unreleased
+## v2.0.4 - 2020-10-08
 
   - update lc39 to 3.1.4
 
