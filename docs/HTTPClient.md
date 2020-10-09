@@ -27,6 +27,8 @@ Both proxies expose the methods to perform a specific HTTP request to service.
  * `patch(path, body, querystring, options)`
  * `delete(path, body, querystring, options)`
 
+All methods return a *Promise object*. You can access to response body trough the `payload` property of the returned object.
+
 The params to be passed to these functions are:
 
  * `path` -  a string that identifies the route to which you want to send the request.
@@ -40,8 +42,6 @@ The params to be passed to these functions are:
     * `allowedStatusCodes` - an array of integers that defines which status codes of the response are accepted. If the response status code is not contained in this array, the promise will be rejected. If this parameter is omitted, the promise is resolved in any case (even if the interrogated server answers 500).
     * `isMiaHeaderInjected` - a boolean value that identifies whether Mia's headers should be forwarded in the request. Default `true`.
 
-All methods return a *Promise object*.
-
 ## Examples
 ```js
 // Example of a request towards `tokens-collection` endpoint passing through Microservice Gateway
@@ -52,6 +52,8 @@ async function tokenGeneration(request, response) {
       id: request.body.quotationId,
       valid: true
     })
+
+  const tokens=result.payload;
   // ...
 }
 ```
@@ -64,6 +66,8 @@ async function tokenGeneration(request, response) {
       id: request.body.quotationId,
       valid: true
     })
+  
+  const tokens=result.payload;
   // ...
 }
 ```
