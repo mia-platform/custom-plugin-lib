@@ -4,19 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.1.0 - 2020-10-20
+
+### Added
+
+- add `timeout` options to service builder to make requests
+- add `agent` options to service builder to make requests
+
 ## v2.0.4 - 2020-10-08
 
-  - update lc39 to 3.1.4
+- update lc39 to 3.1.4
 
 ## v2.0.3 - 2020-10-02
 
-  - update lc39 to 3.1.3
+- update lc39 to 3.1.3
 
 ## v2.0.2 - 2020-09-29
 
 ### Added
 
-  - [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.2
+- [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.2
 
 ## v2.0.1 - 2020-09-22
 
