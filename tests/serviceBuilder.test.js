@@ -21,6 +21,9 @@ const nock = require('nock')
 const serviceBuilder = require('../lib/serviceBuilder')
 const reqheaders = { 'content-type': 'application/json;charset=utf8' }
 const { Readable } = require('stream')
+const http = require('http')
+const proxy = require('proxy')
+const { HttpProxyAgent } = require('hpagent')
 
 function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
@@ -184,7 +187,7 @@ tap.test('serviceBuilder', test => {
       assert.end()
     })
 
-    innerTest.test('with queryparameter', async assert => {
+    innerTest.test('with query parameter', async assert => {
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
         .get('/foo?aa=bar')
@@ -1143,6 +1146,241 @@ tap.test('serviceBuilder', test => {
     assert.ok(response.headers['content-length'])
 
     myServiceNameScope.done()
+    assert.end()
+  })
+
+  test.test('timeout', async assert => {
+    assert.test('returnAs: JSON', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .delay(101)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      await assert.rejects(async() => {
+        await service.get('/foo', {}, {
+          returnAs: 'JSON',
+          timeout: 100,
+        })
+      }, new Error('Request timed out'))
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    assert.test('returnAs: BUFFER', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .delay(101)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      await assert.rejects(async() => {
+        await service.get('/foo', {}, {
+          returnAs: 'BUFFER',
+          timeout: 100,
+        })
+      }, new Error('Request timed out'))
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    assert.test('returnAs: STREAM with delay body', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .delayBody(101)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      const response = await service.get('/foo', {}, { returnAs: 'STREAM', timeout: 100 })
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
+      myServiceNameScope.done()
+
+      await wait(200)
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.on('data', data => {
+          acc += data.toString()
+        })
+        response.on('end', () => resolve(acc))
+      })
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
+    })
+
+    assert.test('returnAs: STREAM', async assert => {
+      const myServiceNameScope = nock('http://my-service-name')
+        .replyContentLength()
+        .get('/foo')
+        .delay(101)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = serviceBuilder('my-service-name')
+
+      await assert.rejects(async() => {
+        await service.get('/foo', {}, {
+          returnAs: 'STREAM',
+          timeout: 100,
+        })
+      }, new Error('Request timed out'))
+
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    assert.end()
+  })
+
+  test.test('agent', async assert => {
+    nock.enableNetConnect('127.0.0.1')
+    assert.tearDown(() => {
+      nock.disableNetConnect()
+    })
+
+    async function createProxy() {
+      return new Promise((resolve) => {
+        const server = proxy(http.createServer())
+        server.listen(0, '127.0.0.1', () => {
+          resolve(server)
+        })
+      })
+    }
+
+    async function createServer() {
+      return new Promise((resolve) => {
+        const server = http.createServer()
+        server.listen(0, '127.0.0.1', () => {
+          resolve(server)
+        })
+      })
+    }
+
+    assert.test('returnAs: JSON', async assert => {
+      const server = await createServer()
+      server.on('request', (req, res) => {
+        res.end('{"status": "ok"}')
+      })
+      const serverProxy = await createProxy()
+      let proxyCalled = false
+      serverProxy.authenticate = (req, fn) => {
+        proxyCalled = true
+        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      }
+
+      const service = serviceBuilder(server.address().address)
+
+      const response = await service.get('/foo', {}, {
+        returnAs: 'JSON',
+        port: `${server.address().port}`,
+        agent: new HttpProxyAgent({
+          proxy: `http://hello:world@${serverProxy.address().address}:${serverProxy.address().port}/`,
+        }),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+      assert.ok(proxyCalled)
+
+      server.close()
+      serverProxy.close()
+
+      assert.end()
+    })
+
+    assert.test('returnAs: BUFFER', async assert => {
+      const server = await createServer()
+      server.on('request', (req, res) => {
+        res.end('OK')
+      })
+      const serverProxy = await createProxy()
+      let proxyCalled = false
+      serverProxy.authenticate = (req, fn) => {
+        proxyCalled = true
+        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      }
+
+      const service = serviceBuilder(server.address().address)
+
+      const response = await service.get('/foo', {}, {
+        returnAs: 'BUFFER',
+        port: `${server.address().port}`,
+        agent: new HttpProxyAgent({
+          proxy: `http://hello:world@${serverProxy.address().address}:${serverProxy.address().port}/`,
+        }),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload.toString('utf8'), 'OK')
+      assert.ok(proxyCalled)
+
+      server.close()
+      serverProxy.close()
+
+      assert.end()
+    })
+
+    assert.test('returnAs: STREAM', async assert => {
+      const server = await createServer()
+      server.on('request', (req, res) => {
+        res.end(JSON.stringify({ the: 'response' }))
+      })
+      const serverProxy = await createProxy()
+      let proxyCalled = false
+      serverProxy.authenticate = (req, fn) => {
+        proxyCalled = true
+        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      }
+
+      const service = serviceBuilder(server.address().address)
+
+      const response = await service.get('/foo', {}, {
+        returnAs: 'STREAM',
+        port: `${server.address().port}`,
+        agent: new HttpProxyAgent({
+          proxy: `http://hello:world@${serverProxy.address().address}:${serverProxy.address().port}/`,
+        }),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.ok(response.headers['content-length'])
+      assert.ok(proxyCalled)
+
+      await wait(200)
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.on('data', data => {
+          acc += data.toString()
+        })
+        response.on('end', () => resolve(acc))
+      })
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+
+      server.close()
+      serverProxy.close()
+
+      assert.end()
+    })
+
     assert.end()
   })
 
