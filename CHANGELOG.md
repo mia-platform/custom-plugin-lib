@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add `timeout` options to service builder to make requests
-- add `agent` options to service builder to make requests
+- add `timeout` option to service builder to make requests
+- add `agent` option to service builder to make requests
 
 ## v2.0.4 - 2020-10-08
 
