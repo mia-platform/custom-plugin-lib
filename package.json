@@ -43,19 +43,21 @@
   "dependencies": {
     "@mia-platform/lc39": "^3.1.4",
     "@types/node": "^13.9.1",
-    "ajv": "^6.12.0",
+    "ajv": "^6.12.6",
     "fastify-env": "^1.0.1",
     "fastify-formbody": "^3.1.0",
     "fastify-plugin": "^1.6.1",
-    "http-errors": "^1.7.3",
-    "simple-get": "^3.1.0"
+    "http-errors": "^1.8.0",
+    "simple-get": "^4.0.0"
   },
   "devDependencies": {
     "@mia-platform/eslint-config-mia": "^3.0.0",
     "eslint": "^7.6.0",
     "fastify-routes": "^2.0.3",
+    "hpagent": "^0.1.1",
     "nock": "^13.0.3",
     "pre-commit": "^1.2.2",
+    "proxy": "^1.0.2",
     "tap": "^14.10.6",
     "typescript": "^3.8.3"
   },
