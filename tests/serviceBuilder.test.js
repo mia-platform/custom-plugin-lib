@@ -19,7 +19,7 @@
 const tap = require('tap')
 const nock = require('nock')
 const serviceBuilder = require('../lib/serviceBuilder')
-const reqheaders = { 'content-type': 'application/json;charset=utf8' }
+const reqheaders = { 'content-type': 'application/json;charset=utf-8' }
 const { Readable } = require('stream')
 const http = require('http')
 const proxy = require('proxy')
@@ -456,7 +456,7 @@ tap.test('serviceBuilder', test => {
 
       const myServiceNameScope = nock('http://my-service-name')
         .replyContentLength()
-        .post('/foo', THE_SENT_BODY.toString('utf8'))
+        .post('/foo', THE_SENT_BODY.toString('utf-8'))
         .reply(200, { the: 'response' }, {
           some: 'response-header',
         })
@@ -1329,7 +1329,7 @@ tap.test('serviceBuilder', test => {
       })
 
       assert.equal(response.statusCode, 200)
-      assert.strictSame(response.payload.toString('utf8'), 'OK')
+      assert.strictSame(response.payload.toString('utf-8'), 'OK')
       assert.ok(proxyCalled)
 
       server.close()
