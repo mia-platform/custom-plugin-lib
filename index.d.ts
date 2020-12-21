@@ -37,7 +37,7 @@ declare namespace customPlugin {
   type RawCustomPluginAdvancedConfig = Pick<fastify.RouteShorthandOptions,
     'schema' |
     'attachValidation' |
-    'schemaCompiler' |
+    'validatorCompiler' |
     'bodyLimit' |
     'logLevel' |
     'config' |
@@ -53,7 +53,7 @@ declare namespace customPlugin {
     getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
-  interface DecoratedRequest extends fastify.FastifyRequest<http.IncomingMessage> {
+  interface DecoratedRequest extends fastify.FastifyRequest {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -71,8 +71,8 @@ declare namespace customPlugin {
   //
   // CUSTOM PLUGIN
   //
-  type Handler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply<http.ServerResponse>) => void
-  type AsyncHandler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply<http.ServerResponse>) => Promise<any>
+  type Handler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => void
+  type AsyncHandler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => Promise<any>
 
   //
   // SERVICE
@@ -123,7 +123,7 @@ declare namespace customPlugin {
   }
   interface AbortRequestAction { }
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
-  type preDecoratorHandler = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest, reply: fastify.FastifyReply<http.ServerResponse>) => Promise<PreDecoratorAction>;
+  type preDecoratorHandler = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
 
   interface OriginalRequest {
     method: string,
@@ -165,7 +165,7 @@ declare namespace customPlugin {
   }
   interface AbortResponseAction { }
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
-  type postDecoratorHandler = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest, reply: fastify.FastifyReply<http.ServerResponse>) => Promise<PostDecoratorAction>;
+  type postDecoratorHandler = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
 
   interface PostDecoratorDecoratedRequest extends DecoratedRequest {
     getOriginalRequest: () => OriginalRequest,

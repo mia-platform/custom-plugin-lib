@@ -74,9 +74,9 @@ async function invokeSomeApis(service: cpl.Service) {
   console.log(response.payload)
 
   const responseAsBuffer = await service.get('/path') as cpl.BufferServiceResponse
-  console.log(response.statusCode)
-  console.log(response.headers)
-  console.log(response.payload)
+  console.log(responseAsBuffer.statusCode)
+  console.log(responseAsBuffer.headers)
+  console.log(responseAsBuffer.payload)
 
   const responseAsStream = await service.get('/path', {}, { returnAs: 'STREAM' })  as cpl.StreamedServiceResponse
   let d: string = ''
@@ -228,13 +228,13 @@ a(async function (service) {
 async function invokeProxies() {
   const directServiceProxy = getDirectServiceProxy('service_name')
   const directServiceProxyWithOpetions = getDirectServiceProxy('service_name', { port: 3000 })
-  
+
   await directServiceProxy.get('/path')
   await directServiceProxyWithOpetions.get('/path')
 
   const serviceProxy = getServiceProxy('microservice-gateway')
   const serviceProxyWithOpetions = getServiceProxy('microservice-gateway', { port: 3000 })
-  
+
   await serviceProxy.get('/path')
   await serviceProxyWithOpetions.get('/path')
 }

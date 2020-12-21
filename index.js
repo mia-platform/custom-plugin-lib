@@ -163,7 +163,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   const { config } = fastify
 
   const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
-  fastify.setSchemaCompiler(schema => ajv.compile(schema))
+  fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
   fastify.decorateRequest(USER_PROPERTIES_HEADER_KEY, config[USER_PROPERTIES_HEADER_KEY])
@@ -171,7 +171,12 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
   fastify.decorateRequest(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
-  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header))
+  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, null)
+
+  // add mutable references later
+  fastify.addHook('onRequest', async(req) => {
+    req.ADDITIONAL_HEADERS_TO_PROXY = config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header)
+  })
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
@@ -188,8 +193,8 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
 
   fastify.register(fp(asyncInitFunction))
-  fastify.setErrorHandler(function errorHanlder(error, request, reply) {
-    if (reply.res.statusCode === 500 && !error.statusCode) {
+  fastify.setErrorHandler(function errorHandler(error, request, reply) {
+    if (reply.raw.statusCode === 500 && !error.statusCode) {
       request.log.error(error)
       reply.send(new Error('Something went wrong'))
     } else {
