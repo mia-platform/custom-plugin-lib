@@ -171,11 +171,10 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
   fastify.decorateRequest(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
-  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, null)
-
-  // add mutable references later
-  fastify.addHook('onRequest', async(req) => {
-    req.ADDITIONAL_HEADERS_TO_PROXY = config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header)
+  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, {
+    getter() {
+      return config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header)
+    },
   })
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
