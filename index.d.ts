@@ -65,7 +65,9 @@ declare namespace customPlugin {
     USER_PROPERTIES_HEADER_KEY: string,
     GROUPS_HEADER_KEY: string,
     CLIENTTYPE_HEADER_KEY: string,
-    BACKOFFICE_HEADER_KEY: string
+    BACKOFFICE_HEADER_KEY: string,
+    MICROSERVICE_GATEWAY_SERVICE_NAME: string,
+    ADDITIONAL_HEADERS_TO_PROXY: string[]
   }
 
   //
