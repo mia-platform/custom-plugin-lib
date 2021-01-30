@@ -144,6 +144,20 @@ function getServiceBuilderFromService(baseOptions = {}) {
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
 }
 
+function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, baseOptions = {}) {
+  let completeUrl
+  try {
+    completeUrl = new URL(serviceCompleteUrlString)
+  } catch (error) {
+    throw new Error(`getDirectServiceProxyFromUrlString: invalid url ${serviceCompleteUrlString}`)
+  }
+  return getDirectlyServiceBuilderFromService(completeUrl.hostname, {
+    protocol: completeUrl.protocol,
+    port: completeUrl.port,
+    ...baseOptions,
+  })
+}
+
 // TODO: test this
 function getMiaHeaders() {
   return {
@@ -178,6 +192,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
+  fastify.decorateRequest('getDirectServiceProxyFromUrlString', getDirectServiceProxyFromUrlString)
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
@@ -186,6 +201,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
+  fastify.decorate('getDirectServiceProxyFromUrlString', getDirectServiceProxyFromUrlString)
 
   fastify.register(fp(asyncInitFunction))
   fastify.setErrorHandler(function errorHanlder(error, request, reply) {
@@ -230,3 +246,4 @@ module.exports.getDirectServiceProxy = getDirectlyServiceBuilderFromService
 module.exports.getServiceProxy = (microserviceGatewayServiceName, baseOptions = {}) => {
   return serviceBuilder(microserviceGatewayServiceName, {}, baseOptions)
 }
+module.exports.getDirectServiceProxyFromUrlString = getDirectServiceProxyFromUrlString
