@@ -24,6 +24,8 @@ const { Readable } = require('stream')
 const http = require('http')
 const proxy = require('proxy')
 const { HttpProxyAgent } = require('hpagent')
+const fs = require('fs')
+const https = require('https')
 
 function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
@@ -1378,6 +1380,145 @@ tap.test('serviceBuilder', test => {
       server.close()
       serverProxy.close()
 
+      assert.end()
+    })
+
+    assert.end()
+  })
+
+  test.test('tls options', async assert => {
+    nock.enableNetConnect('localhost:3200')
+    assert.tearDown(() => {
+      nock.disableNetConnect()
+    })
+
+    async function createServer() {
+      return new Promise((resolve) => {
+        const server = https.createServer({
+          requestCert: true,
+          rejectUnauthorized: false,
+          ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+          key: fs.readFileSync('tests/fixtures/keys/server.key'),
+          cert: fs.readFileSync('tests/fixtures/keys/server.crt'),
+        })
+        server.listen(3200, 'localhost', () => {
+          resolve(server)
+        })
+      })
+    }
+
+    assert.test('returnAs: JSON', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'JSON',
+        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
+        key: fs.readFileSync('tests/fixtures/keys/client.key'),
+        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+
+      assert.end()
+    })
+
+
+    assert.test('returnAs: BUFFER', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          res.end('NOK')
+        }
+
+        res.end('OK')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'BUFFER',
+        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
+        key: fs.readFileSync('tests/fixtures/keys/client.key'),
+        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload.toString('utf-8'), 'OK')
+
+      assert.end()
+    })
+
+
+    assert.test('returnAs: STREAM', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          res.end(JSON.stringify({ the: 'nok' }))
+        }
+
+        res.end(JSON.stringify({ the: 'response' }))
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'STREAM',
+        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
+        key: fs.readFileSync('tests/fixtures/keys/client.key'),
+        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.ok(response.headers['content-length'])
+
+      await wait(200)
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.on('data', data => {
+          acc += data.toString()
+        })
+        response.on('end', () => resolve(acc))
+      })
+
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
       assert.end()
     })
 
