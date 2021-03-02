@@ -1,3 +1,4 @@
+/* eslint-disable no-sync */
 /*
  * Copyright 2018 Mia srl
  *
@@ -1392,14 +1393,21 @@ tap.test('serviceBuilder', test => {
       nock.disableNetConnect()
     })
 
+    const serverCa = fs.readFileSync('tests/fixtures/keys/ca.crt')
+    const serverKey = fs.readFileSync('tests/fixtures/keys/server.key')
+    const serverCert = fs.readFileSync('tests/fixtures/keys/server.crt')
+
+    const clientKey = fs.readFileSync('tests/fixtures/keys/client.key')
+    const clientCert = fs.readFileSync('tests/fixtures/keys/client.crt')
+
     async function createServer() {
       return new Promise((resolve) => {
         const server = https.createServer({
           requestCert: true,
           rejectUnauthorized: false,
-          ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
-          key: fs.readFileSync('tests/fixtures/keys/server.key'),
-          cert: fs.readFileSync('tests/fixtures/keys/server.crt'),
+          ca: serverCa,
+          key: serverKey,
+          cert: serverCert,
         })
         server.listen(3200, 'localhost', () => {
           resolve(server)
@@ -1430,9 +1438,9 @@ tap.test('serviceBuilder', test => {
 
       const response = await service.get('/', {}, {
         returnAs: 'JSON',
-        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
-        key: fs.readFileSync('tests/fixtures/keys/client.key'),
-        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
       })
 
       assert.equal(response.statusCode, 200)
@@ -1465,9 +1473,9 @@ tap.test('serviceBuilder', test => {
 
       const response = await service.get('/', {}, {
         returnAs: 'BUFFER',
-        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
-        key: fs.readFileSync('tests/fixtures/keys/client.key'),
-        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
       })
 
       assert.equal(response.statusCode, 200)
@@ -1500,9 +1508,9 @@ tap.test('serviceBuilder', test => {
 
       const response = await service.get('/', {}, {
         returnAs: 'STREAM',
-        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
-        key: fs.readFileSync('tests/fixtures/keys/client.key'),
-        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
       })
 
       assert.equal(response.statusCode, 200)
@@ -1541,9 +1549,9 @@ tap.test('serviceBuilder', test => {
       const service = serviceBuilder('localhost', {}, {
         protocol: 'https',
         port: 3200,
-        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
-        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
-        key: fs.readFileSync('tests/fixtures/keys/client.key'),
+        ca: serverCa,
+        cert: clientCert,
+        key: clientKey,
       })
 
       const response = await service.get('/', {}, {
