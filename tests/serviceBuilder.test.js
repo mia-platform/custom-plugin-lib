@@ -1522,6 +1522,40 @@ tap.test('serviceBuilder', test => {
       assert.end()
     })
 
+    assert.test('returnAs: JSON - passing options to service initialization', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+        ca: fs.readFileSync('tests/fixtures/keys/ca.crt'),
+        cert: fs.readFileSync('tests/fixtures/keys/client.crt'),
+        key: fs.readFileSync('tests/fixtures/keys/client.key'),
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'JSON',
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+
+      assert.end()
+    })
+
     assert.end()
   })
 
