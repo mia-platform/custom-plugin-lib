@@ -87,6 +87,9 @@ declare namespace customPlugin {
     returnAs?: 'JSON' | 'BUFFER' | 'STREAM'
     allowedStatusCodes?: number[]
     isMiaHeaderInjected?: boolean
+    cert?: string | Buffer
+    key?: string | Buffer
+    ca?: string | Buffer
   }
   interface BaseServiceResponse extends http.ServerResponse {
     headers: object

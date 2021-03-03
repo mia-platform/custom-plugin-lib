@@ -1,3 +1,4 @@
+/* eslint-disable no-sync */
 /*
  * Copyright 2018 Mia srl
  *
@@ -24,6 +25,8 @@ const { Readable } = require('stream')
 const http = require('http')
 const proxy = require('proxy')
 const { HttpProxyAgent } = require('hpagent')
+const fs = require('fs')
+const https = require('https')
 
 function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
@@ -1377,6 +1380,186 @@ tap.test('serviceBuilder', test => {
 
       server.close()
       serverProxy.close()
+
+      assert.end()
+    })
+
+    assert.end()
+  })
+
+  test.test('tls options', async assert => {
+    nock.enableNetConnect('localhost:3200')
+    assert.tearDown(() => {
+      nock.disableNetConnect()
+    })
+
+    const serverCa = fs.readFileSync('tests/fixtures/keys/ca.crt')
+    const serverKey = fs.readFileSync('tests/fixtures/keys/server.key')
+    const serverCert = fs.readFileSync('tests/fixtures/keys/server.crt')
+
+    const clientKey = fs.readFileSync('tests/fixtures/keys/client.key')
+    const clientCert = fs.readFileSync('tests/fixtures/keys/client.crt')
+
+    async function createServer() {
+      return new Promise((resolve) => {
+        const server = https.createServer({
+          requestCert: true,
+          rejectUnauthorized: false,
+          ca: serverCa,
+          key: serverKey,
+          cert: serverCert,
+        })
+        server.listen(3200, 'localhost', () => {
+          resolve(server)
+        })
+      })
+    }
+
+    assert.test('returnAs: JSON', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'JSON',
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+
+      assert.end()
+    })
+
+
+    assert.test('returnAs: BUFFER', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          res.end('NOK')
+        }
+
+        res.end('OK')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'BUFFER',
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload.toString('utf-8'), 'OK')
+
+      assert.end()
+    })
+
+
+    assert.test('returnAs: STREAM', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          res.end(JSON.stringify({ the: 'nok' }))
+        }
+
+        res.end(JSON.stringify({ the: 'response' }))
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'STREAM',
+        cert: clientCert,
+        key: clientKey,
+        ca: serverCa,
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.ok(response.headers['content-length'])
+
+      await wait(200)
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.on('data', data => {
+          acc += data.toString()
+        })
+        response.on('end', () => resolve(acc))
+      })
+
+      assert.strictSame(body, JSON.stringify({ the: 'response' }))
+      assert.end()
+    })
+
+    assert.test('returnAs: JSON - passing options to service initialization', async assert => {
+      const server = await createServer()
+
+      assert.tearDown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const service = serviceBuilder('localhost', {}, {
+        protocol: 'https',
+        port: 3200,
+        ca: serverCa,
+        cert: clientCert,
+        key: clientKey,
+      })
+
+      const response = await service.get('/', {}, {
+        returnAs: 'JSON',
+      })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
 
       assert.end()
     })
