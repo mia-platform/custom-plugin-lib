@@ -2,17 +2,16 @@
 `Mia service Node.js Library` is built on Fastify and therefore integrates with [testing tools](https://www.fastify.io/docs/latest/Testing/)
 made available by the framework. A complete example of this type of test is available [here](../examples/advanced/tests/).
 
-CustomPlugin directly expose `getDirectServiceProxy`, `getServiceProxy` and `getDirectServiceProxyFromUrlString` for testing purpose.
+CustomPlugin directly expose `getDirectServiceProxy` and `getServiceProxy` for testing purpose.
 Ypu can import the function in you test in ths way:
+
 ``` javascript
 const { getDirectServiceProxy } = require('@mia-platform/custom-plugin-lib') 
 const { getServiceProxy } = require('@mia-platform/custom-plugin-lib') 
-const { getDirectServiceProxyFromUrlString } = require('@mia-platform/custom-plugin-lib') 
 
 const myServiceProxy = getDirectServiceProxy(serviceName,otions)
 const myServiceProxy = getServiceProxy(options)
-const myServiceProxy = getDirectServiceProxyFromUrlString(serviceCompleteUrl,otions)
- ```
+```
 ## Integration and Unit test
 
 The testing of service can be performed at multiple levels of abstraction. One possibility is to use a technique called _fake http injection_ for which it is possible to simulate

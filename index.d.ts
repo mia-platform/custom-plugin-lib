@@ -26,7 +26,6 @@ declare namespace customPlugin {
 
   function getDirectServiceProxy(serviceName: string, options?: InitServiceOptions): Service
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
-  function getDirectServiceProxyFromUrlString(serviceCompleteUrlString: string, options?: InitServiceOptions): Service
   interface environmentSchema {
     type: 'object',
     required?: string[],
@@ -52,7 +51,6 @@ declare namespace customPlugin {
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
     getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
-    getDirectServiceProxyFromUrlString: (serviceCompleteUrlString: string, options?: InitServiceOptions) => Service,
   }
 
   interface DecoratedRequest extends fastify.FastifyRequest<http.IncomingMessage> {
@@ -63,7 +61,6 @@ declare namespace customPlugin {
     isFromBackOffice: () => boolean,
     getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
-    getDirectServiceProxyFromUrlString: (serviceCompleteUrlString: string, options?: InitServiceOptions) => Service,
     USERID_HEADER_KEY: string,
     USER_PROPERTIES_HEADER_KEY: string,
     GROUPS_HEADER_KEY: string,

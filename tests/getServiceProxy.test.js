@@ -13,7 +13,6 @@ const MY_AWESOME_SERVICE_PROXY_HTTPS_URL_CUSTOM_PORT = 'https://my-awesome-servi
 const {
   getDirectServiceProxy,
   getServiceProxy,
-  getDirectServiceProxyFromUrlString,
 } = require('../index')
 
 tap.test('getDirectServiceProxy available for testing', async t => {
@@ -83,14 +82,14 @@ tap.test('getServiceProxy available for testing', async t => {
   microserviceScope.done()
 })
 
-tap.test('getDirectServiceProxyFromUrlString available for testing', async t => {
+tap.test('getDirectServiceProxy available for testing - complete url passed', async t => {
   nock.disableNetConnect()
   t.tearDown(() => {
     nock.enableNetConnect()
   })
 
   const RETURN_MESSAGE = 'OK'
-  const customProxy = getDirectServiceProxyFromUrlString(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+  const customProxy = getDirectServiceProxy(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
   const awesomeHttpServiceScope = nock(`${MY_AWESOME_SERVICE_PROXY_HTTP_URL}:80`)
     .get('/test-endpoint')
     .reply(200, {
@@ -104,14 +103,14 @@ tap.test('getDirectServiceProxyFromUrlString available for testing', async t => 
   awesomeHttpServiceScope.done()
 })
 
-tap.test('getDirectServiceProxyFromUrlString available for testing - https url', async t => {
+tap.test('getDirectServiceProxy available for testing - https url', async t => {
   nock.disableNetConnect()
   t.tearDown(() => {
     nock.enableNetConnect()
   })
 
   const RETURN_MESSAGE = 'OK'
-  const customProxy = getDirectServiceProxyFromUrlString(MY_AWESOME_SERVICE_PROXY_HTTPS_URL)
+  const customProxy = getDirectServiceProxy(MY_AWESOME_SERVICE_PROXY_HTTPS_URL)
   const awesomeHttpsServiceScope = nock(`${MY_AWESOME_SERVICE_PROXY_HTTPS_URL}:443`)
     .get('/test-endpoint')
     .reply(200, {
@@ -125,14 +124,14 @@ tap.test('getDirectServiceProxyFromUrlString available for testing - https url',
   awesomeHttpsServiceScope.done()
 })
 
-tap.test('getDirectServiceProxyFromUrlString available for testing - custom port 3000 - custom headers', async t => {
+tap.test('getDirectServiceProxy available for testing - custom port 3000 - custom headers', async t => {
   nock.disableNetConnect()
   t.tearDown(() => {
     nock.enableNetConnect()
   })
 
   const RETURN_MESSAGE = 'OK'
-  const customProxy = getDirectServiceProxyFromUrlString(MY_AWESOME_SERVICE_PROXY_HTTP_URL_CUSTOM_PORT,
+  const customProxy = getDirectServiceProxy(MY_AWESOME_SERVICE_PROXY_HTTP_URL_CUSTOM_PORT,
     {
       headers: {
         'test-header': 'test header works',
@@ -152,14 +151,14 @@ tap.test('getDirectServiceProxyFromUrlString available for testing - custom port
   awesomeHttpServiceScope.done()
 })
 
-tap.test('getDirectServiceProxyFromUrlString available for testing - https url - custom port 3001', async t => {
+tap.test('getDirectServiceProxy available for testing - https url - custom port 3001', async t => {
   nock.disableNetConnect()
   t.tearDown(() => {
     nock.enableNetConnect()
   })
 
   const RETURN_MESSAGE = 'OK'
-  const customProxy = getDirectServiceProxyFromUrlString(MY_AWESOME_SERVICE_PROXY_HTTPS_URL_CUSTOM_PORT)
+  const customProxy = getDirectServiceProxy(MY_AWESOME_SERVICE_PROXY_HTTPS_URL_CUSTOM_PORT)
   const awesomeHttpsServiceScope = nock(`${MY_AWESOME_SERVICE_PROXY_HTTPS_URL}:3001`)
     .get('/test-endpoint')
     .reply(200, {
@@ -173,12 +172,12 @@ tap.test('getDirectServiceProxyFromUrlString available for testing - https url -
   awesomeHttpsServiceScope.done()
 })
 
-tap.test('getDirectServiceProxyFromUrlString throws on invalid url', async t => {
-  const invalidUrl = 'not-a-complete-url'
+tap.test('getDirectServiceProxy throws on invalid url', async t => {
+  const invalidUrl = 'httpnot-a-complete-url'
   try {
-    getDirectServiceProxyFromUrlString(invalidUrl)
+    getDirectServiceProxy(invalidUrl)
     t.notOk(true, 'The function should throw an error for not complete url string')
   } catch (error) {
-    t.strictSame(error, new Error(`getDirectServiceProxyFromUrlString: invalid url ${invalidUrl}`))
+    t.strictSame(error, new Error(`getDirectServiceProxy: invalid url ${invalidUrl}`))
   }
 })

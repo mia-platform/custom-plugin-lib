@@ -8,20 +8,17 @@ You can get a proxy calling these methods both on `Request`(the first argument o
 
 * `getServiceProxy(options)` - returns a proxy  passing through the [Microservice Gateway](https://docs.mia-platform.eu/runtime_suite/microservice-gateway/).
   * `options` - is an object with the following optional fields:
-    * `port` - an integer that identifies the port of the service to be queried.
-    * `protocol` - a string that identifies the protocol to use (only `http` and `https` are supported, the default value is `http`).
-    * `headers` - an object that represents the set of headers to send to the service;
-    * `prefix` - a string representing the prefix of the service call path.
+    * `port` - an integer that identifies the port of the service to be queried
+    * `protocol` - a string that identifies the protocol to use (only `http` and `https` are supported, the default value is `http`)
+    * `headers` - an object that represents the set of headers to send to the service
+    * `prefix` - a string representing the prefix of the service call path
     * `timeout` - set a request timeout
     * `agent` - set a custom node agent
-* `getDirectServiceProxy(serviceName, options)` - returns a direct proxy to the service.
-  * `serviceName` - The name of the service to call. You can't specify the port here, you have to do in `options.port`.
-  * `options` - The same options described above
-* `getDirectServiceProxyFromUrlString(serviceCompleteUrlString, options)` - returns a direct proxy to the service.
-  * `serviceCompleteUrlString` - The complete url string of the service to call. The string must include the service protocol and, possibly, the custom port.
+* `getDirectServiceProxy(serviceName, options)` - returns a direct proxy to the service
+  * `serviceName` - The name of the service to call. You can pass just the hostname, without protocol and port (that you can specify into the `options` field), or a complete url string
   * `options` - The same options described above
 
-Potentially, the `getDirectServiceProxy` and `getDirectServiceProxyFromUrlString` methods allows you to also query services outside the Platform. In this case, however, it is necessary to bear in mind that the platform headers will be automatically forwarded.
+Potentially, the `getDirectServiceProxy` method allows you to also query services outside the Platform. In this case, however, it is necessary to bear in mind that the platform headers will be automatically forwarded.
 
 Both proxies, by default, forward the four Mia headers to the service called. In addition, other headers of the original request can also be forwarded to the named service. To do this it is necessary to define an additional environment variable, `ADDITIONAL_HEADERS_TO_PROXY`, whose value must be a string containing the keys of the headers to be forwarded separated by a comma.
 
@@ -47,7 +44,7 @@ The params to be passed to these functions are:
   * a [Buffer](https://nodejs.org/api/buffer.html#)
   * one [Stream](https://nodejs.org/api/stream.html)
 * `querystring` - optional, an object that represents the querystring.
-* `options` - optional, an object that admits all the`options` listed above for the `getServiceProxy`, `getDirectServiceProxy` and `getDirectServiceProxyFromUrlString` methods (which will eventually be overwritten), plus the following fields:
+* `options` - optional, an object that admits all the`options` listed above for the `getServiceProxy` and `getDirectServiceProxy` methods (which will eventually be overwritten), plus the following fields:
   * `returnAs` - a string that identifies the format in which you want to receive the response. It can be `JSON`,`BUFFER` or `STREAM`. Default `JSON`.
   * `allowedStatusCodes` - an array of integers that defines which status codes of the response are accepted. If the response status code is not contained in this array, the promise will be rejected. If this parameter is omitted, the promise is resolved in any case (even if the interrogated server answers 500).
   * `isMiaHeaderInjected` - a boolean value that identifies whether Mia's headers should be forwarded in the request. Default `true`.
@@ -73,21 +70,6 @@ async function tokenGeneration(request, response) {
 // and bypassing Microservice Gateway
 async function tokenGeneration(request, response) {
   const crudProxy = request.getDirectServiceProxy('crud-service')
-  const result = await crudProxy
-    .post('/tokens-collection/', {
-      id: request.body.quotationId,
-      valid: true
-    })
-  
-  const tokens=result.payload;
-  // ...
-}
-```
-
-```js
-// and bypassing Microservice Gateway with complete url
-async function tokenGeneration(request, response) {
-  const crudProxy = request.getDirectServiceProxyFromUrlString('http://crud-service:3000')
   const result = await crudProxy
     .post('/tokens-collection/', {
       id: request.body.quotationId,

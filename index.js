@@ -130,6 +130,9 @@ function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
 }
 
 function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
+  if (serviceName.toLowerCase().startsWith('http')) {
+    return getDirectServiceProxyFromUrlString(serviceName, baseOptions)
+  }
   return serviceBuilder(serviceName, {}, baseOptions)
 }
 
@@ -149,9 +152,9 @@ function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, baseOption
   try {
     completeUrl = new URL(serviceCompleteUrlString)
   } catch (error) {
-    throw new Error(`getDirectServiceProxyFromUrlString: invalid url ${serviceCompleteUrlString}`)
+    throw new Error(`getDirectServiceProxy: invalid url ${serviceCompleteUrlString}`)
   }
-  return getDirectlyServiceBuilderFromService(completeUrl.hostname, {
+  return serviceBuilder(completeUrl.hostname, {}, {
     protocol: completeUrl.protocol,
     port: completeUrl.port,
     ...baseOptions,
@@ -192,7 +195,6 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
-  fastify.decorateRequest('getDirectServiceProxyFromUrlString', getDirectServiceProxyFromUrlString)
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
@@ -201,7 +203,6 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
-  fastify.decorate('getDirectServiceProxyFromUrlString', getDirectServiceProxyFromUrlString)
 
   fastify.register(fp(asyncInitFunction))
   fastify.setErrorHandler(function errorHanlder(error, request, reply) {
@@ -246,4 +247,3 @@ module.exports.getDirectServiceProxy = getDirectlyServiceBuilderFromService
 module.exports.getServiceProxy = (microserviceGatewayServiceName, baseOptions = {}) => {
   return serviceBuilder(microserviceGatewayServiceName, {}, baseOptions)
 }
-module.exports.getDirectServiceProxyFromUrlString = getDirectServiceProxyFromUrlString
