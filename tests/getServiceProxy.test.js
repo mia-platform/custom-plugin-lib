@@ -176,8 +176,7 @@ tap.test('getDirectServiceProxy throws on invalid url', async t => {
   const invalidUrl = 'httpnot-a-complete-url'
   try {
     getDirectServiceProxy(invalidUrl)
-    t.notOk(true, 'The function should throw an error for not complete url string')
   } catch (error) {
-    t.strictSame(error, new Error(`getDirectServiceProxy: invalid url ${invalidUrl}`))
+    t.notOk(true, 'The function should not throw anymore if the url is not a valid one, bet return the standard proxy')
   }
 })

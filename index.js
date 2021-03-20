@@ -130,10 +130,12 @@ function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
 }
 
 function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
-  if (serviceName.toLowerCase().startsWith('http')) {
-    return getDirectServiceProxyFromUrlString(serviceName, baseOptions)
+  try {
+    const proxy = getDirectServiceProxyFromUrlString(serviceName, baseOptions)
+    return proxy
+  } catch (error) {
+    return serviceBuilder(serviceName, {}, baseOptions)
   }
-  return serviceBuilder(serviceName, {}, baseOptions)
 }
 
 function getServiceBuilderFromRequest(baseOptions = {}) {
