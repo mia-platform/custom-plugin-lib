@@ -129,12 +129,12 @@ function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
   return serviceBuilder(serviceName, { ...this.getMiaHeaders(), ...extraHeaders }, options)
 }
 
-function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
+function getDirectlyServiceBuilderFromService(serviceNameOrURL, baseOptions = {}) {
   try {
-    const proxy = getDirectServiceProxyFromUrlString(serviceName, baseOptions)
+    const proxy = getDirectServiceProxyFromUrlString(serviceNameOrURL, baseOptions)
     return proxy
   } catch (error) {
-    return serviceBuilder(serviceName, {}, baseOptions)
+    return serviceBuilder(serviceNameOrURL, {}, baseOptions)
   }
 }
 

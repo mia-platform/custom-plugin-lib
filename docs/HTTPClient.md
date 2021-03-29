@@ -14,8 +14,8 @@ You can get a proxy calling these methods both on `Request`(the first argument o
     * `prefix` - a string representing the prefix of the service call path
     * `timeout` - set a request timeout
     * `agent` - set a custom node agent
-* `getDirectServiceProxy(serviceName, options)` - returns a direct proxy to the service
-  * `serviceName` - The name of the service to call. You can pass just the hostname, without protocol and port (that you can specify into the `options` field), or a complete url string
+* `getDirectServiceProxy(serviceNameOrURL, options)` - returns a direct proxy to the service
+  * `serviceNameOrURL` - The name of the service to call. You can pass just the hostname, without protocol and port (that you can specify into the `options` field), or a complete url string
   * `options` - The same options described above
 
 Potentially, the `getDirectServiceProxy` method allows you to also query services outside the Platform. In this case, however, it is necessary to bear in mind that the platform headers will be automatically forwarded.
