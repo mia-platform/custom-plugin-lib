@@ -122,16 +122,26 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   }
 }
 
-function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
+function getDirectlyServiceBuilderFromRequest(serviceNameOrURL, baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
   const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  return serviceBuilder(serviceName, { ...this.getMiaHeaders(), ...extraHeaders }, options)
+  const serviceHeaders = { ...this.getMiaHeaders(), ...extraHeaders }
+  try {
+    const proxy = getDirectServiceProxyFromUrlString(
+      serviceNameOrURL,
+      serviceHeaders,
+      baseOptions
+    )
+    return proxy
+  } catch (error) {
+    return serviceBuilder(serviceNameOrURL, serviceHeaders, options)
+  }
 }
 
 function getDirectlyServiceBuilderFromService(serviceNameOrURL, baseOptions = {}) {
   try {
-    const proxy = getDirectServiceProxyFromUrlString(serviceNameOrURL, baseOptions)
+    const proxy = getDirectServiceProxyFromUrlString(serviceNameOrURL, {}, baseOptions)
     return proxy
   } catch (error) {
     return serviceBuilder(serviceNameOrURL, {}, baseOptions)
@@ -149,18 +159,21 @@ function getServiceBuilderFromService(baseOptions = {}) {
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
 }
 
-function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, baseOptions = {}) {
+function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, requestMiaHeaders = {}, baseOptions = {}) {
   let completeUrl
   try {
     completeUrl = new URL(serviceCompleteUrlString)
   } catch (error) {
     throw new Error(`getDirectServiceProxy: invalid url ${serviceCompleteUrlString}`)
   }
-  return serviceBuilder(completeUrl.hostname, {}, {
-    protocol: completeUrl.protocol,
-    port: completeUrl.port,
-    ...baseOptions,
-  })
+  return serviceBuilder(
+    completeUrl.hostname,
+    requestMiaHeaders,
+    {
+      protocol: completeUrl.protocol,
+      port: completeUrl.port,
+      ...baseOptions,
+    })
 }
 
 // TODO: test this
