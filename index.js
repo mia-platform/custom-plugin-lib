@@ -19,7 +19,10 @@
 const fastifyEnv = require('fastify-env')
 const fp = require('fastify-plugin')
 const fastifyFormbody = require('fastify-formbody')
+
 const Ajv = require('ajv')
+const addFormats = require('ajv-formats')
+
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
 
@@ -163,6 +166,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   const { config } = fastify
 
   const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
+  addFormats(ajv)
   fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
