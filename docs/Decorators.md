@@ -47,7 +47,7 @@ The first parameter of the handler function is [Request](https://www.fastify.io/
     * `setBody(newBody)` - modify the body of the original request.
     * `setHeaders(newHeaders)` - modify the headers of the original request.
     * `setQuery(newPath)` - modify the querystring of the original request.
-* `leaveOriginalRequestUnmodified` - leave the original request unmodified .
+* `leaveOriginalRequestUnmodified()` - leave the original request unmodified .
 
 ## POST and CATCH decorators
 ```js
@@ -99,7 +99,7 @@ Related to the original response:
     * `setBody(newBody)` - modify the body of the original response.
     * `setHeaders(newHeaders)` - modifies the headers of the original response.
     * `setStatusCode(newCode)` - changes the status code of the original response.
-* `leaveOriginalResponseUnmodified` - leaves the original response unmodified.
+* `leaveOriginalResponseUnmodified()` - leaves the original response unmodified.
 
 ## Abort chain
 To abort the decorator chain, you can call on the `request` the method:
