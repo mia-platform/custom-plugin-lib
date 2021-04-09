@@ -44,7 +44,7 @@ The params to be passed to these functions are:
   * a [Buffer](https://nodejs.org/api/buffer.html#)
   * one [Stream](https://nodejs.org/api/stream.html)
 * `querystring` - optional, an object that represents the querystring.
-* `options` - optional, an object that admits all the`options` listed above for the `getServiceProxy` and `getDirectServiceProxy` methods (which will eventually be overwritten), plus the following fields:
+* `options` - optional, an object that admits all the `options` listed above for the `getServiceProxy` and `getDirectServiceProxy` methods (which will eventually be overwritten), plus the following fields:
   * `returnAs` - a string that identifies the format in which you want to receive the response. It can be `JSON`,`BUFFER` or `STREAM`. Default `JSON`.
   * `allowedStatusCodes` - an array of integers that defines which status codes of the response are accepted. If the response status code is not contained in this array, the promise will be rejected. If this parameter is omitted, the promise is resolved in any case (even if the interrogated server answers 500).
   * `isMiaHeaderInjected` - a boolean value that identifies whether Mia's headers should be forwarded in the request. Default `true`.
