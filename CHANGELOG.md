@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unrealeased]
 
+### Fixed
+
+- replaced expired test certificates with new ones that will expire on 3 September 3061
+
 ## v2.3.0 - 2021-03-03
 
 - update lc39 to 3.3.0
