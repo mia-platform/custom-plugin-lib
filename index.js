@@ -122,15 +122,28 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   }
 }
 
-function getDirectlyServiceBuilderFromRequest(serviceName, baseOptions = {}) {
+function getDirectlyServiceBuilderFromRequest(serviceNameOrURL, baseOptions = {}) {
   const requestHeaders = this.getOriginalRequestHeaders()
   const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  return serviceBuilder(serviceName, { ...this.getMiaHeaders(), ...extraHeaders }, options)
+  const serviceHeaders = { ...this.getMiaHeaders(), ...extraHeaders }
+  try {
+    return getDirectServiceProxyFromUrlString(
+      serviceNameOrURL,
+      serviceHeaders,
+      baseOptions
+    )
+  } catch (error) {
+    return serviceBuilder(serviceNameOrURL, serviceHeaders, options)
+  }
 }
 
-function getDirectlyServiceBuilderFromService(serviceName, baseOptions = {}) {
-  return serviceBuilder(serviceName, {}, baseOptions)
+function getDirectlyServiceBuilderFromService(serviceNameOrURL, baseOptions = {}) {
+  try {
+    return getDirectServiceProxyFromUrlString(serviceNameOrURL, {}, baseOptions)
+  } catch (error) {
+    return serviceBuilder(serviceNameOrURL, {}, baseOptions)
+  }
 }
 
 function getServiceBuilderFromRequest(baseOptions = {}) {
@@ -142,6 +155,23 @@ function getServiceBuilderFromRequest(baseOptions = {}) {
 
 function getServiceBuilderFromService(baseOptions = {}) {
   return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
+}
+
+function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, requestMiaHeaders = {}, baseOptions = {}) {
+  let completeUrl
+  try {
+    completeUrl = new URL(serviceCompleteUrlString)
+  } catch (error) {
+    throw new Error(`getDirectServiceProxy: invalid url ${serviceCompleteUrlString}`)
+  }
+  return serviceBuilder(
+    completeUrl.hostname,
+    requestMiaHeaders,
+    {
+      protocol: completeUrl.protocol,
+      port: completeUrl.port,
+      ...baseOptions,
+    })
 }
 
 // TODO: test this

@@ -24,7 +24,7 @@ declare function customPlugin(envSchema?: customPlugin.environmentSchema): custo
 declare namespace customPlugin {
   type CustomService = (asyncInitFunction: AsyncInitFunction) => any
 
-  function getDirectServiceProxy(serviceName: string, options?: InitServiceOptions): Service
+  function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   interface environmentSchema {
     type: 'object',
@@ -49,7 +49,7 @@ declare namespace customPlugin {
     addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
-    getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
+    getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
@@ -59,7 +59,7 @@ declare namespace customPlugin {
     getGroups: () => string[],
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
-    getDirectServiceProxy: (serviceName: string, options?: InitServiceOptions) => Service,
+    getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
     USERID_HEADER_KEY: string,
     USER_PROPERTIES_HEADER_KEY: string,

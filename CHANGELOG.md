@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - replaced expired test certificates with new ones that will expire on 3 September 3061
+### Changed
+
+- the `getDirectServiceProxy` function now can receive a complete url as `serviceName` parameter
 
 ## v2.3.0 - 2021-03-03
 
