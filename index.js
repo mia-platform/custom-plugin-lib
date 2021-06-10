@@ -19,10 +19,7 @@
 const fastifyEnv = require('fastify-env')
 const fp = require('fastify-plugin')
 const fastifyFormbody = require('fastify-formbody')
-
 const Ajv = require('ajv')
-const addFormats = require('ajv-formats')
-
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
 
@@ -196,7 +193,6 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   const { config } = fastify
 
   const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
-  addFormats(ajv)
   fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
@@ -205,11 +201,7 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
   fastify.decorateRequest(CLIENTTYPE_HEADER_KEY, config[CLIENTTYPE_HEADER_KEY])
   fastify.decorateRequest(BACKOFFICE_HEADER_KEY, config[BACKOFFICE_HEADER_KEY])
   fastify.decorateRequest(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
-  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, {
-    getter() {
-      return config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header)
-    },
-  })
+  fastify.decorateRequest(ADDITIONAL_HEADERS_TO_PROXY, { getter: () => config[ADDITIONAL_HEADERS_TO_PROXY].split(',').filter(header => header) })
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
