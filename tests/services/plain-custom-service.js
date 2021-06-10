@@ -31,13 +31,13 @@ const schema = {
   },
 }
 
-function customParser(req, done) {
+function customParser(req, payload, done) {
   let data = ''
-  req.on('data', chunk => {
+  payload.on('data', chunk => {
     data += chunk
   })
 
-  req.on('end', () => {
+  payload.on('end', () => {
     done(null, data)
   })
 }
