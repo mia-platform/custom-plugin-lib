@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### BREAKING CHANGES
 
-- [RJMR-24](https://makeitapp.atlassian.net/browse/RJMR-24) ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression 
+- ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression 
 
 ### Fixed
 
