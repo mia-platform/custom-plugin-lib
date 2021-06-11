@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### BREAKING CHANGES
 
-- ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression 
+- ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression. 
+
+    This change is due to an incompatibility between fastify-env dependency env-schema and ajv formats. From ajv version 7.0.0 formats have been separated from the main package, requiring to be explicitly added. Visit ajv [official documentation](https://ajv.js.org/guide/formats.html#string-formats) and env-schema [official release page](https://github.com/fastify/env-schema/releases/tag/v3.0.0) for further details regarding this topic. 
+
+- Environment variables using default values cannot be required anymore (and viceversa). 
+
+    Fastify-env dependency env-schema no longer support both required and default properties to be defined simultaneously. Please make sure your environment variables now respect this constraint. You can have further details regarding this issue [here](https://github.com/fastify/env-schema/blob/master/index.js#L51)
 
 ### Fixed
 
@@ -54,11 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.2
+- updated lc39 dependency to 3.1.2
 
 ## v2.0.1 - 2020-09-22
 
-- [BMP-508](https://makeitapp.atlassian.net/browse/BMP-508): updated lc39 dependency to 3.1.1
+- updated lc39 dependency to 3.1.1
 
 ## v2.0.0 - 2020-09-17
 
