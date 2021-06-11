@@ -6,12 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unrealeased]
 
+### BREAKING CHANGES
+
+- [RJMR-24](https://makeitapp.atlassian.net/browse/RJMR-24) ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression 
+
 ### Fixed
 
 - replaced expired test certificates with new ones that will expire on 3 September 3061
 ### Changed
 
 - the `getDirectServiceProxy` function now can receive a complete url as `serviceName` parameter
+
+- [RJMR-24](https://makeitapp.atlassian.net/browse/RJMR-24) update dependencies to fastify v.3 and lc39 to v4.0.0
 
 ## v2.3.0 - 2021-03-03
 
