@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - the `getDirectServiceProxy` function now can receive a complete url as `serviceName` parameter
 
-- [RJMR-24](https://makeitapp.atlassian.net/browse/RJMR-24) update dependencies to fastify v.3 and lc39 to v4.0.0
+- update dependencies to fastify v3 and lc39 to v4.0.0
 
 ## v2.3.0 - 2021-03-03
 
