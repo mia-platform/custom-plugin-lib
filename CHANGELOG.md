@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unrealeased]
 
+## v3.0.0 - 2021-28-06 
+
 ### BREAKING CHANGES
 
 - ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression. 
