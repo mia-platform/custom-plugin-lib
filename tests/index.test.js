@@ -195,7 +195,45 @@ tap.test('Plain Custom Service', test => {
     })
 
     assert.strictSame(badResponse.statusCode, 400)
-    assert.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(badResponse.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(badResponse.payload), {
+      statusCode: 400,
+      message: 'body must NOT have additional properties',
+      error: 'Bad Request',
+    }, 'bad response')
+
+    const badResponse1 = await fastify.inject({
+      method: 'POST',
+      url: '/validation',
+      payload: { ...payload, foobar: 'not valid' },
+    })
+
+    assert.strictSame(badResponse1.statusCode, 400)
+    assert.strictSame(badResponse1.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(badResponse1.payload), {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'body.foobar must be equal to one of the allowed values',
+    }, 'enum validation')
+
+    const badResponse2 = await fastify.inject({
+      method: 'POST',
+      url: '/validation',
+      payload: {
+        ...payload,
+        foobar: 'foo1',
+        nested: { field: [1, 2, 3] },
+      },
+    })
+
+    assert.strictSame(badResponse2.statusCode, 400)
+    assert.strictSame(badResponse2.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(badResponse2.payload), {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'body.nested.field must be string',
+    }, 'nested fields validation')
+
     assert.end()
   })
 

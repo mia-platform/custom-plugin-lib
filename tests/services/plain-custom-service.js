@@ -26,6 +26,20 @@ const schema = {
     required: ['some'],
     properties: {
       some: { type: 'string' },
+      foobar: {
+        type: 'string',
+        enum: ['foo1', 'bar2', 'taz3'],
+      },
+      nested: {
+        type: 'object',
+        properties: {
+          field: {
+            type: 'string',
+          },
+        },
+        additionalProperties: false,
+        required: ['field'],
+      },
     },
     additionalProperties: false,
   },
