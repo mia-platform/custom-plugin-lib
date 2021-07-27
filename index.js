@@ -228,15 +228,14 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
       reply.send(new Error('Something went wrong'))
       return
     }
-    if (error.validation && error.validation.length > 0) {
-      const [{ instancePath, message }] = error.validation
-      const objectPath = `body${instancePath.replace(/\//g, '.')}`
-      const customErr = new Error(`${objectPath} ${message}`)
-      customErr.statusCode = 400
-      reply.send(customErr)
-      return
-    }
     reply.send(error)
+  })
+  fastify.setSchemaErrorFormatter((errors, dataVar) => {
+    const [{ instancePath, message }] = errors
+    const objectPath = `${dataVar}${instancePath.replace(/\//g, '.')}`
+    const customErr = new Error(`${objectPath} ${message}`)
+    customErr.statusCode = 400
+    return customErr
   })
 }
 

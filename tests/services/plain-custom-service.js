@@ -43,6 +43,12 @@ const schema = {
     },
     additionalProperties: false,
   },
+  querystring: {
+    type: 'object',
+    properties: {
+      some: { type: 'number' },
+    },
+  },
 }
 
 function customParser(req, payload, done) {
