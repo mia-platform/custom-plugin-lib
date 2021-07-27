@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unrealeased]
 
+### Added
+
+- improve validation error message
+
 ## v3.0.0 - 2021-28-06 
 
 ### BREAKING CHANGES
