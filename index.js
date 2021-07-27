@@ -226,9 +226,17 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
     if (reply.raw.statusCode === 500 && !error.statusCode) {
       request.log.error(error)
       reply.send(new Error('Something went wrong'))
-    } else {
-      reply.send(error)
+      return
     }
+    if (error.validation && error.validation.length > 0) {
+      const [{ instancePath, message }] = error.validation
+      const objectPath = `body${instancePath.replace(/\//g, '.')}`
+      const customErr = new Error(`${objectPath} ${message}`)
+      customErr.statusCode = 400
+      reply.send(customErr)
+      return
+    }
+    reply.send(error)
   })
 }
 
