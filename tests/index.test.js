@@ -234,6 +234,20 @@ tap.test('Plain Custom Service', test => {
       message: 'body.nested.field must be string',
     }, 'nested fields validation')
 
+    const badResponse3 = await fastify.inject({
+      method: 'POST',
+      url: '/validation?some=foo',
+      payload,
+    })
+
+    assert.strictSame(badResponse3.statusCode, 400)
+    assert.strictSame(badResponse3.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(badResponse3.payload), {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'querystring.some must be number',
+    }, 'nested fields validation')
+
     assert.end()
   })
 
