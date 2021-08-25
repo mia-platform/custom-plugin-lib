@@ -17,6 +17,7 @@
 import * as fastify from 'fastify'
 import * as http from 'http'
 import {FastifySchema} from 'fastify/types/schema'
+import {RouteGenericInterface} from 'fastify/types/route'
 
 export = customPlugin
 
@@ -49,14 +50,14 @@ declare namespace customPlugin {
 
   interface DecoratedFastify extends fastify.FastifyInstance {
     config: NodeJS.Dict<string>,
-    addRawCustomPlugin(method: RawCustomPluginMethod, path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
-    addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
-    addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
+    addRawCustomPlugin<RequestType>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<RequestType> | Handler<RequestType>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
+    addPreDecorator<RequestType>(path: string, handler: preDecoratorHandler<RequestType>): DecoratedFastify
+    addPostDecorator<RequestType>(path: string, handler: postDecoratorHandler<RequestType>): DecoratedFastify
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
-  interface DecoratedRequest extends fastify.FastifyRequest {
+  interface DecoratedRequest<T extends RouteGenericInterface> extends fastify.FastifyRequest<T> {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -76,9 +77,9 @@ declare namespace customPlugin {
   //
   // CUSTOM PLUGIN
   //
-  type BasicHandler<T> = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => T
-  type Handler = BasicHandler<void>
-  type AsyncHandler = BasicHandler<Promise<any>>
+  type BasicHandler<RequestType, ResponseType> = (this: DecoratedFastify, request: DecoratedRequest<RequestType>, reply: fastify.FastifyReply) => ResponseType
+  type Handler<RequestType> = BasicHandler<RequestType, void>
+  type AsyncHandler<RequestType> = BasicHandler<RequestType, Promise<any>>
 
   //
   // SERVICE
@@ -132,7 +133,7 @@ declare namespace customPlugin {
   }
   interface AbortRequestAction { }
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
-  type preDecoratorHandler = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
+  type preDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
 
   interface OriginalRequest {
     method: string,
@@ -148,7 +149,7 @@ declare namespace customPlugin {
     body?: any
   }
 
-  interface PreDecoratorDecoratedRequest extends DecoratedRequest {
+  interface PreDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
@@ -174,9 +175,9 @@ declare namespace customPlugin {
   }
   interface AbortResponseAction { }
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
-  type postDecoratorHandler = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
+  type postDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
 
-  interface PostDecoratorDecoratedRequest extends DecoratedRequest {
+  interface PostDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
@@ -193,11 +194,11 @@ declare namespace customPlugin {
 
     changeOriginalRequest: () => ChangeResponseAction,
     leaveOriginalResponseUnmodified: () => LeaveResponseUnchangedAction,
-    abortChain: (statusCode: number, finalBody: any, headers?: object) => AbortResponseAction
+    abortChain: (statusCode: number, finalBody: any, headers?: http.IncomingHttpHeaders) => AbortResponseAction
   }
 
   // Utilities
-  interface InputOutputSchemas extends FastifySchema{
+  interface InputOutputSchemas extends FastifySchema {
     tags?: string[]
   }
 }
