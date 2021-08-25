@@ -16,6 +16,7 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
+import {IncomingHttpHeaders} from "http";
 
 export = customPlugin
 
@@ -47,7 +48,7 @@ declare namespace customPlugin {
   type RawCustomPluginMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD'
 
   interface DecoratedFastify extends fastify.FastifyInstance {
-    config: Record<string, string | undefined>,
+    config: NodeJS.Dict<string>,
     addRawCustomPlugin(method: RawCustomPluginMethod, path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
@@ -75,8 +76,9 @@ declare namespace customPlugin {
   //
   // CUSTOM PLUGIN
   //
-  type Handler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => void
-  type AsyncHandler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => Promise<any>
+  type BasicHandler<T> = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => T
+  type Handler = BasicHandler<void>
+  type AsyncHandler = BasicHandler<Promise<any>>
 
   //
   // SERVICE
@@ -87,16 +89,18 @@ declare namespace customPlugin {
     headers?: object,
     prefix?: string,
   }
+  type Certificate = string | Buffer
+  type ServiceFormats = 'JSON' | 'BUFFER' | 'STREAM'
   interface ServiceOptions extends InitServiceOptions{
-    returnAs?: 'JSON' | 'BUFFER' | 'STREAM'
+    returnAs?: ServiceFormats
     allowedStatusCodes?: number[]
     isMiaHeaderInjected?: boolean
-    cert?: string | Buffer
-    key?: string | Buffer
-    ca?: string | Buffer
+    cert?: Certificate
+    key?: Certificate
+    ca?: Certificate
   }
   interface BaseServiceResponse extends http.ServerResponse {
-    headers: object
+    headers: IncomingHttpHeaders
   }
   interface StreamedServiceResponse extends BaseServiceResponse {
   }
@@ -107,13 +111,14 @@ declare namespace customPlugin {
     payload: Buffer
   }
   type ServiceResponse = StreamedServiceResponse | JSONServiceResponse | BufferServiceResponse
+  type QueryString = string | NodeJS.Dict<string | ReadonlyArray<string>> | Iterable<[string, string]> | ReadonlyArray<[string, string]>
 
   interface Service {
-    get: (path: string, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    post: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    put: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    patch: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    delete: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
+    get: (path: string, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    post: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    put: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    patch: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    delete: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
   }
 
   //
