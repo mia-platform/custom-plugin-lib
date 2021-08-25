@@ -80,7 +80,7 @@ tap.test('Test Environment variables', test => {
       })
       assert.fail()
     } catch (error) {
-      assert.strictSame(error.message, 'must match pattern "^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$"')
+      assert.strictSame(error.message, 'env/MICROSERVICE_GATEWAY_SERVICE_NAME must match pattern "^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$"')
     }
 
     assert.end()

@@ -51,7 +51,7 @@ async function setupFastify(filePath, envVariables) {
 
 tap.test('', test => {
   nock.disableNetConnect()
-  test.tearDown(() => {
+  test.teardown(() => {
     nock.enableNetConnect()
   })
 

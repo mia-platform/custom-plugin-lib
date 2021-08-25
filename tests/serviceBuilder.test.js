@@ -34,7 +34,7 @@ function wait(time) {
 
 tap.test('serviceBuilder', test => {
   nock.disableNetConnect()
-  test.tearDown(() => {
+  test.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -1255,7 +1255,7 @@ tap.test('serviceBuilder', test => {
 
   test.test('agent', async assert => {
     nock.enableNetConnect('127.0.0.1')
-    assert.tearDown(() => {
+    assert.teardown(() => {
       nock.disableNetConnect()
     })
 
@@ -1389,7 +1389,7 @@ tap.test('serviceBuilder', test => {
 
   test.test('tls options', async assert => {
     nock.enableNetConnect('localhost:3200')
-    assert.tearDown(() => {
+    assert.teardown(() => {
       nock.disableNetConnect()
     })
 
@@ -1418,7 +1418,7 @@ tap.test('serviceBuilder', test => {
     assert.test('returnAs: JSON', async assert => {
       const server = await createServer()
 
-      assert.tearDown(() => {
+      assert.teardown(() => {
         server.close()
       })
 
@@ -1453,7 +1453,7 @@ tap.test('serviceBuilder', test => {
     assert.test('returnAs: BUFFER', async assert => {
       const server = await createServer()
 
-      assert.tearDown(() => {
+      assert.teardown(() => {
         server.close()
       })
 
@@ -1488,7 +1488,7 @@ tap.test('serviceBuilder', test => {
     assert.test('returnAs: STREAM', async assert => {
       const server = await createServer()
 
-      assert.tearDown(() => {
+      assert.teardown(() => {
         server.close()
       })
 
@@ -1533,7 +1533,7 @@ tap.test('serviceBuilder', test => {
     assert.test('returnAs: JSON - passing options to service initialization', async assert => {
       const server = await createServer()
 
-      assert.tearDown(() => {
+      assert.teardown(() => {
         server.close()
       })
 

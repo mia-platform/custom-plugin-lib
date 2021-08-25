@@ -360,10 +360,10 @@ tap.test('Advanced config', test => {
         schema,
       } = parsedPayload.config
 
-      assert.notEqual(method, 'overwritten property')
-      assert.notEqual(path, 'overwritten property')
-      assert.notEqual(handler, 'overwritten property')
-      assert.notEqual(schema, 'overwritten property')
+      assert.not(method, 'overwritten property')
+      assert.not(path, 'overwritten property')
+      assert.not(handler, 'overwritten property')
+      assert.not(schema, 'overwritten property')
 
       assert.end()
     })

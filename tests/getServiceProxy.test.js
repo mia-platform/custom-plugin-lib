@@ -17,7 +17,7 @@ const {
 
 tap.test('getDirectServiceProxy available for testing', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -38,7 +38,7 @@ tap.test('getDirectServiceProxy available for testing', async t => {
 
 tap.test('getDirectServiceProxy accept all options', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -62,7 +62,7 @@ tap.test('getDirectServiceProxy accept all options', async t => {
 
 tap.test('getServiceProxy available for testing', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -84,7 +84,7 @@ tap.test('getServiceProxy available for testing', async t => {
 
 tap.test('getDirectServiceProxy available for testing - complete url passed', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -105,7 +105,7 @@ tap.test('getDirectServiceProxy available for testing - complete url passed', as
 
 tap.test('getDirectServiceProxy available for testing - https url', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -126,7 +126,7 @@ tap.test('getDirectServiceProxy available for testing - https url', async t => {
 
 tap.test('getDirectServiceProxy available for testing - custom port 3000 - custom headers', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
@@ -153,7 +153,7 @@ tap.test('getDirectServiceProxy available for testing - custom port 3000 - custo
 
 tap.test('getDirectServiceProxy available for testing - https url - custom port 3001', async t => {
   nock.disableNetConnect()
-  t.tearDown(() => {
+  t.teardown(() => {
     nock.enableNetConnect()
   })
 
