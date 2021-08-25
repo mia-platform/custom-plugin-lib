@@ -48,7 +48,7 @@ async function setupFastify(filePath, envVariables) {
 
 tap.test('Call microservice gateway proxy', test => {
   nock.disableNetConnect()
-  test.tearDown(() => {
+  test.teardown(() => {
     nock.enableNetConnect()
   })
 

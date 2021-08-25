@@ -22,7 +22,8 @@
     "Davide Bianchi <bianchidavide12@gmail.com>",
     "Riccardo Di Benedetto <dibe.ricky@gmail.com>",
     "Luca Marzi <luca.marzi@mail.polimi.it>",
-    "Fabio Percivaldi <fabio.percivaldi@hotmail.it"
+    "Fabio Percivaldi <fabio.percivaldi@hotmail.it>",
+    "Francesco Francomano <silversoulKali@gmail.com>"
   ],
   "main": "index.js",
   "repository": {
@@ -37,12 +38,12 @@
     "start": "echo 'unable to start the library directly' && exit 1",
     "test": "npm run lint && npm run unit && npm run checkonly && npm run typescript",
     "typescript": "tsc --project ./tests/types/tsconfig.json",
-    "unit": "tap --no-esm -b -o tap.log tests/*.test.js",
+    "unit": "tap -b -o tap.log tests/*.test.js",
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^4.0.0",
-    "@types/node": "^15.12.0",
+    "@mia-platform/lc39": "^5.0.0",
+    "@types/node": "^16.7.1",
     "ajv": "^8.6.0",
     "fastify-env": "^2.1.0",
     "fastify-formbody": "^5.0.0",
@@ -58,7 +59,7 @@
     "nock": "^13.0.11",
     "pre-commit": "^1.2.2",
     "proxy": "^1.0.2",
-    "tap": "^14.11.0",
+    "tap": "^15.0.9",
     "typescript": "^4.2.3"
   },
   "engines": {
@@ -66,5 +67,8 @@
   },
   "eslintConfig": {
     "extends": "@mia-platform/eslint-config-mia"
+  },
+  "tap": {
+    "check-coverage": false
   }
 }
