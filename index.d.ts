@@ -16,7 +16,6 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
-import {IncomingHttpHeaders} from "http";
 
 export = customPlugin
 
@@ -100,7 +99,7 @@ declare namespace customPlugin {
     ca?: Certificate
   }
   interface BaseServiceResponse extends http.ServerResponse {
-    headers: IncomingHttpHeaders
+    headers: http.IncomingHttpHeaders
   }
   interface StreamedServiceResponse extends BaseServiceResponse {
   }
@@ -127,8 +126,8 @@ declare namespace customPlugin {
   interface LeaveRequestUnchangedAction { }
   interface ChangeRequestAction {
     setBody: (newBody: any) => ChangeRequestAction,
-    setQuery: (newQuery: object) => ChangeRequestAction,
-    setHeaders: (newHeaders: object) => ChangeRequestAction
+    setQuery: (newQuery: QueryString) => ChangeRequestAction,
+    setHeaders: (newHeaders: http.IncomingHttpHeaders) => ChangeRequestAction
   }
   interface AbortRequestAction { }
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
@@ -137,30 +136,30 @@ declare namespace customPlugin {
   interface OriginalRequest {
     method: string,
     path: string,
-    query: object,
-    headers: object,
-    body?: object
+    query: QueryString,
+    headers: http.IncomingHttpHeaders,
+    body?: any
   }
 
   interface OriginalResponse {
     statusCode: number,
-    headers: object,
-    body?: object
+    headers: http.OutgoingHttpHeaders,
+    body?: any
   }
 
   interface PreDecoratorDecoratedRequest extends DecoratedRequest {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
-    getOriginalRequestHeaders: () => object,
-    getOriginalRequestQuery: () => object
+    getOriginalRequestHeaders: () => http.IncomingHttpHeaders,
+    getOriginalRequestQuery: () => QueryString
     getOriginalRequestBody: () => any,
 
-    getMiaHeaders: () => object,
+    getMiaHeaders: () => NodeJS.Dict<string>,
 
     changeOriginalRequest: () => ChangeRequestAction,
     leaveOriginalRequestUnmodified: () => LeaveRequestUnchangedAction,
-    abortChain: (statusCode: number, finalBody: any, headers?: object) => AbortRequestAction
+    abortChain: (statusCode: number, finalBody: any, headers?: http.IncomingHttpHeaders) => AbortRequestAction
   }
 
   //
@@ -170,7 +169,7 @@ declare namespace customPlugin {
   interface ChangeResponseAction {
     setBody: (newBody: any) => ChangeResponseAction,
     setStatusCode: (newStatusCode: number) => ChangeResponseAction,
-    setHeaders: (newHeaders: object) => ChangeResponseAction
+    setHeaders: (newHeaders: http.IncomingHttpHeaders) => ChangeResponseAction
   }
   interface AbortResponseAction { }
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
@@ -180,16 +179,16 @@ declare namespace customPlugin {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
-    getOriginalRequestHeaders: () => object,
-    getOriginalRequestQuery: () => object
+    getOriginalRequestHeaders: () => http.IncomingHttpHeaders,
+    getOriginalRequestQuery: () => QueryString
     getOriginalRequestBody: () => any,
 
     getOriginalResponse: () => OriginalResponse,
-    getOriginalResponseHeaders: () => object,
+    getOriginalResponseHeaders: () => http.OutgoingHttpHeaders,
     getOriginalResponseBody: () => any,
     getOriginalResponseStatusCode: () => number,
 
-    getMiaHeaders: () => object,
+    getMiaHeaders: () => NodeJS.Dict<string>,
 
     changeOriginalRequest: () => ChangeResponseAction,
     leaveOriginalResponseUnmodified: () => LeaveResponseUnchangedAction,
