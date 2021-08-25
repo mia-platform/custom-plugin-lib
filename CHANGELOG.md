@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### BREAKING CHANGES
+
+- [@mia-platform/lc39](https://github.com/mia-platform/lc39) updated to v5
+   - OpenAPI 3 is now the default version. Read the [official documentation](https://github.com/mia-platform/lc39/blob/master/docs/main-entrypoint.md#exposed-swagger-documentation) for more
+
 ## v3.1.1 - 2021-07-27
 
 ### Fixed
