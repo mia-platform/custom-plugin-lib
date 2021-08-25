@@ -17,7 +17,6 @@
 import * as fastify from 'fastify'
 import * as http from 'http'
 import {FastifySchema} from 'fastify/types/schema'
-import {RouteGenericInterface} from 'fastify/types/route'
 
 export = customPlugin
 
@@ -57,7 +56,7 @@ declare namespace customPlugin {
     getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
-  interface DecoratedRequest<T extends RouteGenericInterface> extends fastify.FastifyRequest<T> {
+  interface DecoratedRequest<T> extends fastify.FastifyRequest<{Body: T}> {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -87,7 +86,7 @@ declare namespace customPlugin {
   interface InitServiceOptions {
     port?: number,
     protocol?: 'http' | 'https',
-    headers?: object,
+    headers?: http.IncomingHttpHeaders,
     prefix?: string,
   }
   type Certificate = string | Buffer
