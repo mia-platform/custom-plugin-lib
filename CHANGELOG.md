@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [@mia-platform/lc39](https://github.com/mia-platform/lc39) updated to v5
    - OpenAPI 3 is now the default version. Read the [official documentation](https://github.com/mia-platform/lc39/blob/master/docs/main-entrypoint.md#exposed-swagger-documentation) for more
-- Improved types of DecoratedFastify
+- Improved types of whole lib
 
 ## v3.1.1 - 2021-07-27
 
