@@ -16,6 +16,7 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
+import {FastifySchema} from 'fastify/types/schema'
 
 export = customPlugin
 
@@ -196,16 +197,7 @@ declare namespace customPlugin {
   }
 
   // Utilities
-  interface InputOutputSchemas {
-    body?: JSONSchema,
-    querystring?: JSONSchema,
-    headers?: JSONSchema,
-    params?: JSONSchema,
-    response?: {
-      [code: number]: JSONSchema,
-      [code: string]: JSONSchema
-    },
+  interface InputOutputSchemas extends FastifySchema{
     tags?: string[]
   }
-  type JSONSchema = object
 }
