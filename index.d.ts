@@ -89,9 +89,9 @@ declare namespace customPlugin {
     prefix?: string,
   }
   type Certificate = string | Buffer
-  type ServiceFormats = 'JSON' | 'BUFFER' | 'STREAM'
+  type ResponseFormats = 'JSON' | 'BUFFER' | 'STREAM'
   interface ServiceOptions extends InitServiceOptions{
-    returnAs?: ServiceFormats
+    returnAs?: ResponseFormats
     allowedStatusCodes?: number[]
     isMiaHeaderInjected?: boolean
     cert?: Certificate
