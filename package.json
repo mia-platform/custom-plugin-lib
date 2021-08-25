@@ -41,7 +41,7 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@mia-platform/lc39": "^4.0.0",
+    "@mia-platform/lc39": "^5.0.0",
     "@types/node": "^15.12.0",
     "ajv": "^8.6.0",
     "fastify-env": "^2.1.0",
