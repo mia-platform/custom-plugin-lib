@@ -44,9 +44,11 @@ declare namespace customPlugin {
     'prefixTrailingSlash'
   >
 
+  type RawCustomPluginMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD'
+
   interface DecoratedFastify extends fastify.FastifyInstance {
-    config: object,
-    addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
+    config: Record<string, string | undefined>,
+    addRawCustomPlugin(method: RawCustomPluginMethod, path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
     addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
