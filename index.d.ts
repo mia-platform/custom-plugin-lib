@@ -16,7 +16,6 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
-import {FastifySchema} from 'fastify/types/schema'
 
 export = customPlugin
 
@@ -197,7 +196,7 @@ declare namespace customPlugin {
   }
 
   // Utilities
-  interface InputOutputSchemas extends FastifySchema {
+  interface InputOutputSchemas extends fastify.FastifySchema {
     tags?: string[]
   }
 }
