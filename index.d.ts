@@ -44,16 +44,18 @@ declare namespace customPlugin {
     'prefixTrailingSlash'
   >
 
+  type RawCustomPluginMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD'
+
   interface DecoratedFastify extends fastify.FastifyInstance {
-    config: object,
-    addRawCustomPlugin(method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD', path: string, handler: AsyncHandler | Handler, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
-    addPreDecorator(path: string, handler: preDecoratorHandler): DecoratedFastify
-    addPostDecorator(path: string, handler: postDecoratorHandler): DecoratedFastify
+    config: NodeJS.Dict<string>,
+    addRawCustomPlugin<RequestType>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<RequestType> | Handler<RequestType>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
+    addPreDecorator<RequestType>(path: string, handler: preDecoratorHandler<RequestType>): DecoratedFastify
+    addPostDecorator<RequestType>(path: string, handler: postDecoratorHandler<RequestType>): DecoratedFastify
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
   }
 
-  interface DecoratedRequest extends fastify.FastifyRequest {
+  interface DecoratedRequest<T> extends fastify.FastifyRequest<{Body: T}> {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -73,8 +75,9 @@ declare namespace customPlugin {
   //
   // CUSTOM PLUGIN
   //
-  type Handler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => void
-  type AsyncHandler = (this: DecoratedFastify, request: DecoratedRequest, reply: fastify.FastifyReply) => Promise<any>
+  type BasicHandler<RequestType, ResponseType> = (this: DecoratedFastify, request: DecoratedRequest<RequestType>, reply: fastify.FastifyReply) => ResponseType
+  type Handler<RequestType> = BasicHandler<RequestType, void>
+  type AsyncHandler<RequestType> = BasicHandler<RequestType, Promise<any>>
 
   //
   // SERVICE
@@ -82,19 +85,21 @@ declare namespace customPlugin {
   interface InitServiceOptions {
     port?: number,
     protocol?: 'http' | 'https',
-    headers?: object,
+    headers?: http.IncomingHttpHeaders,
     prefix?: string,
   }
+  type Certificate = string | Buffer
+  type ResponseFormats = 'JSON' | 'BUFFER' | 'STREAM'
   interface ServiceOptions extends InitServiceOptions{
-    returnAs?: 'JSON' | 'BUFFER' | 'STREAM'
+    returnAs?: ResponseFormats
     allowedStatusCodes?: number[]
     isMiaHeaderInjected?: boolean
-    cert?: string | Buffer
-    key?: string | Buffer
-    ca?: string | Buffer
+    cert?: Certificate
+    key?: Certificate
+    ca?: Certificate
   }
   interface BaseServiceResponse extends http.ServerResponse {
-    headers: object
+    headers: http.IncomingHttpHeaders
   }
   interface StreamedServiceResponse extends BaseServiceResponse {
   }
@@ -105,13 +110,14 @@ declare namespace customPlugin {
     payload: Buffer
   }
   type ServiceResponse = StreamedServiceResponse | JSONServiceResponse | BufferServiceResponse
+  type QueryString = string | NodeJS.Dict<string | ReadonlyArray<string>> | Iterable<[string, string]> | ReadonlyArray<[string, string]>
 
   interface Service {
-    get: (path: string, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    post: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    put: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    patch: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
-    delete: (path: string, body: any | Buffer | ReadableStream, queryString?: object, options?: ServiceOptions) => Promise<ServiceResponse>,
+    get: (path: string, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    post: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    put: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    patch: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    delete: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
   }
 
   //
@@ -120,40 +126,40 @@ declare namespace customPlugin {
   interface LeaveRequestUnchangedAction { }
   interface ChangeRequestAction {
     setBody: (newBody: any) => ChangeRequestAction,
-    setQuery: (newQuery: object) => ChangeRequestAction,
-    setHeaders: (newHeaders: object) => ChangeRequestAction
+    setQuery: (newQuery: QueryString) => ChangeRequestAction,
+    setHeaders: (newHeaders: http.IncomingHttpHeaders) => ChangeRequestAction
   }
   interface AbortRequestAction { }
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
-  type preDecoratorHandler = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
+  type preDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
 
   interface OriginalRequest {
     method: string,
     path: string,
-    query: object,
-    headers: object,
-    body?: object
+    query: QueryString,
+    headers: http.IncomingHttpHeaders,
+    body?: any
   }
 
   interface OriginalResponse {
     statusCode: number,
-    headers: object,
-    body?: object
+    headers: http.OutgoingHttpHeaders,
+    body?: any
   }
 
-  interface PreDecoratorDecoratedRequest extends DecoratedRequest {
+  interface PreDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
-    getOriginalRequestHeaders: () => object,
-    getOriginalRequestQuery: () => object
+    getOriginalRequestHeaders: () => http.IncomingHttpHeaders,
+    getOriginalRequestQuery: () => QueryString
     getOriginalRequestBody: () => any,
 
-    getMiaHeaders: () => object,
+    getMiaHeaders: () => NodeJS.Dict<string>,
 
     changeOriginalRequest: () => ChangeRequestAction,
     leaveOriginalRequestUnmodified: () => LeaveRequestUnchangedAction,
-    abortChain: (statusCode: number, finalBody: any, headers?: object) => AbortRequestAction
+    abortChain: (statusCode: number, finalBody: any, headers?: http.IncomingHttpHeaders) => AbortRequestAction
   }
 
   //
@@ -163,43 +169,34 @@ declare namespace customPlugin {
   interface ChangeResponseAction {
     setBody: (newBody: any) => ChangeResponseAction,
     setStatusCode: (newStatusCode: number) => ChangeResponseAction,
-    setHeaders: (newHeaders: object) => ChangeResponseAction
+    setHeaders: (newHeaders: http.IncomingHttpHeaders) => ChangeResponseAction
   }
   interface AbortResponseAction { }
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
-  type postDecoratorHandler = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
+  type postDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
 
-  interface PostDecoratorDecoratedRequest extends DecoratedRequest {
+  interface PostDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
-    getOriginalRequestHeaders: () => object,
-    getOriginalRequestQuery: () => object
+    getOriginalRequestHeaders: () => http.IncomingHttpHeaders,
+    getOriginalRequestQuery: () => QueryString
     getOriginalRequestBody: () => any,
 
     getOriginalResponse: () => OriginalResponse,
-    getOriginalResponseHeaders: () => object,
+    getOriginalResponseHeaders: () => http.OutgoingHttpHeaders,
     getOriginalResponseBody: () => any,
     getOriginalResponseStatusCode: () => number,
 
-    getMiaHeaders: () => object,
+    getMiaHeaders: () => NodeJS.Dict<string>,
 
     changeOriginalRequest: () => ChangeResponseAction,
     leaveOriginalResponseUnmodified: () => LeaveResponseUnchangedAction,
-    abortChain: (statusCode: number, finalBody: any, headers?: object) => AbortResponseAction
+    abortChain: (statusCode: number, finalBody: any, headers?: http.IncomingHttpHeaders) => AbortResponseAction
   }
 
   // Utilities
-  interface InputOutputSchemas {
-    body?: JSONSchema,
-    querystring?: JSONSchema,
-    headers?: JSONSchema,
-    params?: JSONSchema,
-    response?: {
-      [code: number]: JSONSchema,
-      [code: string]: JSONSchema
-    },
+  interface InputOutputSchemas extends fastify.FastifySchema {
     tags?: string[]
   }
-  type JSONSchema = object
 }
