@@ -45,7 +45,7 @@
     "@mia-platform/lc39": "^5.0.0",
     "@types/node": "^16.7.1",
     "ajv": "^8.6.0",
-    "fastify-env": "^2.1.0",
+    "fastify-env": "^2.1.1",
     "fastify-formbody": "^5.0.0",
     "fastify-plugin": "^3.0.0",
     "http-errors": "^1.8.0",
