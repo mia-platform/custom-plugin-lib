@@ -59,7 +59,7 @@ module.exports = customService(async function handler(service) {
 
 ## Adding a shared schema
 
-It is possible to add shared schema between routes. For this purpose, you can access to the `ajv` instance used to perform route validation. It is possible to add a schema to the `ajv` instance using the `addValidatorSchema` method. It is also possible to get the added schema using the `getValidatorSchema` method.
+It is possible to add shared schema between routes. For this purpose, you can access to the `ajv` instance used to perform route validation. It is possible to add a schema to the `ajv` instance using the `addValidatorSchema` method. `addValidatorSchema` method also adds schema to fastify using *fastify.addSchema* function. It is also possible to get the added schema using the `getValidatorSchema` method.
 
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
