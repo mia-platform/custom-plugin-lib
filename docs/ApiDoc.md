@@ -1,4 +1,5 @@
 # API documentation
+
 Services developed with this library automatically also exposes the documentation of the routes and decorators that
 are implemented. The documentation is specified using the [OpenAPI 2.0 standard](https://swagger.io/specification/v2/)
 and exhibited through [Swagger](https://swagger.io).
@@ -11,6 +12,7 @@ and responses to a route must conform to the format accepted by
 [Fastify](https://www.fastify.io/docs/latest/Validation-and-Serialization).
 
 ## Example
+
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
 

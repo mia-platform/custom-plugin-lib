@@ -4,13 +4,14 @@ Decorators are particular endpoint that a microservice can expose. Using the Dev
 
 Decorators allow you to perform custom actions upon specific API handler invocations. There are three types of decorators:
 
- * **PRE**: invoked *before* the configured route handler.
- * **POST**: invoked *after* the successful execution of configured route handler (a 2xx status code is returned).
- * **CATCH**: invoked after the failure of the configured route handler (any other error status code, 4xx or 5xx).
+* **PRE**: invoked *before* the configured route handler.
+* **POST**: invoked *after* the successful execution of configured route handler (a 2xx status code is returned).
+* **CATCH**: invoked after the failure of the configured route handler (any other error status code, 4xx or 5xx).
 
 You can add a decorator with these methods:
-*  ```addPreDecorator(path, handler)```
-*  ```addPostDecorator(path, handler)```
+
+* ```addPreDecorator(path, handler)```
+* ```addPostDecorator(path, handler)```
 
 whose arguments are, in order:
 
@@ -19,6 +20,7 @@ whose arguments are, in order:
 documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Routes/#routes-config).
 
 ## PRE decorators
+
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
 
@@ -36,7 +38,9 @@ service.addPreDecorator('/checkwho', function checkWhoHandler(request) {
   })
 }) 
 ```
+
 The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the `addRawCustomPlugin` method, in addition, with the following methods:
+
 * `getOriginalRequest()` - returns the original request.
 * `getOriginalRequestMethod()` - returns the original request HTTP method.
 * `getOriginalRequestPath()` - returns the path of the original request.
@@ -44,12 +48,13 @@ The first parameter of the handler function is [Request](https://www.fastify.io/
 * `getOriginalRequestQuery()` - returns the querystring of the original request.
 * `getOriginalRequestBody()` - returns the body of the original request.
 * `changeOriginalRequest()`- returns a builder object with following methods: 
-    * `setBody(newBody)` - modify the body of the original request.
-    * `setHeaders(newHeaders)` - modify the headers of the original request.
-    * `setQuery(newPath)` - modify the querystring of the original request.
+  * `setBody(newBody)` - modify the body of the original request.
+  * `setHeaders(newHeaders)` - modify the headers of the original request.
+  * `setQuery(newPath)` - modify the querystring of the original request.
 * `leaveOriginalRequestUnmodified()` - leave the original request unmodified .
 
 ## POST and CATCH decorators
+
 ```js
 ...
 /*
@@ -83,12 +88,13 @@ service.addPostDecorator('/catch', function exceptionHandler(request) {
 ```
 
 Even in this case the first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is decorated as the `addRawCustomPlugin` method, in addition, with the following methods:
+
 * `getOriginalRequest()` - returns the original request.
-*  `getOriginalRequestMethod()` - returns the original request method.
-*  `getOriginalRequestPath()` - returns the path of the original request.
-*  `getOriginalRequestHeaders()` - returns the headers of the original request.
-*  `getOriginalRequestQuery()` - returns the querystring of the original request.
-*  `getOriginalRequestBody()` - returns the body of the original request.
+* `getOriginalRequestMethod()` - returns the original request method.
+* `getOriginalRequestPath()` - returns the path of the original request.
+* `getOriginalRequestHeaders()` - returns the headers of the original request.
+* `getOriginalRequestQuery()` - returns the querystring of the original request.
+* `getOriginalRequestBody()` - returns the body of the original request.
 
 Related to the original response:
 
@@ -96,12 +102,13 @@ Related to the original response:
 * `getOriginalResponseHeaders()` - returns the headers of the original response.
 * `getOriginalResponseStatusCode()` - returns the status code of the original response.
 * `changeOriginalResponse()`- returns a builder object with following methods: 
-    * `setBody(newBody)` - modify the body of the original response.
-    * `setHeaders(newHeaders)` - modifies the headers of the original response.
-    * `setStatusCode(newCode)` - changes the status code of the original response.
+  * `setBody(newBody)` - modify the body of the original response.
+  * `setHeaders(newHeaders)` - modifies the headers of the original response.
+  * `setStatusCode(newCode)` - changes the status code of the original response.
 * `leaveOriginalResponseUnmodified()` - leaves the original response unmodified.
 
 ## Abort chain
+
 To abort the decorator chain, you can call on the `request` the method:
 
  `abortChain(finalStatusCode, finalBody, finalHeaders)`
@@ -111,6 +118,5 @@ To abort the decorator chain, you can call on the `request` the method:
 * `finalStatusCode` - the final returned status code.
 * `finalBody` - the final returned body.
 * `finalHeaders` - the final returned headers.
-
 
 > **_More examples?_** Go [here](../examples/advanced/index.js) to see another decorators implementations.
