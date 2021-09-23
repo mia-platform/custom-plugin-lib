@@ -1,7 +1,9 @@
 # Logging
+
 You can log a message to see in DevOps console. The library use the [Fastify logging system](https://www.fastify.io/docs/v2.0.x/Logging/), that is based on [pino](https://github.com/pinojs/pino).
 
 To log messages call these methods on the logger instance of request. Logging is enabled by default. Therefore you can call on `request.log` or `service.log`:
+
 * `debug()`
 * `info()`
 * `warn()`
@@ -13,6 +15,7 @@ Each method creates a log with the homonym level.
 By default the library will generate two logs for each request, one representing the incoming request and one for the request completion, logs are created with *trace* and *info* levels respectively and already provide useful information for later analysis or debugging. If you need more, you can add your logs.
 
 ## Example
+
 ```js
 service.addPostDecorator('/notify', function notifyHandler(request) {
   // Get "notifications" setting from the request querystring
@@ -38,4 +41,5 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
   }
 ) 
 ```
+
 For further detail about logs can you see the [guidelines for logs](https://docs.mia-platform.eu/development_suite/monitoring-dashboard/dev_ops_guide/log/).
