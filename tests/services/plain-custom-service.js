@@ -27,8 +27,7 @@ const schema = {
     properties: {
       some: { type: 'string' },
       foobar: {
-        type: 'string',
-        enum: ['foo1', 'bar2', 'taz3'],
+        $ref: 'foobar#',
       },
       nested: {
         type: 'object',
@@ -49,6 +48,14 @@ const schema = {
       some: { type: 'number' },
     },
   },
+  headers: {
+    type: 'object',
+    properties: {
+      foobar: {
+        $ref: 'foobar#',
+      },
+    },
+  },
 }
 
 function customParser(req, payload, done) {
@@ -63,6 +70,12 @@ function customParser(req, payload, done) {
 }
 
 module.exports = customService(async function clientGroups(service) {
+  service.ajv.addSchema({
+    $id: 'foobar',
+    type: 'string',
+    enum: ['foo1', 'bar2', 'taz3'],
+  })
+
   service.register(fastifyRoutes)
   function handler(request, reply) {
     reply.send('Hello world!')
