@@ -70,11 +70,12 @@ function customParser(req, payload, done) {
 }
 
 module.exports = customService(async function clientGroups(service) {
-  service.ajv.addSchema({
+  service.addValidatorSchema({
     $id: 'foobar',
     type: 'string',
     enum: ['foo1', 'bar2', 'taz3'],
   })
+  service.assert.ok(service.getValidatorSchema('foobar'))
 
   service.register(fastifyRoutes)
   function handler(request, reply) {

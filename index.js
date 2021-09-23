@@ -194,7 +194,8 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
   fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
-  fastify.decorate('ajv', ajv)
+  fastify.decorate('addValidatorSchema', ajv.addSchema.bind(ajv))
+  fastify.decorate('getValidatorSchema', ajv.getSchema.bind(ajv))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
   fastify.decorateRequest(USER_PROPERTIES_HEADER_KEY, config[USER_PROPERTIES_HEADER_KEY])

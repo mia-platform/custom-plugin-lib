@@ -59,13 +59,13 @@ module.exports = customService(async function handler(service) {
 
 ## Adding a shared schema
 
-It is possible to add shared schema between routes. For this purpose, you can access to the `ajv` instance used to perform route validation. It is possible to add a schema to the `ajv` instance using the `addSchema` method:
+It is possible to add shared schema between routes. For this purpose, you can access to the `ajv` instance used to perform route validation. It is possible to add a schema to the `ajv` instance using the `addValidatorSchema` method. It is also possible to get the added schema using the `getValidatorSchema` method.
 
 ```js
 const customService = require('@mia-platform/custom-plugin-lib')()
 
 module.exports = customService(async function handler(service) {
-  service.ajv.addSchema({
+  service.addValidatorSchema({
     $id: 'example',
     type: 'object',
     properties: {
@@ -74,6 +74,9 @@ module.exports = customService(async function handler(service) {
       }
     }
   })
+
+  const exampleSchema = service.getValidatorSchema('example')
+  console.log('Log the example schema', exampleSchema)
 
   service.addRawCustomPlugin('GET', '/hello', function helloHandler(request, reply) {
     const user = request.getUserId() || 'World'
