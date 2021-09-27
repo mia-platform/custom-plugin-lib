@@ -53,6 +53,8 @@ declare namespace customPlugin {
     addPostDecorator<RequestType>(path: string, handler: postDecoratorHandler<RequestType>): DecoratedFastify
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
+    addValidatorSchema(schema: object): void,
+    getValidatorSchema(schemaId: string): undefined | ((data: any) => boolean | Promise<any>),
   }
 
   interface DecoratedRequest<T> extends fastify.FastifyRequest<{Body: T}> {
