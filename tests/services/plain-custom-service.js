@@ -56,6 +56,17 @@ const schema = {
       },
     },
   },
+  response: {
+    200: {
+      type: 'object',
+      properties: {
+        foobar: {
+          $ref: 'foobar#',
+        },
+      },
+      additionalProperties: true,
+    },
+  },
 }
 
 function customParser(req, payload, done) {
