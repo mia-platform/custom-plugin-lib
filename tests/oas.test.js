@@ -5,12 +5,10 @@ const lc39 = require('@mia-platform/lc39')
 const Swagger = require('swagger-parser')
 
 async function setupFastify(filePath, envVariables) {
-  const fastify = await lc39(filePath, {
+  return lc39(filePath, {
     logLevel: 'silent',
     envVariables,
   })
-
-  return fastify
 }
 
 const USERID_HEADER_KEY = 'userid-header-key'
@@ -27,7 +25,7 @@ const baseEnv = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
-tap.test('support $ref schema', async t => {
+tap.test('create a valid docs with the support of $ref schema', async t => {
   const fastify = await setupFastify('./tests/services/plain-custom-service.js', baseEnv)
 
   const res = await fastify.inject({
