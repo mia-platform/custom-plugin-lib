@@ -86,7 +86,8 @@ module.exports = customService(async function clientGroups(service) {
     type: 'string',
     enum: ['foo1', 'bar2', 'taz3'],
   })
-  service.assert.ok(service.getValidatorSchema('foobar'))
+  const retrievedSchema = service.getValidatorSchema('foobar')
+  service.assert.ok(retrievedSchema)
 
   service.register(fastifyRoutes)
   function handler(request, reply) {
