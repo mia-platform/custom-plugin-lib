@@ -22,7 +22,7 @@ export = customPlugin
 declare function customPlugin(envSchema?: customPlugin.environmentSchema): customPlugin.CustomService
 
 declare namespace customPlugin {
-  type CustomService = (asyncInitFunction: AsyncInitFunction) => any
+  type CustomService = (asyncInitFunction: AsyncInitFunction, serviceOptions?: CustomServiceOptions) => any
 
   function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
@@ -33,6 +33,15 @@ declare namespace customPlugin {
   }
 
   type AsyncInitFunction = (service: DecoratedFastify) => Promise<void>
+
+  interface CustomServiceOptions {
+    avj?: {
+      plugins?: {
+        'ajv-formats'?: {formats: string[]}
+      }
+    }
+    vocabulary?: string[]
+  }
 
   type RawCustomPluginAdvancedConfig = Pick<fastify.RouteShorthandOptions,
     'schema' |

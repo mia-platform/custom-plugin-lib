@@ -27,6 +27,7 @@ const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
 const addPreDecorator = require('./lib/preDecorator')
 const addPostDecorator = require('./lib/postDecorator')
+const ajvSetup = require('./lib/ajvSetup')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
@@ -45,8 +46,13 @@ const extraHeadersKeys = [
 
 const baseSchema = {
   type: 'object',
-  required: [USERID_HEADER_KEY, GROUPS_HEADER_KEY, CLIENTTYPE_HEADER_KEY,
-    BACKOFFICE_HEADER_KEY, MICROSERVICE_GATEWAY_SERVICE_NAME],
+  required: [
+    USERID_HEADER_KEY,
+    GROUPS_HEADER_KEY,
+    CLIENTTYPE_HEADER_KEY,
+    BACKOFFICE_HEADER_KEY,
+    MICROSERVICE_GATEWAY_SERVICE_NAME,
+  ],
   properties: {
     [USERID_HEADER_KEY]: {
       type: 'string',
@@ -189,16 +195,8 @@ function getOriginalRequestHeaders() {
   return this.headers
 }
 
-async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction }) {
+function decorateFastify(fastify) {
   const { config } = fastify
-
-  const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
-  fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
-  fastify.decorate('addValidatorSchema', (schema) => {
-    ajv.addSchema(schema)
-    fastify.addSchema(schema)
-  })
-  fastify.decorate('getValidatorSchema', ajv.getSchema.bind(ajv))
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
   fastify.decorateRequest(USER_PROPERTIES_HEADER_KEY, config[USER_PROPERTIES_HEADER_KEY])
@@ -225,6 +223,23 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
+}
+
+async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction, serviceOptions = {} }) {
+  const { ajv: ajvServiceOptions } = serviceOptions
+
+  const ajv = new Ajv({ coerceTypes: true, useDefaults: true })
+  ajvSetup(ajv, ajvServiceOptions)
+
+  fastify.setValidatorCompiler(({ schema }) => ajv.compile(schema))
+
+  fastify.decorate('addValidatorSchema', (schema) => {
+    ajv.addSchema(schema)
+    fastify.addSchema(schema)
+  })
+  fastify.decorate('getValidatorSchema', ajv.getSchema.bind(ajv))
+
+  decorateFastify(fastify)
 
   fastify.register(fp(asyncInitFunction))
   fastify.setErrorHandler(function errorHandler(error, request, reply) {
@@ -247,11 +262,11 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction })
 const defaultSchema = { type: 'object', required: [], properties: {} }
 
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
-  return function customService(asyncInitFunction) {
+  return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
       fastify.register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
       fastify.register(fastifyFormbody)
-      fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction })
+      fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }
     index.options = {
       errorHandler: false,
