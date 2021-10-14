@@ -21,14 +21,43 @@ const customService = require('@mia-platform/custom-plugin-lib')({
 
 You can configure the environment variables from DevOps console, in your service configuration. For further detail see [Mia-Platform documentation](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/#environment-variable-configuration).  
 
-The function expects an async function to initialize and configure the `service`, a [Fastify instance](https://www.fastify.io/docs/latest/Server/).   
+The customService function expects two arguments:
+
+ - an async function to initialize and configure the `service`, a [Fastify instance](https://www.fastify.io/docs/latest/Server/);
+ - an optional `serviceOptions` object useful for configuring the plugins used by the library.   
+
 You can access the environment variables values from `service.config`:
 
 ```js
 module.exports = customService(async function handler(service) {
   const { ENV_VAR } = service.config
   ...
-})
+}, serviceOptions)
 ```
 
 Upon `service`, you can you can add [routes](Routes.md) and [decorators](Decorators.md). 
+
+The `serviceOptions` argument supports the following properties:
+
+  - `ajv`: an object useful to customize certain configurations of the `ajv` instance used by the service:
+    - `vocabulary`: a list of strings used to setup a custom keyword vocabulary;
+    - `plugins`: allows setting up the different plugins used by the service:
+      - `ajv-formats`: with this option you can configure certain [`ajv-formats`](https://github.com/ajv-validator/ajv-formats) configurations
+        - `formats`: a list of strings used to setup the formats that should be allowed when validating schemas
+
+An example of service options is the following:
+
+```js
+
+const serviceOptions = {
+  ajv: {
+    plugins: {
+      'ajv-formats': { formats: ['date-time'] },
+    },
+    vocabulary: ['name'],
+  },
+}
+module.exports = customService(async function myService(service) {
+  ...
+}, serviceOptions)
+```
