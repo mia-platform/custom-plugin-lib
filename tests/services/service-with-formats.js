@@ -23,7 +23,7 @@ const serviceOptions = {
     plugins: {
       'ajv-formats': { formats: ['date-time'] },
     },
-    vocabulary: ['name'],
+    vocabulary: ['x-name'],
   },
 }
 
@@ -38,7 +38,7 @@ module.exports = customService(async function clientGroups(service) {
       properties: {
         someDate: {
           type: 'string',
-          name: 'My custom name in schema',
+          'x-name': 'My custom name in schema',
           format: 'date-time',
           description: 'some date description',
         },
