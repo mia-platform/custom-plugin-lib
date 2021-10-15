@@ -233,6 +233,14 @@ a(async function (service) {
   })
 })
 
+const b = cpl()
+b(async function (service) {}, {
+  avj: {
+    plugins: {'ajv-formats': {formats: ['date-time']}}
+  },
+  vocabulary: ['my-keyword']
+})
+
 async function invokeProxies() {
   const directServiceProxy = getDirectServiceProxy('service_name')
   const directServiceProxyWithOpetions = getDirectServiceProxy('service_name', { port: 3000 })

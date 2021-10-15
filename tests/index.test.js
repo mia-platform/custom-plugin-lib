@@ -372,3 +372,61 @@ tap.test('Advanced config', test => {
 
   test.end()
 })
+
+tap.test('Service with API formats', t => {
+  async function setupFastify(envVariables) {
+    const fastify = await lc39('./tests/services/service-with-formats.js', {
+      logLevel: 'silent',
+      envVariables,
+    })
+    return fastify
+  }
+
+  t.test('it validates date-time', async t => {
+    const fastify = await setupFastify(baseEnv)
+    const someDate = '2021-10-12T15:46:39.081Z'
+
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/hello',
+      body: {
+        someDate,
+      },
+    })
+
+    const parsedPayload = JSON.parse(response.payload)
+
+    t.strictSame(response.statusCode, 200)
+    t.ok(/application\/json/.test(response.headers['content-type']))
+    t.ok(/charset=utf-8/.test(response.headers['content-type']))
+
+    t.strictSame(parsedPayload, { message: `hello there, it is ${someDate}` })
+
+    t.end()
+  })
+
+  t.test('fails for invalid date', async t => {
+    const fastify = await setupFastify(baseEnv)
+
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/hello',
+      body: {
+        someDate: 'NOT A DATE',
+      },
+    })
+
+    const parsedPayload = JSON.parse(response.payload)
+
+    t.strictSame(response.statusCode, 400)
+    t.strictSame(parsedPayload, {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'body.someDate must match format "date-time"',
+    })
+
+    t.end()
+  })
+
+  t.end()
+})
