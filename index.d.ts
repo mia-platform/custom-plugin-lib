@@ -17,6 +17,8 @@
 import * as fastify from 'fastify'
 import * as http from 'http'
 
+import {FormatName} from 'ajv-formats'
+
 export = customPlugin
 
 declare function customPlugin(envSchema?: customPlugin.environmentSchema): customPlugin.CustomService
@@ -37,7 +39,7 @@ declare namespace customPlugin {
   interface CustomServiceOptions {
     avj?: {
       plugins?: {
-        'ajv-formats'?: {formats: string[]}
+        'ajv-formats'?: {formats: FormatName[]}
       }
     }
     vocabulary?: string[]

@@ -42,7 +42,7 @@ The `serviceOptions` argument supports the following properties:
   - `ajv`: an object useful to customize certain configurations of the `ajv` instance used by the service:
     - `vocabulary`: a list of strings used to setup a custom keyword vocabulary;
     - `plugins`: allows setting up the different plugins used by the service:
-      - `ajv-formats`: with this option you can configure certain [`ajv-formats`](https://github.com/ajv-validator/ajv-formats) configurations
+      - `ajv-formats` (`^2.1.1`): with this option you can configure certain [`ajv-formats`](https://github.com/ajv-validator/ajv-formats) configurations
         - `formats`: a list of strings used to setup the formats that should be allowed when validating schemas
 
 An example of service options is the following:
