@@ -217,7 +217,7 @@ a(async function (service) {
 
     return request.leaveOriginalResponseUnmodified()
   }).addPostDecorator('/decorators/my-post2', async function myHandlerPostDecorator(request, reply) {
-    return request.changeOriginalRequest()
+    return request.changeOriginalResponse()
       .setBody({ new: 'body' })
       .setStatusCode(201)
       .setHeaders({ rewrite: 'the headers completely' })

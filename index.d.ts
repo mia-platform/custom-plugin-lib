@@ -203,7 +203,7 @@ declare namespace customPlugin {
 
     getMiaHeaders: () => NodeJS.Dict<string>,
 
-    changeOriginalRequest: () => ChangeResponseAction,
+    changeOriginalResponse: () => ChangeResponseAction,
     leaveOriginalResponseUnmodified: () => LeaveResponseUnchangedAction,
     abortChain: (statusCode: number, finalBody: any, headers?: http.IncomingHttpHeaders) => AbortResponseAction
   }
