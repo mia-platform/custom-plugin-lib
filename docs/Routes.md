@@ -86,7 +86,7 @@ module.exports = customService(async function handler(service) {
     })
   }, {
     body: {
-      ref: 'example#'
+      $ref: 'example#'
     }
   })
 }) 
