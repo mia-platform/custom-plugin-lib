@@ -145,7 +145,7 @@ a(async function (service) {
     headers: {
       type:'object'
     }
-  }).addRawCustomPlugin<{rawPlugin: string}>('GET', '/ts', async function handler(request, reply) {
+  }).addRawCustomPlugin<{Body: {rawPlugin: string}}>('GET', '/ts', async function handler(request, reply) {
     return request.body.rawPlugin
   })
 
@@ -182,7 +182,7 @@ a(async function (service) {
   service.addPreDecorator('/decorators/my-pre4', async function myHandlerPreDecorator(request, reply) {
     return request.abortChain(200, { final: 'body' }, { some: 'other headers' })
   })
-  service.addPreDecorator<{decorator: string}>('/decorators/my-pre5', async function myHandlerPreDecorator(request, response) {
+  service.addPreDecorator<{Body: {decorator: string}}>('/decorators/my-pre5', async function myHandlerPreDecorator(request, response) {
     return request.body.decorator
   })
 
@@ -228,7 +228,7 @@ a(async function (service) {
   service.addPostDecorator('/decorators/my-post4', async function myHandlerPostDecorator(request, reply) {
     return request.abortChain(200, { final: 'body' }, { some: 'other headers' })
   })
-  service.addPostDecorator<{decorator: string}>('/decorators/my-post5', async function myHandlerPostDecorator(request, response) {
+  service.addPostDecorator<{Body: {decorator: string}}>('/decorators/my-post5', async function myHandlerPostDecorator(request, response) {
     return request.body.decorator
   })
 })

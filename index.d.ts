@@ -18,23 +18,24 @@ import * as fastify from 'fastify'
 import * as http from 'http'
 
 import {FormatName} from 'ajv-formats'
+import {RouteGenericInterface} from 'fastify/types/route'
 
 export = customPlugin
 
-declare function customPlugin(envSchema?: customPlugin.environmentSchema): customPlugin.CustomService
+declare function customPlugin<ServiceConfig = NodeJS.Dict<string>>(envSchema?: customPlugin.environmentSchema): customPlugin.CustomService<ServiceConfig>
 
 declare namespace customPlugin {
-  type CustomService = (asyncInitFunction: AsyncInitFunction, serviceOptions?: CustomServiceOptions) => any
+  type CustomService<ServiceConfig = NodeJS.Dict<string>> = (asyncInitFunction: AsyncInitFunction<ServiceConfig>, serviceOptions?: CustomServiceOptions) => any
 
   function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   interface environmentSchema {
     type: 'object',
-    required?: string[],
+    required?: string[] | readonly string[],
     properties: object
   }
 
-  type AsyncInitFunction = (service: DecoratedFastify) => Promise<void>
+  type AsyncInitFunction<ServiceConfig = NodeJS.Dict<string>> = (service: DecoratedFastify<ServiceConfig>) => Promise<void>
 
   interface CustomServiceOptions {
     avj?: {
@@ -57,18 +58,18 @@ declare namespace customPlugin {
 
   type RawCustomPluginMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD'
 
-  interface DecoratedFastify extends fastify.FastifyInstance {
-    config: NodeJS.Dict<string>,
-    addRawCustomPlugin<RequestType>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<RequestType> | Handler<RequestType>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
-    addPreDecorator<RequestType>(path: string, handler: preDecoratorHandler<RequestType>): DecoratedFastify
-    addPostDecorator<RequestType>(path: string, handler: postDecoratorHandler<RequestType>): DecoratedFastify
+  interface DecoratedFastify<ServiceConfig = NodeJS.Dict<string>> extends fastify.FastifyInstance {
+    config: ServiceConfig,
+    addRawCustomPlugin<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<ServiceConfig, RouteGeneric> | Handler<ServiceConfig, RouteGeneric>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
+    addPreDecorator<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(path: string, handler: preDecoratorHandler<ServiceConfig, RouteGeneric>): DecoratedFastify<ServiceConfig>
+    addPostDecorator<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(path: string, handler: postDecoratorHandler<ServiceConfig, RouteGeneric>): DecoratedFastify<ServiceConfig>
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
     addValidatorSchema(schema: object): void,
     getValidatorSchema(schemaId: string): undefined | ((data: any) => boolean | Promise<any>),
   }
 
-  interface DecoratedRequest<T> extends fastify.FastifyRequest<{Body: T}> {
+  interface DecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends fastify.FastifyRequest<RouteGeneric> {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -88,9 +89,19 @@ declare namespace customPlugin {
   //
   // CUSTOM PLUGIN
   //
-  type BasicHandler<RequestType, ResponseType> = (this: DecoratedFastify, request: DecoratedRequest<RequestType>, reply: fastify.FastifyReply) => ResponseType
-  type Handler<RequestType> = BasicHandler<RequestType, void>
-  type AsyncHandler<RequestType> = BasicHandler<RequestType, Promise<any>>
+  type BasicHandler<
+    ServiceConfigType = NodeJS.Dict<string>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+    ResponseType = void | Promise<any>,
+  > = (this: DecoratedFastify<ServiceConfigType>, request: DecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => ResponseType
+  type Handler<
+    ServiceConfigType = NodeJS.Dict<string>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+  > = BasicHandler<ServiceConfigType, RouteGeneric, void>
+  type AsyncHandler<
+    ServiceConfigType = NodeJS.Dict<string>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+  > = BasicHandler<ServiceConfigType, RouteGeneric, Promise<any>>
 
   //
   // SERVICE
@@ -116,21 +127,21 @@ declare namespace customPlugin {
   }
   interface StreamedServiceResponse extends BaseServiceResponse {
   }
-  interface JSONServiceResponse extends BaseServiceResponse {
-    payload: any
+  interface JSONServiceResponse<Payload = any> extends BaseServiceResponse {
+    payload: Payload
   }
   interface BufferServiceResponse extends BaseServiceResponse {
     payload: Buffer
   }
-  type ServiceResponse = StreamedServiceResponse | JSONServiceResponse | BufferServiceResponse
+  type ServiceResponse<Payload = any> = StreamedServiceResponse | JSONServiceResponse<Payload> | BufferServiceResponse
   type QueryString = string | NodeJS.Dict<string | ReadonlyArray<string>> | Iterable<[string, string]> | ReadonlyArray<[string, string]>
 
   interface Service {
-    get: (path: string, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
-    post: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
-    put: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
-    patch: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
-    delete: (path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ServiceResponse>,
+    get: <ResponseType = ServiceResponse>(path: string, queryString?: QueryString, options?: ServiceOptions) => Promise<ResponseType>,
+    post: <ResponseType = ServiceResponse>(path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ResponseType>,
+    put: <ResponseType = ServiceResponse>(path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ResponseType>,
+    patch: <ResponseType = ServiceResponse>(path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ResponseType>,
+    delete: <ResponseType = ServiceResponse>(path: string, body: any | Buffer | ReadableStream, queryString?: QueryString, options?: ServiceOptions) => Promise<ResponseType>,
   }
 
   //
@@ -144,7 +155,10 @@ declare namespace customPlugin {
   }
   interface AbortRequestAction { }
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
-  type preDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PreDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
+  type preDecoratorHandler<
+    ServiceConfigType = NodeJS.Dict<string>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+  > = (this: DecoratedFastify<ServiceConfigType>, request: PreDecoratorDecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
 
   interface OriginalRequest {
     method: string,
@@ -160,7 +174,7 @@ declare namespace customPlugin {
     body?: any
   }
 
-  interface PreDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
+  interface PreDecoratorDecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends DecoratedRequest<RouteGeneric> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
@@ -186,9 +200,12 @@ declare namespace customPlugin {
   }
   interface AbortResponseAction { }
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
-  type postDecoratorHandler<RequestType> = (this: DecoratedFastify, request: PostDecoratorDecoratedRequest<RequestType>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
+  type postDecoratorHandler<
+    ServiceConfigType = NodeJS.Dict<string>,
+    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+  > = (this: DecoratedFastify<ServiceConfigType>, request: PostDecoratorDecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
 
-  interface PostDecoratorDecoratedRequest<RequestType> extends DecoratedRequest<RequestType> {
+  interface PostDecoratorDecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends DecoratedRequest<RouteGeneric> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
