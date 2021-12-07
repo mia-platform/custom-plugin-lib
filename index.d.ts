@@ -18,20 +18,19 @@ import * as fastify from 'fastify'
 import * as http from 'http'
 
 import {FormatName} from 'ajv-formats'
-import {RouteGenericInterface} from 'fastify/types/route'
 
 export = customPlugin
 
 declare function customPlugin<ServiceConfig = NodeJS.Dict<string>>(envSchema?: customPlugin.environmentSchema): customPlugin.CustomService<ServiceConfig>
 
 declare namespace customPlugin {
-  type CustomService<ServiceConfig = NodeJS.Dict<string>> = (asyncInitFunction: AsyncInitFunction<ServiceConfig>, serviceOptions?: CustomServiceOptions) => any
+  type CustomService<ServiceConfig> = (asyncInitFunction: AsyncInitFunction<ServiceConfig>, serviceOptions?: CustomServiceOptions) => any
 
   function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   interface environmentSchema {
     type: 'object',
-    required?: string[] | readonly string[],
+    required?: readonly string[],
     properties: object
   }
 
@@ -60,16 +59,16 @@ declare namespace customPlugin {
 
   interface DecoratedFastify<ServiceConfig = NodeJS.Dict<string>> extends fastify.FastifyInstance {
     config: ServiceConfig,
-    addRawCustomPlugin<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<ServiceConfig, RouteGeneric> | Handler<ServiceConfig, RouteGeneric>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
-    addPreDecorator<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(path: string, handler: preDecoratorHandler<ServiceConfig, RouteGeneric>): DecoratedFastify<ServiceConfig>
-    addPostDecorator<RouteGeneric extends RouteGenericInterface = RouteGenericInterface>(path: string, handler: postDecoratorHandler<ServiceConfig, RouteGeneric>): DecoratedFastify<ServiceConfig>
+    addRawCustomPlugin<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<ServiceConfig, RequestGeneric> | Handler<ServiceConfig, RequestGeneric>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
+    addPreDecorator<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface>(path: string, handler: preDecoratorHandler<ServiceConfig, RequestGeneric>): DecoratedFastify<ServiceConfig>
+    addPostDecorator<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface>(path: string, handler: postDecoratorHandler<ServiceConfig, RequestGeneric>): DecoratedFastify<ServiceConfig>
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
     getServiceProxy: (options?: InitServiceOptions) => Service,
     addValidatorSchema(schema: object): void,
     getValidatorSchema(schemaId: string): undefined | ((data: any) => boolean | Promise<any>),
   }
 
-  interface DecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends fastify.FastifyRequest<RouteGeneric> {
+  interface DecoratedRequest<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface> extends fastify.FastifyRequest<RequestGeneric> {
     getUserId: () => string | null,
     getUserProperties: () => object | null,
     getGroups: () => string[],
@@ -91,17 +90,17 @@ declare namespace customPlugin {
   //
   type BasicHandler<
     ServiceConfigType = NodeJS.Dict<string>,
-    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
+    RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface,
     ResponseType = void | Promise<any>,
-  > = (this: DecoratedFastify<ServiceConfigType>, request: DecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => ResponseType
+  > = (this: DecoratedFastify<ServiceConfigType>, request: DecoratedRequest<RequestGeneric>, reply: fastify.FastifyReply) => ResponseType
   type Handler<
     ServiceConfigType = NodeJS.Dict<string>,
-    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  > = BasicHandler<ServiceConfigType, RouteGeneric, void>
+    RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface,
+  > = BasicHandler<ServiceConfigType, RequestGeneric, void>
   type AsyncHandler<
     ServiceConfigType = NodeJS.Dict<string>,
-    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  > = BasicHandler<ServiceConfigType, RouteGeneric, Promise<any>>
+    RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface,
+  > = BasicHandler<ServiceConfigType, RequestGeneric, Promise<any>>
 
   //
   // SERVICE
@@ -157,8 +156,8 @@ declare namespace customPlugin {
   type PreDecoratorAction = LeaveRequestUnchangedAction | ChangeRequestAction | AbortRequestAction;
   type preDecoratorHandler<
     ServiceConfigType = NodeJS.Dict<string>,
-    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  > = (this: DecoratedFastify<ServiceConfigType>, request: PreDecoratorDecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
+    RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface,
+  > = (this: DecoratedFastify<ServiceConfigType>, request: PreDecoratorDecoratedRequest<RequestGeneric>, reply: fastify.FastifyReply) => Promise<PreDecoratorAction>;
 
   interface OriginalRequest {
     method: string,
@@ -174,7 +173,7 @@ declare namespace customPlugin {
     body?: any
   }
 
-  interface PreDecoratorDecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends DecoratedRequest<RouteGeneric> {
+  interface PreDecoratorDecoratedRequest<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface> extends DecoratedRequest<RequestGeneric> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
@@ -202,10 +201,10 @@ declare namespace customPlugin {
   type PostDecoratorAction = LeaveResponseUnchangedAction | ChangeResponseAction | AbortResponseAction;
   type postDecoratorHandler<
     ServiceConfigType = NodeJS.Dict<string>,
-    RouteGeneric extends RouteGenericInterface = RouteGenericInterface,
-  > = (this: DecoratedFastify<ServiceConfigType>, request: PostDecoratorDecoratedRequest<RouteGeneric>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
+    RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface,
+  > = (this: DecoratedFastify<ServiceConfigType>, request: PostDecoratorDecoratedRequest<RequestGeneric>, reply: fastify.FastifyReply) => Promise<PostDecoratorAction>;
 
-  interface PostDecoratorDecoratedRequest<RouteGeneric extends RouteGenericInterface = RouteGenericInterface> extends DecoratedRequest<RouteGeneric> {
+  interface PostDecoratorDecoratedRequest<RequestGeneric extends fastify.RequestGenericInterface = fastify.RequestGenericInterface> extends DecoratedRequest<RequestGeneric> {
     getOriginalRequest: () => OriginalRequest,
     getOriginalRequestMethod: () => string,
     getOriginalRequestPath: () => string,
