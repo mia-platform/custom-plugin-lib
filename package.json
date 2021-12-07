@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@mia-platform/eslint-config-mia": "^3.0.0",
-    "eslint": "^7.23.0",
+    "eslint": "^8.4.1",
     "fastify-routes": "^3.0.1",
     "hpagent": "^0.1.1",
     "nock": "^13.0.11",
