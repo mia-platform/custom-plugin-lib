@@ -32,7 +32,6 @@ cpl()
 const a = cpl()
 const { getDirectServiceProxy, getServiceProxy } = cpl
 
-
 async function invokeSomeApis(service: cpl.Service) {
   service.get('/path')
   service.get('/path', { query: 'params' })
@@ -278,8 +277,8 @@ async function invokeProxies() {
   await directServiceProxyWithOpetions.get('/path')
 
   const serviceProxy = getServiceProxy('microservice-gateway')
-  const serviceProxyWithOpetions = getServiceProxy('microservice-gateway', { port: 3000 })
+  const serviceProxyWithOptions = getServiceProxy('microservice-gateway', { port: 3000 })
 
   await serviceProxy.get('/path')
-  await serviceProxyWithOpetions.get('/path')
+  await serviceProxyWithOptions.get('/path')
 }
