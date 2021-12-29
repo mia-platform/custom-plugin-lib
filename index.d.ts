@@ -39,7 +39,7 @@ declare namespace customPlugin {
   type AsyncInitFunction<Config extends ServiceConfig = ServiceConfig> = (service: DecoratedFastify<Config>) => Promise<void>
 
   interface CustomServiceOptions {
-    avj?: {
+    ajv?: {
       plugins?: {
         'ajv-formats'?: {formats: FormatName[]}
       }

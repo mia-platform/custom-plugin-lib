@@ -263,7 +263,7 @@ a(async function (service) {
 
 const b = cpl()
 b(async function (service) {}, {
-  avj: {
+  ajv: {
     plugins: {'ajv-formats': {formats: ['date-time']}}
   },
   vocabulary: ['my-keyword']
