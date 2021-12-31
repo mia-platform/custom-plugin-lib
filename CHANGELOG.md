@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Typings improvement
+- Fixed error JSON.parse while passing both `returnAs:'BUFFER'` and `allowedStatusCode:[204]`
 
 ### Fixes
 
