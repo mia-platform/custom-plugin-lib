@@ -32,7 +32,6 @@ cpl()
 const a = cpl()
 const { getDirectServiceProxy, getServiceProxy } = cpl
 
-
 async function invokeSomeApis(service: cpl.Service) {
   service.get('/path')
   service.get('/path', { query: 'params' })
@@ -102,14 +101,23 @@ a(async function (service) {
     }
   }, { attachValidation: true })
 
-  service.addRawCustomPlugin('GET', '/path1', function handlerPath1(request, reply) {
+  type RequestGeneric = {
+    Body: {body: string}
+    Querystring: {querystring: string}
+    Params: {params: string}
+    Headers: {headers: string}
+  }
+
+  service
+    .addRawCustomPlugin('GET', '/path1', function handlerPath1(request, reply) {
     console.log(this.config)
     if (request.getUserId() === null) {
       reply.send({})
       return
     }
     reply.send({ hi: request.getUserId() })
-  }).addRawCustomPlugin('GET', '/', async function handler(request, reply) {
+  })
+    .addRawCustomPlugin('GET', '/', async function handler(request, reply) {
     console.log(this.config)
 
     const userId: string | null = request.getUserId()
@@ -145,11 +153,18 @@ a(async function (service) {
     headers: {
       type:'object'
     }
-  }).addRawCustomPlugin<{rawPlugin: string}>('GET', '/ts', async function handler(request, reply) {
-    return request.body.rawPlugin
+  })
+    .addRawCustomPlugin<RequestGeneric>('GET', '/ts', async function handler(request, reply) {
+      console.log(request.body.body)
+      console.log(request.query.querystring)
+      console.log(request.params.params)
+      console.log(request.headers.headers)
+
+      return { 'aa': 'boo' }
   })
 
-  service.addPreDecorator('/decorators/my-pre1', async function myHandlerPreDecorator(request, reply) {
+  service
+    .addPreDecorator('/decorators/my-pre1', async function myHandlerPreDecorator(request, reply) {
     const originalRequest : cpl.OriginalRequest = request.getOriginalRequest()
     console.log(originalRequest)
     console.log(originalRequest.body)
@@ -170,7 +185,8 @@ a(async function (service) {
     console.log(request.getMiaHeaders())
 
     return request.leaveOriginalRequestUnmodified()
-  }).addPreDecorator('/decorators/my-pre2', async function myHandlerPreDecorator(request, reply) {
+  })
+    .addPreDecorator('/decorators/my-pre2', async function myHandlerPreDecorator(request, reply) {
     return request.changeOriginalRequest()
       .setBody({ new: 'body' })
       .setQuery({ rewrite: 'the querystring completely' })
@@ -182,11 +198,17 @@ a(async function (service) {
   service.addPreDecorator('/decorators/my-pre4', async function myHandlerPreDecorator(request, reply) {
     return request.abortChain(200, { final: 'body' }, { some: 'other headers' })
   })
-  service.addPreDecorator<{decorator: string}>('/decorators/my-pre5', async function myHandlerPreDecorator(request, response) {
-    return request.body.decorator
+  service.addPreDecorator<RequestGeneric>('/decorators/my-pre5', async function myHandlerPreDecorator(request, response) {
+    console.log(request.body.body)
+    console.log(request.query.querystring)
+    console.log(request.params.params)
+    console.log(request.headers.headers)
+
+    return { 'aa': 'boo' }
   })
 
-  service.addPostDecorator('/decorators/my-post1', async function myHandlerPostDecorator(request, reply) {
+  service
+    .addPostDecorator('/decorators/my-post1', async function myHandlerPostDecorator(request, reply) {
     const originalRequest : cpl.OriginalRequest = request.getOriginalRequest()
     console.log(originalRequest)
     console.log(originalRequest.body)
@@ -216,7 +238,8 @@ a(async function (service) {
     console.log(request.getMiaHeaders())
 
     return request.leaveOriginalResponseUnmodified()
-  }).addPostDecorator('/decorators/my-post2', async function myHandlerPostDecorator(request, reply) {
+  })
+    .addPostDecorator('/decorators/my-post2', async function myHandlerPostDecorator(request, reply) {
     return request.changeOriginalResponse()
       .setBody({ new: 'body' })
       .setStatusCode(201)
@@ -228,14 +251,19 @@ a(async function (service) {
   service.addPostDecorator('/decorators/my-post4', async function myHandlerPostDecorator(request, reply) {
     return request.abortChain(200, { final: 'body' }, { some: 'other headers' })
   })
-  service.addPostDecorator<{decorator: string}>('/decorators/my-post5', async function myHandlerPostDecorator(request, response) {
-    return request.body.decorator
+  service.addPostDecorator<RequestGeneric>('/decorators/my-post5', async function myHandlerPostDecorator(request, response) {
+    console.log(request.body.body)
+    console.log(request.query.querystring)
+    console.log(request.params.params)
+    console.log(request.headers.headers)
+
+    return { 'aa': 'boo' }
   })
 })
 
 const b = cpl()
 b(async function (service) {}, {
-  avj: {
+  ajv: {
     plugins: {'ajv-formats': {formats: ['date-time']}}
   },
   vocabulary: ['my-keyword']
@@ -249,8 +277,8 @@ async function invokeProxies() {
   await directServiceProxyWithOpetions.get('/path')
 
   const serviceProxy = getServiceProxy('microservice-gateway')
-  const serviceProxyWithOpetions = getServiceProxy('microservice-gateway', { port: 3000 })
+  const serviceProxyWithOptions = getServiceProxy('microservice-gateway', { port: 3000 })
 
   await serviceProxy.get('/path')
-  await serviceProxyWithOpetions.get('/path')
+  await serviceProxyWithOptions.get('/path')
 }
