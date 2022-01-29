@@ -907,11 +907,11 @@ tap.test('serviceBuilder', test => {
     })
 
     innerTest.test(
-      'send Object - returnAs: BUFFER and allowedStatusCodes: [204] - error statusCode 404',
+      'send Object - returnAs: BUFFER and allowedStatusCodes: [204] - error statusCode 502',
       async(assert) => {
         const myServiceNameScope = nock('http://my-service-name')
           .delete('/foo')
-          .reply(404)
+          .reply(502)
 
         const service = serviceBuilder('my-service-name')
 
@@ -923,7 +923,7 @@ tap.test('serviceBuilder', test => {
             { returnAs: 'BUFFER', allowedStatusCodes: [204] }
           )
         } catch (error) {
-          assert.equal(error.message, 'Invalid status code: 404. Allowed: 204.')
+          assert.equal(error.message, 'Invalid status code: 502. Allowed: 204.')
         }
 
         myServiceNameScope.done()
@@ -1103,7 +1103,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+    const service = serviceBuilder('my-service-name', {}, { headers: { foo: 'global user header' } })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
@@ -1124,7 +1124,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+    const service = serviceBuilder('my-service-name', {}, { headers: { foo: 'global user header' } })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
 
@@ -1187,7 +1187,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { prefix: '/my-prefix' })
+    const service = serviceBuilder('my-service-name', {}, { prefix: '/my-prefix' })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
