@@ -906,16 +906,64 @@ tap.test('serviceBuilder', test => {
       assert.end()
     })
 
+    innerTest.test(
+      'send Object - returnAs: BUFFER and allowedStatusCodes: [204] - error statusCode 502',
+      async(assert) => {
+        const myServiceNameScope = nock('http://my-service-name')
+          .delete('/foo')
+          .reply(502)
+
+        const service = serviceBuilder('my-service-name')
+
+        try {
+          await service.delete(
+            '/foo',
+            undefined,
+            undefined,
+            { returnAs: 'BUFFER', allowedStatusCodes: [204] }
+          )
+        } catch (error) {
+          assert.equal(error.message, 'Invalid status code: 502. Allowed: 204.')
+        }
+
+        myServiceNameScope.done()
+        assert.end()
+      }
+    )
+
+    innerTest.test(
+      'send Object - returnAs: BUFFER and allowedStatusCodes: [204] - success statusCode 204',
+      async(assert) => {
+        const myServiceNameScope = nock('http://my-service-name')
+          .delete('/foo')
+          .reply(204)
+
+        const service = serviceBuilder('my-service-name')
+
+        const response = await service.delete(
+          '/foo',
+          undefined,
+          undefined,
+          { returnAs: 'BUFFER', allowedStatusCodes: [204] }
+        )
+
+        assert.equal(response.statusCode, 204)
+        myServiceNameScope.done()
+
+        assert.end()
+      }
+    )
+
     innerTest.end()
   })
 
-  test.test('returnAs: unknwon', async assert => {
+  test.test('returnAs: unknown', async assert => {
     const service = serviceBuilder('my-service-name')
     try {
-      await service.get('/foo', {}, { returnAs: 'UNKNWON TYPE' })
+      await service.get('/foo', {}, { returnAs: 'UNKNOWN TYPE' })
       assert.fail('We can\'t reach this!')
     } catch (error) {
-      assert.equal(error.message, 'Unknwon returnAs: UNKNWON TYPE')
+      assert.equal(error.message, 'Unknown returnAs: UNKNOWN TYPE')
     }
     assert.end()
   })
@@ -1055,7 +1103,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+    const service = serviceBuilder('my-service-name', {}, { headers: { foo: 'global user header' } })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
@@ -1076,7 +1124,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { headers: { foo: 'global user header' } })
+    const service = serviceBuilder('my-service-name', {}, { headers: { foo: 'global user header' } })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON', headers: { foo: 'request header' } })
 
@@ -1139,7 +1187,7 @@ tap.test('serviceBuilder', test => {
         some: 'response-header',
       })
 
-    const service = serviceBuilder('my-service-name', { }, { prefix: '/my-prefix' })
+    const service = serviceBuilder('my-service-name', {}, { prefix: '/my-prefix' })
 
     const response = await service.get('/foo', { aa: 'bar' }, { returnAs: 'JSON' })
 
