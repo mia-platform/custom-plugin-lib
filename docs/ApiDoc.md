@@ -1,8 +1,5 @@
----
-id: apidoc
-title: API documentation
-sidebar_label: ApiDoc
----
+# API documentation
+
 Services developed with this library automatically also exposes the documentation of the routes and decorators that
 are implemented. The documentation is specified using the [OpenAPI 2.0 standard](https://swagger.io/specification/v2/)
 and exhibited through [Swagger](https://swagger.io).
