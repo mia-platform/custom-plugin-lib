@@ -1,12 +1,15 @@
-# Call the other services on the Platform project
-
+---
+id: httpclient
+title: Call the other services on the Platform project
+sidebar_label: HTTPClient
+---
 You can call any service or any endpoint defined on the Platform project, obtaining and using a proxy object.
 
 For example, if you need to connect to a CRUD, you have to use a Proxy towards the `crud-service`.
 
 You can get a proxy calling these methods both on `Request`(the first argument of handler) and `Service` (the Fastify instance):
 
-* `getServiceProxy(options)` - returns a proxy  passing through the [Microservice Gateway](https://docs.mia-platform.eu/runtime_suite/microservice-gateway/).
+* `getServiceProxy(options)` - returns a proxy  passing through the [Microservice Gateway](../../runtime_suite/microservice-gateway/overview.md).
   * `options` - is an object with the following optional fields:
     * `port` - an integer that identifies the port of the service to be queried
     * `protocol` - a string that identifies the protocol to use (only `http` and `https` are supported, the default value is `http`)

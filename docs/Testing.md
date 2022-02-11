@@ -1,7 +1,10 @@
-# Testing
-
+---
+id: testing
+title: Testing
+sidebar_label: Testing
+---
 `Mia service Node.js Library` is built on Fastify and therefore integrates with [testing tools](https://www.fastify.io/docs/latest/Testing/)
-made available by the framework. A complete example of this type of test is available [here](../examples/advanced/tests/).
+made available by the framework. A complete example of this type of test is available [here](https://github.com/mia-platform/custom-plugin-lib/tree/master/examples/advanced/tests).
 
 CustomPlugin directly expose `getDirectServiceProxy` and `getServiceProxy` for testing purpose.
 Ypu can import the function in you test in ths way:
@@ -10,7 +13,7 @@ Ypu can import the function in you test in ths way:
 const { getDirectServiceProxy } = require('@mia-platform/custom-plugin-lib') 
 const { getServiceProxy } = require('@mia-platform/custom-plugin-lib') 
 
-const myServiceProxy = getDirectServiceProxy(serviceName,otions)
+const myServiceProxy = getDirectServiceProxy(serviceName,options)
 const myServiceProxy = getServiceProxy(options)
 ```
 
@@ -41,7 +44,7 @@ const index = customPlugin(async service => {
 })
 
 const createTestServer = () => {
-  // Silent => trace for enabliing logs
+  // Silent => trace for enabling logs
   const createdServer = fastify({ logger: { level: 'silent' } })
   
   createdServer.register(index)

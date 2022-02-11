@@ -1,5 +1,8 @@
-# Logging
-
+---
+id: logging
+title: Logging
+sidebar_label: Logging
+---
 You can log a message to see in DevOps console. The library use the [Fastify logging system](https://www.fastify.io/docs/v2.0.x/Logging/), that is based on [pino](https://github.com/pinojs/pino).
 
 To log messages call these methods on the logger instance of request. Logging is enabled by default. Therefore you can call on `request.log` or `service.log`:
@@ -42,4 +45,4 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
 ) 
 ```
 
-For further detail about logs can you see the [guidelines for logs](https://docs.mia-platform.eu/development_suite/monitoring-dashboard/dev_ops_guide/log/).
+For further detail about logs can you see the [guidelines for logs](../../development_suite/monitoring/monitoring.md#pod-logs).
