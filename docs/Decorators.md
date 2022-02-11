@@ -1,4 +1,4 @@
-# ADD decorators
+# Add decorators
 
 Decorators are particular endpoint that a microservice can expose. Using the DevOps console you can manage your decorators and link them to your endpoint routes. Check out [decorators documentation](../../development_suite/api-console/api-design/decorators.md) for further detail on their usage and management.
 
