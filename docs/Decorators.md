@@ -1,6 +1,6 @@
 # Add decorators
 
-Decorators are particular endpoint that a microservice can expose. Using the DevOps console you can manage your decorators and link them to your endpoint routes. Check out [decorators documentation](../../development_suite/api-console/api-design/decorators.md) for further detail on their usage and management.
+Decorators are particular endpoint that a microservice can expose. Using the DevOps console you can manage your decorators and link them to your endpoint routes. Check out [decorators documentation](https://docs.mia-platform.eu/docs/development_suite/api-console/api-design/decorators) for further detail on their usage and management.
 
 Decorators allow you to perform custom actions upon specific API handler invocations. There are three types of decorators:
 

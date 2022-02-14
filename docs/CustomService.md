@@ -1,6 +1,6 @@
 # Custom Service
 
-A Custom Microservice is a service that receives HTTP requests, whose cycle of use and deploy is managed by the platform. A Custom Microservice  encapsulates ad-hoc business logics that can be developed by any user of the platform. To know how manage your services in the DevOps Console see the [documentation](../../development_suite/api-console/api-design/services.md)
+A Custom Microservice is a service that receives HTTP requests, whose cycle of use and deploy is managed by the platform. A Custom Microservice  encapsulates ad-hoc business logics that can be developed by any user of the platform. To know how manage your services in the DevOps Console see the [documentation](https://docs.mia-platform.eu/docs/development_suite/api-console/api-design/services)
 
 The library exports a function which creates the infrastructure ready to accept the definition of routes and decorators.  
 The function optionally can take a schema of the required environment variables (you can find the reference [fastify-env](https://github.com/fastify/fastify-env).
@@ -19,7 +19,7 @@ const customService = require('@mia-platform/custom-plugin-lib')({
 
 > **_More examples?_** Go [here](https://github.com/mia-platform/custom-plugin-lib/blob/master/examples/advanced/index.js) to see another use cases.
 
-You can configure the environment variables from DevOps console, in your service configuration. For further detail see [Mia-Platform documentation](../../development_suite/api-console/api-design/services.md#environment-variable-configuration).  
+You can configure the environment variables from DevOps console, in your service configuration. For further detail see [Mia-Platform documentation](https://docs.mia-platform.eu/docs/development_suite/api-console/api-design/services#environment-variable-configuration).  
 
 The customService function expects two arguments:
 
