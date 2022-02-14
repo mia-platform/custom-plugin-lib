@@ -13,7 +13,7 @@ whose arguments are, in order
 * `handler` - function that contains the actual behavior. It must respect the same interface defined in the
 documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Routes/#async-await).
 * `schema` - definition of the request and response data schema.
-The format is the one accepted by [fastify](https://www.fastify.io/docs/latest/Validation-and-Serialization). To further detail see [`related section`](ApiDoc.md).
+The format is the one accepted by [fastify](https://www.fastify.io/docs/latest/Validation-and-Serialization). To further detail see [`related section`](./apidoc.md).
 
 To get more info about how to declare a route can you look at the related [Fastify documentation](https://github.com/fastify/fastify/blob/master/docs/Routes.md).
 
@@ -33,7 +33,7 @@ module.exports = customService(async function handler(service) {
 }) 
 ```
 
-> **_More examples?_** Go [here](../examples/advanced/index.js#L86) to see another `addRawCustomPlugin` uses case.
+> **_More examples?_** Go [here](https://github.com/mia-platform/custom-plugin-lib/blob/master/examples/advanced/index.js) to see another `addRawCustomPlugin` uses case.
 
 * The first parameter of the handler function is [Request](https://www.fastify.io/docs/latest/Request/). The request is automatically decorated, indeed we can call `request.getUserId()`.
 

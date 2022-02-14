@@ -42,4 +42,4 @@ service.addPostDecorator('/notify', function notifyHandler(request) {
 ) 
 ```
 
-For further detail about logs can you see the [guidelines for logs](https://docs.mia-platform.eu/development_suite/monitoring-dashboard/dev_ops_guide/log/).
+For further detail about logs can you see the [guidelines for logs](https://docs.mia-platform.eu/docs/development_suite/monitoring/monitoring#pod-logs).
