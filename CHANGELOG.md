@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixes
 
 - Fixed typos and changed docs links inside `docs` directory
+- CVE-2022-0355
 
 ## v4.3.1 - 2022-02-02
 
