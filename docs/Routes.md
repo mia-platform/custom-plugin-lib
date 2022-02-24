@@ -1,6 +1,6 @@
 # Declare routes
 
-You can define the behaviour of the Custom Microservice in response to an HTTP request by declaring the routes. For this purpose, you can use the `addRawCustomPlugin` method:
+You can define the behavior of the Custom Microservice in response to an HTTP request by declaring the routes. For this purpose, you can use the `addRawCustomPlugin` method:
 
 ```js
 service.addRawCustomPlugin(httpVerb, path, handler, schema)
