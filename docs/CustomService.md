@@ -35,7 +35,7 @@ module.exports = customService(async function handler(service) {
 }, serviceOptions)
 ```
 
-Upon `service`, you can you can add [routes](./routes.md) and [decorators](./decorators.md). 
+Upon `service`, you can you can add [routes](./Routes.md) and [decorators](./Decorators.md). 
 
 The `serviceOptions` argument supports the following properties:
 
