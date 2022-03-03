@@ -70,7 +70,7 @@ module.exports = customService(async function helloWorldService(service) {
 - `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and a handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
 Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
 
-To get more info about Custom Services can you look at the [related section](./docs/CustomService.md).
+To get more info about Custom Services can you look at the [related section](./docs/custom_service.md).
 
 ## Environment Variables configuration
 To works correctly, this library needs some specific environment variables:
@@ -106,13 +106,13 @@ Now you can consult the swagger documentation of the service at
 
 # How to
 
-* <a href="./docs/CustomService.md"><b>Create a Custom Service</b></a>
-* <a href="./docs/Routes.md#declare-routes"><b>Declare routes</b></a>
-* <a href="./docs/Decorators.md"><b>Add decorators</b></a>
-* <a href="./docs/HTTPClient.md"><b>Call the other services on the Platform project</b></a>
-* <a href="./docs/ApiDoc.md"><b>API documentation</b></a>
-* <a href="./docs/Testing.md"><b>Testing</b></a>
-* <a href="./docs/Logging.md#logging"><b>Logging</b></a>
+* <a href="./docs/custom_service.md"><b>Create a Custom Service</b></a>
+* <a href="./docs/routes.md#declare-routes"><b>Declare routes</b></a>
+* <a href="./docs/decorators.md"><b>Add decorators</b></a>
+* <a href="./docs/http_client.md"><b>Call the other services on the Platform project</b></a>
+* <a href="./docs/apidoc.md"><b>API documentation</b></a>
+* <a href="./docs/testing.md"><b>Testing</b></a>
+* <a href="./docs/logging.md#logging"><b>Logging</b></a>
 
 [17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
