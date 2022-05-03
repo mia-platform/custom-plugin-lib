@@ -56,7 +56,7 @@
     "@mia-platform/eslint-config-mia": "^3.0.0",
     "eslint": "^7.23.0",
     "fastify-routes": "^3.0.1",
-    "hpagent": "^0.1.1",
+    "hpagent": "^1.0.0",
     "nock": "^13.0.11",
     "pre-commit": "^1.2.2",
     "proxy": "^1.0.2",
