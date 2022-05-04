@@ -16,9 +16,9 @@
 
 'use strict'
 
-const fastifyEnv = require('fastify-env')
+const fastifyEnv = require('@fastify/env')
 const fp = require('fastify-plugin')
-const fastifyFormbody = require('fastify-formbody')
+const fastifyFormbody = require('@fastify/formbody')
 const Ajv = require('ajv')
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))

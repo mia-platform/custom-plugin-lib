@@ -42,14 +42,14 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
+    "@fastify/env": "^3.0.0",
+    "@fastify/formbody": "^6.0.0",
     "@mia-platform/lc39": "^6.0.0",
     "@types/node": "^16.7.1",
-    "ajv": "^8.6.0",
+    "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
-    "fastify-env": "^2.1.1",
-    "fastify-formbody": "^5.0.0",
-    "fastify-plugin": "^3.0.0",
-    "http-errors": "^1.8.0",
+    "fastify-plugin": "^3.0.1",
+    "http-errors": "^2.0.0",
     "simple-get": "^4.0.1"
   },
   "devDependencies": {
