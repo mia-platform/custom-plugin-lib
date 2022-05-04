@@ -16,9 +16,10 @@
 
 'use strict'
 
-const customService = require('../../index')()
 const fs = require('fs')
-const fastifyRoutes = require('fastify-routes')
+const fastifyRoutes = require('@fastify/routes')
+
+const customService = require('../../index')()
 
 const schema = {
   body: {
