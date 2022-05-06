@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `allowedStatusCodes` array of status codes is replaced by the function `validateStatus` (which accept by default 2xx)
   - `agent` to configure the proxy is renamed to `proxy` and it is now an object
   - `port` and `protocol` are now accepted only in url and baseUrl
+- expose `getHeadersToProxy` function to calculate headers to proxy
 
 ### Deprecation
 

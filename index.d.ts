@@ -37,6 +37,7 @@ declare namespace customPlugin {
    */
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   function getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient
+
   interface environmentSchema {
     type: 'object',
     required?: readonly string[],
@@ -100,6 +101,7 @@ declare namespace customPlugin {
      * @deprecated Do not use this method, use `getHttpClient` instead
      */
     getServiceProxy: (options?: InitServiceOptions) => Service,
+    getHeadersToProxy({isMiaHeaderInjected}: {isMiaHeaderInjected?: boolean}): NodeJS.Dict<string | string[]>
     getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient,
     USERID_HEADER_KEY: string,
     USER_PROPERTIES_HEADER_KEY: string,

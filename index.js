@@ -29,6 +29,7 @@ const addPreDecorator = require('./lib/preDecorator')
 const addPostDecorator = require('./lib/postDecorator')
 const ajvSetup = require('./lib/ajvSetup')
 const HttpClient = require('./lib/httpClient')
+const { extraHeadersKeys } = require('./lib/util')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
@@ -37,13 +38,6 @@ const CLIENTTYPE_HEADER_KEY = 'CLIENTTYPE_HEADER_KEY'
 const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
 const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
-
-const extraHeadersKeys = [
-  'x-request-id',
-  'x-forwarded-for',
-  'x-forwarded-proto',
-  'x-forwarded-host',
-]
 
 const baseSchema = {
   type: 'object',
@@ -208,6 +202,19 @@ function getHttpClient(url, baseOptions = {}) {
   return new HttpClient(url, {}, baseOptions)
 }
 
+function getHeadersToProxy({ isMiaHeaderInjected = true } = {}) {
+  const requestHeaders = this.getOriginalRequestHeaders()
+
+  const miaHeaders = this.getMiaHeaders()
+  const extraMiaHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
+  const customHeaders = getCustomHeaders(this[ADDITIONAL_HEADERS_TO_PROXY], requestHeaders)
+  return {
+    ...isMiaHeaderInjected ? miaHeaders : {},
+    ...isMiaHeaderInjected ? extraMiaHeaders : {},
+    ...customHeaders,
+  }
+}
+
 function decorateFastify(fastify) {
   const { config } = fastify
 
@@ -225,6 +232,7 @@ function decorateFastify(fastify) {
 
   fastify.decorateRequest('getMiaHeaders', getMiaHeaders)
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
+  fastify.decorateRequest('getHeadersToProxy', getHeadersToProxy)
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
