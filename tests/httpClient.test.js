@@ -8,7 +8,7 @@ const proxy = require('proxy')
 const fs = require('fs')
 const https = require('https')
 
-const HttpClient = require('../lib/HttpClient')
+const HttpClient = require('../lib/httpClient')
 
 const MY_AWESOME_SERVICE_PROXY_HTTP_URL = 'http://my-awesome-service'
 const MY_AWESOME_SERVICE_PROXY_HTTPS_URL = 'https://my-awesome-service'
