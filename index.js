@@ -28,6 +28,7 @@ const addRawCustomPlugin = require('./lib/rawCustomPlugin')
 const addPreDecorator = require('./lib/preDecorator')
 const addPostDecorator = require('./lib/postDecorator')
 const ajvSetup = require('./lib/ajvSetup')
+const HttpClient = require('./lib/httpClient')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
@@ -195,6 +196,18 @@ function getOriginalRequestHeaders() {
   return this.headers
 }
 
+function getHttpClientFromRequest(url, baseOptions = {}) {
+  const requestHeaders = this.getOriginalRequestHeaders()
+  const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
+  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
+  const serviceHeaders = { ...this.getMiaHeaders(), ...extraHeaders }
+  return new HttpClient(url, serviceHeaders, options)
+}
+
+function getHttpClient(url, baseOptions = {}) {
+  return new HttpClient(url, {}, baseOptions)
+}
+
 function decorateFastify(fastify) {
   const { config } = fastify
 
@@ -215,6 +228,7 @@ function decorateFastify(fastify) {
 
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
+  fastify.decorateRequest('getHttpClient', getHttpClientFromRequest)
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
@@ -223,6 +237,7 @@ function decorateFastify(fastify) {
 
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
+  fastify.decorate('getHttpClient', getHttpClient)
 }
 
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction, serviceOptions = {} }) {
@@ -291,3 +306,4 @@ module.exports.getDirectServiceProxy = getDirectlyServiceBuilderFromService
 module.exports.getServiceProxy = (microserviceGatewayServiceName, baseOptions = {}) => {
   return serviceBuilder(microserviceGatewayServiceName, {}, baseOptions)
 }
+module.exports.getHttpClient = getHttpClient

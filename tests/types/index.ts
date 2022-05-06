@@ -30,9 +30,9 @@ cpl({
 cpl()
 
 const a = cpl()
-const { getDirectServiceProxy, getServiceProxy } = cpl
+const { getDirectServiceProxy, getServiceProxy, getHttpClient } = cpl
 
-async function invokeSomeApis(service: cpl.Service) {
+async function invokeSomeApisServiceProxy(service: cpl.Service) {
   service.get('/path')
   service.get('/path', { query: 'params' })
   service.get('/path', { query: 'params' }, { returnAs: 'JSON' })
@@ -81,7 +81,61 @@ async function invokeSomeApis(service: cpl.Service) {
   let d: string = ''
   responseAsStream.on('data', data => { d += data.toString() })
   responseAsStream.on('end', () => console.log(d))
+}
 
+async function invokeSomeApis(service: cpl.HttpClient) {
+  service.get('/path')
+  service.get('/path', { query: { query: 'params'} })
+  service.get('/path', { returnAs: 'JSON', query: { query: 'params' } })
+  service.get('/path', { returnAs: 'BUFFER', query: { query: 'params' } })
+  service.get('/path', { returnAs: 'STREAM', query: { query: 'params' } })
+
+  service.post('/path', {my: 'body'})
+  service.post('/path', 'My body as string')
+  service.post('/path', Buffer.from('My body as buffer'))
+  service.post('/path', new stream.Readable())
+  service.post('/path', {my: 'body'}, { query: { query: 'params'} })
+  service.post('/path', {my: 'body'}, { returnAs: 'STREAM', query: { query: 'params'} })
+
+  service.put('/path', {my: 'body'})
+  service.put('/path', 'My body as string')
+  service.put('/path', Buffer.from('My body as buffer'))
+  service.put('/path', new stream.Readable())
+  service.put('/path', {my: 'body'}, { query: { query: 'params'} })
+  service.put('/path', {my: 'body'}, { returnAs: 'STREAM', query: { query: 'params'} })
+
+  service.patch('/path', {my: 'body'})
+  service.patch('/path', 'My body as string')
+  service.patch('/path', Buffer.from('My body as buffer'))
+  service.patch('/path', new stream.Readable())
+  service.patch('/path', {my: 'body'}, {query: { query: 'params'}})
+  service.patch('/path', {my: 'body'}, { returnAs: 'STREAM', query: { query: 'params'} })
+
+  service.delete('/path', {my: 'body'})
+  service.delete('/path', 'My body as string')
+  service.delete('/path', Buffer.from('My body as buffer'))
+  service.delete('/path', new stream.Readable())
+  service.delete('/path', {my: 'body'}, { query: { query: 'params'} })
+  service.delete('/path', {my: 'body'}, { returnAs: 'STREAM', query: { query: 'params'} })
+
+  interface Res {
+    foo: string
+  }
+  const response = await service.get<cpl.JSONResponse<Res>>('/path')
+  console.log(response.statusCode)
+  console.log(response.headers)
+  console.log(response.payload.foo)
+
+  const responseAsBuffer = await service.get<cpl.BufferResponse>('/path')
+  console.log(responseAsBuffer.statusCode)
+  console.log(responseAsBuffer.headers)
+  console.log(responseAsBuffer.payload)
+
+  const responseAsStream = await service.get<cpl.StreamResponse>('/path', { returnAs: 'STREAM' })
+  let d: string = ''
+  responseAsStream.headers
+  responseAsStream.payload.on('data', data => { d += data.toString() })
+  responseAsStream.payload.on('end', () => console.log(d))
 }
 
 a(async function (service) {
@@ -108,6 +162,9 @@ a(async function (service) {
     Headers: {headers: string}
   }
 
+  const httpClientFromService = service.getHttpClient('http://service-name')
+  await invokeSomeApis(httpClientFromService)
+
   service
     .addRawCustomPlugin('GET', '/path1', function handlerPath1(request, reply) {
     console.log(this.config)
@@ -126,27 +183,52 @@ a(async function (service) {
     const isFromBackOffice: boolean = request.isFromBackOffice()
 
     const directService: cpl.Service = request.getDirectServiceProxy('my-service')
-    await invokeSomeApis(directService)
+    await invokeSomeApisServiceProxy(directService)
 
     const directServiceWithOptions: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http'})
-    await invokeSomeApis(directServiceWithOptions)
+    await invokeSomeApisServiceProxy(directServiceWithOptions)
 
     const directServiceWithOptionsAndHeaders: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http', headers: { key: 'value1' }})
-    await invokeSomeApis(directServiceWithOptionsAndHeaders)
+    await invokeSomeApisServiceProxy(directServiceWithOptionsAndHeaders)
 
     const proxiedService: cpl.Service = request.getServiceProxy()
-    await invokeSomeApis(proxiedService)
+    await invokeSomeApisServiceProxy(proxiedService)
 
     const proxiedServiceWithOptions: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http'})
-    await invokeSomeApis(proxiedServiceWithOptions)
+    await invokeSomeApisServiceProxy(proxiedServiceWithOptions)
 
     const proxiedServiceWithOptionsAndHeaders: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', headers: { key: 'value1' }})
-    await invokeSomeApis(proxiedServiceWithOptionsAndHeaders)
+    await invokeSomeApisServiceProxy(proxiedServiceWithOptionsAndHeaders)
 
     const proxiedServiceWithPrefix: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', prefix: '/my-prefix'})
-    await invokeSomeApis(proxiedServiceWithPrefix)
+    await invokeSomeApisServiceProxy(proxiedServiceWithPrefix)
 
     await invokeProxies()
+
+    return { 'aa': 'boo' }
+  }, {
+    headers: {
+      type:'object'
+    }
+  })
+    .addRawCustomPlugin('POST', '/', async function handler(request, reply) {
+    console.log(this.config)
+
+    const userId: string | null = request.getUserId()
+    const groups: string[] = request.getGroups()
+    const clientType: string | null = request.getClientType()
+    const isFromBackOffice: boolean = request.isFromBackOffice()
+
+    const httpClient = request.getHttpClient('http://my-service')
+    await invokeSomeApis(httpClient)
+
+    const httpClientWithOptions = request.getHttpClient('http://my-service', {
+      headers: {'accept': 'application/json'},
+    })
+    await invokeSomeApis(httpClientWithOptions)
+
+    const httpClientFromService = service.getHttpClient('http://service-name')
+    await invokeSomeApis(httpClientFromService)
 
     return { 'aa': 'boo' }
   }, {
@@ -281,4 +363,11 @@ async function invokeProxies() {
 
   await serviceProxy.get('/path')
   await serviceProxyWithOptions.get('/path')
+
+  const httpClient = getHttpClient('http://service_name')
+  const httpClientWithOptions = getHttpClient('http://service_name:3000', {
+    timeout: 1000,
+  })
+  await httpClient.get('/path')
+  await httpClientWithOptions.get('/path')
 }

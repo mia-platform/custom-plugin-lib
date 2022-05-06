@@ -28,8 +28,15 @@ declare namespace customPlugin {
 
   type CustomService<Config extends ServiceConfig = ServiceConfig> = (asyncInitFunction: AsyncInitFunction<Config>, serviceOptions?: CustomServiceOptions) => any
 
+  /**
+   * @deprecated Do not use this method, use `getHttpClient` instead
+   */
   function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
+  /**
+   * @deprecated Do not use this method, use `getHttpClient` instead
+   */
   function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
+  function getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient
   interface environmentSchema {
     type: 'object',
     required?: readonly string[],
@@ -66,8 +73,15 @@ declare namespace customPlugin {
     addRawCustomPlugin<Request extends RequestGeneric = RequestGeneric>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<Config, Request> | Handler<Config, Request>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator<Request extends RequestGeneric = RequestGeneric>(path: string, handler: preDecoratorHandler<Config, Request>): DecoratedFastify<Config>
     addPostDecorator<Request extends RequestGeneric = RequestGeneric>(path: string, handler: postDecoratorHandler<Config, Request>): DecoratedFastify<Config>
+    /**
+     * @deprecated Do not use this method, use `getHttpClient` instead
+     */
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
+    /**
+     * @deprecated Do not use this method, use `getHttpClient` instead
+     */
     getServiceProxy: (options?: InitServiceOptions) => Service,
+    getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient,
     addValidatorSchema(schema: object): void,
     getValidatorSchema(schemaId: string): undefined | ((data: any) => boolean | Promise<any>),
   }
@@ -78,8 +92,15 @@ declare namespace customPlugin {
     getGroups: () => string[],
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
+    /**
+     * @deprecated Do not use this method, use `getHttpClient` instead
+     */
     getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
+    /**
+     * @deprecated Do not use this method, use `getHttpClient` instead
+     */
     getServiceProxy: (options?: InitServiceOptions) => Service,
+    getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient,
     USERID_HEADER_KEY: string,
     USER_PROPERTIES_HEADER_KEY: string,
     GROUPS_HEADER_KEY: string,
@@ -95,6 +116,56 @@ declare namespace customPlugin {
   type BasicHandler<Config extends ServiceConfig = ServiceConfig, Request extends RequestGeneric = RequestGeneric, ResponseType = void | Promise<any>> = (this: DecoratedFastify<Config>, request: DecoratedRequest<Request>, reply: fastify.FastifyReply) => ResponseType
   type Handler<Config extends ServiceConfig = ServiceConfig, Request extends RequestGeneric = RequestGeneric> = BasicHandler<Config, Request, void>
   type AsyncHandler<Config extends ServiceConfig = ServiceConfig, Request extends RequestGeneric = RequestGeneric> = BasicHandler<Config, Request, Promise<any>>
+
+  //
+  // HTTP CLIENT
+  //
+  interface HttpClientBaseOptions {
+    headers?: http.IncomingHttpHeaders,
+    timeout?: number,
+    cert?: string,
+    key?: string,
+    ca?: string,
+  }
+  interface BaseHttpClientResponse {
+    headers: http.IncomingHttpHeaders
+    statusCode: number
+  }
+  interface StreamResponse extends BaseHttpClientResponse {
+    payload: NodeJS.ReadableStream
+  }
+  interface JSONResponse<Payload = any> extends BaseHttpClientResponse {
+    payload: Payload
+  }
+  interface BufferResponse extends BaseHttpClientResponse {
+    payload: Buffer
+  }
+  type Response<Payload = any> = StreamResponse | JSONResponse<Payload> | BufferResponse
+  interface HttpClientProxy {
+    protocol: 'http' | 'https'
+    host: string
+    port: number
+    auth: {
+      username: string
+      password: string
+    }
+  }
+  interface HttpClientOptions extends HttpClientBaseOptions {
+    returnAs?: 'STREAM' | 'JSON' | 'BUFFER';
+    validateStatus?: (statusCode: number) => boolean;
+    isMiaHeaderInjected?: boolean;
+    errorMessageKey?: string;
+    proxy?: HttpClientProxy;
+    query?: Record<string, string>;
+  }
+
+  interface HttpClient {
+    get: <ResponseType = Response>(path: string, options?: HttpClientOptions) => Promise<ResponseType>
+    post: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
+    put: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
+    patch: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
+    delete: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
+  }
 
   //
   // SERVICE

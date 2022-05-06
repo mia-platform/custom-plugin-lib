@@ -8,8 +8,8 @@ service.addRawCustomPlugin(httpVerb, path, handler, schema)
 
 whose arguments are, in order
 
-* `httpVerb` - the HTTP verb of the request (e.g.,` GET`).
-* `path` - the route path (e.g.,` /status /alive`).
+* `httpVerb` - the HTTP verb of the request (e.g.,`GET`).
+* `path` - the route path (e.g.,`/status /alive`).
 * `handler` - function that contains the actual behavior. It must respect the same interface defined in the
 documentation of the handlers of [fastify](https://www.fastify.io/docs/latest/Routes/#async-await).
 * `schema` - definition of the request and response data schema.
