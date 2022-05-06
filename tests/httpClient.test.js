@@ -1046,24 +1046,47 @@ tap.test('httpClient', test => {
     }
     )
 
-    innerTest.test('send Object - returnAs: BUFFER - success statusCode 204', async(assert) => {
+    innerTest.test('send empty - returnAs: BUFFER - success statusCode 204', async(assert) => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
         .delete('/foo')
         .reply(204)
 
       const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
 
-      const response = await service.delete(
-        '/foo',
-        undefined,
-        { returnAs: 'BUFFER' }
-      )
+      const response = await service.delete('/foo', undefined, { returnAs: 'BUFFER' })
 
       assert.equal(response.statusCode, 204)
       myServiceNameScope.done()
 
       assert.end()
     })
+
+    innerTest.test('send empty - returnAs: STREAM - success statusCode 204', async(assert) => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .delete('/foo')
+        .reply(204)
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+
+      const response = await service.delete('/foo', undefined, { returnAs: 'STREAM' })
+
+      assert.equal(response.statusCode, 204)
+      myServiceNameScope.done()
+
+      const body = await new Promise(resolve => {
+        let acc = ''
+        response.payload.on('data', data => {
+          acc += data.toString()
+        })
+        response.payload.on('end', () => resolve(acc))
+      })
+      assert.strictSame(body, '')
+
+      assert.end()
+    })
+
 
     innerTest.end()
   })
