@@ -161,12 +161,15 @@ declare namespace customPlugin {
     query?: Record<string, string>;
   }
 
+  type RequestBody = any | Buffer | ReadableStream
+  type RequestMethodWithBody = (path: string, body: RequestBody, options?: HttpClientOptions) => Promise<ResponseType>
+
   interface HttpClient {
     get: <ResponseType = Response>(path: string, options?: HttpClientOptions) => Promise<ResponseType>
-    post: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
-    put: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
-    patch: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
-    delete: <ResponseType = Response>(path: string, body: any | Buffer | ReadableStream, options?: HttpClientOptions) => Promise<ResponseType>
+    post: RequestMethodWithBody
+    put: RequestMethodWithBody
+    patch: RequestMethodWithBody
+    delete: RequestMethodWithBody
   }
 
   //
