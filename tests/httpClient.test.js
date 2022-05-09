@@ -7,6 +7,9 @@ const http = require('http')
 const proxy = require('proxy')
 const fs = require('fs')
 const https = require('https')
+const split = require('split2')
+const Pino = require('pino')
+const lc39 = require('@mia-platform/lc39')
 
 const HttpClient = require('../lib/httpClient')
 
@@ -1703,6 +1706,189 @@ tap.test('httpClient', test => {
     })
 
     assert.end()
+  })
+
+  test.test('logger', async innerTest => {
+    const USERID_HEADER_KEY = 'userid-header-key'
+    const GROUPS_HEADER_KEY = 'groups-header-key'
+    const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
+    const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
+    const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
+
+    const baseEnv = {
+      USERID_HEADER_KEY,
+      GROUPS_HEADER_KEY,
+      CLIENTTYPE_HEADER_KEY,
+      BACKOFFICE_HEADER_KEY,
+      MICROSERVICE_GATEWAY_SERVICE_NAME,
+    }
+    const stream = split(JSON.parse)
+    const fastify = await lc39('./tests/services/http-client.js', {
+      logLevel: 'trace',
+      stream,
+      envVariables: baseEnv,
+    })
+
+    innerTest.test('log correctly - request ok', async assert => {
+      const stream = split(JSON.parse)
+      const pino = Pino({ level: 'trace' }, stream)
+
+      stream.once('data', beforeRequest => {
+        assert.match(beforeRequest, {
+          level: 10,
+          msg: /^make call$/,
+          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          time: /[0-9]+/,
+          headers: {
+            some: 'value',
+          },
+          payload: {
+            request: 'body',
+          },
+        })
+
+        stream.once('data', afterRequest => {
+          assert.match(afterRequest, {
+            level: 10,
+            msg: /^response info$/,
+            statusCode: 200,
+            headers: {
+              some: 'response-header',
+            },
+            payload: { the: 'response' },
+          })
+        })
+      })
+
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .post('/foo')
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+      const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
+        logger: pino,
+      })
+      const response = await httpClient.post('/foo', {
+        request: 'body',
+      }, {
+        headers: {
+          some: 'value',
+        },
+      })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+    })
+
+    innerTest.test('log correctly - response error', async assert => {
+      const stream = split(JSON.parse)
+      const pino = Pino({ level: 'trace' }, stream)
+
+      stream.once('data', beforeRequest => {
+        assert.match(beforeRequest, {
+          level: 10,
+          msg: /^make call$/,
+          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          time: /[0-9]+/,
+          headers: {
+            some: 'value',
+          },
+          payload: {
+            request: 'body',
+          },
+        })
+
+        stream.once('data', afterRequest => {
+          assert.match(afterRequest, {
+            level: 50,
+            msg: /^response error$/,
+            statusCode: 500,
+            message: 'error message',
+          })
+        })
+      })
+
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .post('/foo')
+        .reply(500, { message: 'error message' }, {
+          some: 'response-header',
+        })
+      const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
+        logger: pino,
+      })
+      try {
+        await httpClient.post('/foo', {
+          request: 'body',
+        }, {
+          headers: {
+            some: 'value',
+          },
+        })
+      } catch (error) {
+        assert.equal(error.statusCode, 500)
+      }
+
+
+      myServiceNameScope.done()
+    })
+
+    innerTest.test('log correctly - generic error', async assert => {
+      assert.plan(3)
+
+      stream.once('data', beforeRequest => {
+        assert.match(beforeRequest, {
+          level: 10,
+          msg: /^make call$/,
+          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          time: /[0-9]+/,
+          headers: {
+            some: 'value',
+          },
+          payload: {
+            request: 'body',
+          },
+        })
+
+        stream.once('data', afterRequest => {
+          assert.match(afterRequest, {
+            level: 50,
+            msg: /^generic request error$/,
+            // eslint-disable-next-line id-blacklist
+            err: {
+              type: 'Error',
+              message: 'timeout of 100ms exceeded',
+              code: 'ECONNABORTED',
+            },
+          })
+        })
+      })
+
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .post('/foo')
+        .delay(101)
+        .reply(200, { the: 'response' })
+      const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
+        logger: fastify.log,
+        timeout: 100,
+      })
+      try {
+        await httpClient.post('/foo', {
+          request: 'body',
+        }, {
+          headers: {
+            some: 'value',
+          },
+        })
+      } catch (error) {
+        assert.equal(error.message, 'timeout of 100ms exceeded')
+      }
+
+      myServiceNameScope.done()
+    })
   })
 
   test.end()
