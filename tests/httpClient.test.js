@@ -307,6 +307,27 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    innerTest.test('response is empty - returnAs: JSON', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get('/foo')
+        .reply(200, '', {
+          some: 'response-header',
+        })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+
+      const response = await service.get('/foo')
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, '')
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
     innerTest.test('response status code is not allowed - default validateStatus - returnAs: JSON', async assert => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
         .replyContentLength()
@@ -321,6 +342,27 @@ tap.test('httpClient', test => {
         assert.fail('We can\'t reach this!')
       } catch (error) {
         assert.strictSame(error.message, 'Resource Not Found')
+        assert.strictSame(error.statusCode, 404)
+      }
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('response status code is not allowed - response is empty - returnAs: JSON', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get('/foo')
+        .reply(404, '', {
+          some: 'response-header',
+        })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+      try {
+        await service.get('/foo')
+        assert.fail('We can\'t reach this!')
+      } catch (error) {
+        assert.strictSame(error.message, 'Something went wrong')
         assert.strictSame(error.statusCode, 404)
       }
 
