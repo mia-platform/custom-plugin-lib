@@ -84,6 +84,41 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    innerTest.test('injects Mia Header if isMiaHeaderInjected base option is true', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {
+        reqheaders: {
+          [HEADER_MIA_KEY]: HEADER_MIA[HEADER_MIA_KEY],
+        },
+      })
+        .get('/foo')
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, HEADER_MIA, {}, { isMiaHeaderInjected: true })
+      const response = await service.get('/foo')
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('does not inject Mia header if isMiaHeaderInjected option is false and base option is true', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {
+        badheaders: [HEADER_MIA_KEY],
+      })
+        .get('/foo')
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, { [HEADER_MIA_KEY]: 'foo' }, { isMiaHeaderInjected: true })
+      const response = await service.get('/foo', { returnAs: 'JSON', isMiaHeaderInjected: false })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+
     innerTest.end()
   })
 
