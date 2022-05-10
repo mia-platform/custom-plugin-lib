@@ -1782,6 +1782,60 @@ tap.test('httpClient', test => {
       myServiceNameScope.done()
     })
 
+    innerTest.test('log correctly - options overwrite base options', async assert => {
+      const stream = split(JSON.parse)
+      const pino = Pino({ level: 'trace' }, stream)
+
+      stream.once('data', beforeRequest => {
+        assert.match(beforeRequest, {
+          level: 10,
+          msg: /^make call$/,
+          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          time: /[0-9]+/,
+          headers: {
+            some: 'value',
+          },
+          payload: {
+            request: 'body',
+          },
+        })
+
+        stream.once('data', afterRequest => {
+          assert.match(afterRequest, {
+            level: 10,
+            msg: /^response info$/,
+            statusCode: 200,
+            headers: {
+              some: 'response-header',
+            },
+            payload: { the: 'response' },
+          })
+        })
+      })
+
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .post('/foo')
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+      const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
+        logger: Pino({ level: 'trace' }),
+      })
+      const response = await httpClient.post('/foo', {
+        request: 'body',
+      }, {
+        headers: {
+          some: 'value',
+        },
+        logger: pino,
+      })
+
+      assert.equal(response.statusCode, 200)
+
+      myServiceNameScope.done()
+    })
+
     innerTest.test('log correctly - response error', async assert => {
       const stream = split(JSON.parse)
       const pino = Pino({ level: 'trace' }, stream)
