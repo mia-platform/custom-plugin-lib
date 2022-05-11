@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### BREAKING CHANGES
+
+- upgrade lc39 to v6
+- drop Node support <14
+
 ### Added
 
 - add an http client method to replace deprecated `getServiceProxy` and `getDirectServiceProxy` (see all the features in the http client docs).
@@ -23,11 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixes
 
 - fix Mia header propagation (resolved [#161](https://github.com/mia-platform/custom-plugin-lib/issues/161))
-
-### BREAKING CHANGES
-
-- upgrade lc39 to v6
-- drop Node support <14
 
 ### Changes
 
