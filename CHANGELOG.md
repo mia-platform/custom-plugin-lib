@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- add an http client method to replace deprecated `getServiceProxy` and `getDirectServiceProxy`.
-  Main differences from the already existent `getServiceProxy` and `getDirectServiceProxy`:
+- add an http client method to replace deprecated `getServiceProxy` and `getDirectServiceProxy` (see all the features in the http client docs).
+  Main breaking changes from the already existent `getServiceProxy` and `getDirectServiceProxy`:
   - streams respond with an object with headers, payload and statusCode. The payload has the stream interface
   - `allowedStatusCodes` array of status codes is replaced by the function `validateStatus` (which accept by default 2xx)
   - `agent` to configure the proxy is renamed to `proxy` and it is now an object
