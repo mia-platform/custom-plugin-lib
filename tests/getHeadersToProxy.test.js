@@ -162,3 +162,22 @@ tap.test('getHeadersToProxy - no request headers', async assert => {
   assert.equal(response.statusCode, 200)
   assert.strictSame(JSON.parse(response.payload), {})
 })
+
+tap.test('getHeadersToProxy - backoffice header to true', async assert => {
+  const fastify = await setupFastify('./tests/services/get-headers-to-proxy.js', {
+    ...baseEnv,
+    ADDITIONAL_HEADERS_TO_PROXY,
+  })
+  const response = await fastify.inject({
+    method: 'POST',
+    url: '/default',
+    headers: {
+      [BACKOFFICE_HEADER_KEY]: '1',
+    },
+  })
+
+  assert.equal(response.statusCode, 200)
+  assert.strictSame(JSON.parse(response.payload), {
+    [BACKOFFICE_HEADER_KEY]: '1',
+  })
+})
