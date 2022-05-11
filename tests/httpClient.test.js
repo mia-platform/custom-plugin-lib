@@ -118,7 +118,6 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
-
     innerTest.end()
   })
 

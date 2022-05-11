@@ -180,13 +180,13 @@ function getMiaHeaders() {
   const userProperties = this.getUserProperties()
   const groups = this.getGroups().join(',')
   const clientType = this.getClientType()
-  const isBackoffice = this.isFromBackOffice() ? '1' : ''
+  const fromBackoffice = this.isFromBackOffice() ? '1' : ''
   return {
     ...userId !== null ? { [this.USERID_HEADER_KEY]: userId } : {},
     ...userProperties !== null ? { [this.USER_PROPERTIES_HEADER_KEY]: JSON.stringify(userProperties) } : {},
     ...groups ? { [this.GROUPS_HEADER_KEY]: groups } : {},
     ...clientType !== null ? { [this.CLIENTTYPE_HEADER_KEY]: clientType } : {},
-    ...isBackoffice ? { [this.BACKOFFICE_HEADER_KEY]: isBackoffice } : {},
+    ...fromBackoffice ? { [this.BACKOFFICE_HEADER_KEY]: fromBackoffice } : {},
   }
 }
 
