@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - deprecate `getServiceProxy` and `getDirectServiceProxy` function. Please, substitute it with the `getHttpClient` function.
 
+### Fixes
+
+- fix Mia header propagation (resolved [#161](https://github.com/mia-platform/custom-plugin-lib/issues/161))
+
 ### BREAKING CHANGES
 
 - upgrade lc39 to v6

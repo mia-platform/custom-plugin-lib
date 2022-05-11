@@ -58,7 +58,6 @@ tap.test('Call microservice gateway proxy', test => {
       [USERID_HEADER_KEY]: 'userid',
       [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
     }
     const scope = nock(`http://${MICROSERVICE_GATEWAY_SERVICE_NAME}`, {
       reqheaders: headers,
@@ -98,7 +97,6 @@ tap.test('Call microservice gateway proxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
     }
     const scope = nock(`https://${MICROSERVICE_GATEWAY_SERVICE_NAME}:3000`, {
       reqheaders: headers,
@@ -139,7 +137,6 @@ tap.test('Call microservice gateway proxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       additionalheader1: 'header1value',
       additionalheader2: 'header2value',
     }
@@ -176,7 +173,6 @@ tap.test('Call microservice gateway proxy', test => {
       [USERID_HEADER_KEY]: 'userid',
       [USER_PROPERTIES_HEADER_KEY]: JSON.stringify({ prop1: 'value1' }),
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       additionalheader1: 'header1value',
       additionalheader2: 'header2value',
     }
@@ -222,7 +218,6 @@ tap.test('Call microservice gateway proxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       additionalheader1: 'header1value',
       additionalheader2: 'header2value',
     }
