@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 
 - upgrade dependencies
+- make `@types/node` a development dependency instead of a normal dependency
 
 ## v4.3.2 - 2022-02-15
 
