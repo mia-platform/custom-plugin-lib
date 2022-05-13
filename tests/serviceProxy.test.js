@@ -61,7 +61,6 @@ tap.test('serviceProxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -108,7 +107,6 @@ tap.test('serviceProxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
     }
     const scope = nock(`http://${otherServiceName}:3000`, {
       reqheaders: headers,
@@ -139,7 +137,6 @@ tap.test('serviceProxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -179,7 +176,6 @@ tap.test('serviceProxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -229,7 +225,6 @@ tap.test('serviceProxy', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -295,7 +290,6 @@ tap.test('httpClient', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -342,7 +336,6 @@ tap.test('httpClient', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
     }
     const scope = nock(`http://${otherServiceName}:3000`, {
       reqheaders: headers,
@@ -373,7 +366,6 @@ tap.test('httpClient', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -413,7 +405,6 @@ tap.test('httpClient', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -463,7 +454,6 @@ tap.test('httpClient', test => {
       [CLIENTTYPE_HEADER_KEY]: 'CMS',
       [USERID_HEADER_KEY]: 'userid',
       [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-      [BACKOFFICE_HEADER_KEY]: '',
       [X_REQUEST_ID_HEADER_KEY]: 'request-id',
       [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
       [X_FORWARDED_PROTO_HEADER_KEY]: 'https',
@@ -509,6 +499,38 @@ tap.test('httpClient', test => {
         id: 'a',
         some: 'stuff',
       },
+    })
+    scope.done()
+    assert.end()
+  })
+
+  test.test('directly call a service without mia headers', async assert => {
+    const otherServiceName = 'other-service'
+    const headers = {}
+    const scope = nock(`http://${otherServiceName}`, {
+      badheaders: [
+        CLIENTTYPE_HEADER_KEY,
+        USERID_HEADER_KEY,
+        GROUPS_HEADER_KEY,
+      ],
+    })
+      .get('/res')
+      .reply(200, { id: 'a', key: 2 })
+
+    const fastify = await setupFastify('./tests/services/http-client.js', {
+      ...baseEnv,
+    })
+    const response = await fastify.inject({
+      method: 'POST',
+      url: '/default',
+      payload: { some: 'stuff' },
+      headers,
+    })
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(response.headers['content-type'], 'application/json; charset=utf-8')
+    assert.strictSame(JSON.parse(response.payload), {
+      id: 'a',
+      some: 'stuff',
     })
     scope.done()
     assert.end()

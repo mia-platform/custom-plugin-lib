@@ -77,7 +77,6 @@ tap.test('getHeadersToProxy basic', async assert => {
     [CLIENTTYPE_HEADER_KEY]: 'CMS',
     [USERID_HEADER_KEY]: 'userid',
     [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-    [BACKOFFICE_HEADER_KEY]: '',
     [USER_PROPERTIES_HEADER_KEY]: '{"foo":"bar"}',
     [X_REQUEST_ID_HEADER_KEY]: 'request-id',
     [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
@@ -141,7 +140,6 @@ tap.test('getHeadersToProxy - additional headers to proxy', async assert => {
     [CLIENTTYPE_HEADER_KEY]: 'CMS',
     [USERID_HEADER_KEY]: 'userid',
     [GROUPS_HEADER_KEY]: 'group-to-greet,group',
-    [BACKOFFICE_HEADER_KEY]: '',
     [USER_PROPERTIES_HEADER_KEY]: '{"foo":"bar"}',
     [X_REQUEST_ID_HEADER_KEY]: 'request-id',
     [X_FORWARDED_FOR_HEADER_KEY]: '8.8.8.8, 10.0.0.1, 172.16.0.1, 192.168.0.1',
@@ -162,11 +160,24 @@ tap.test('getHeadersToProxy - no request headers', async assert => {
   })
 
   assert.equal(response.statusCode, 200)
+  assert.strictSame(JSON.parse(response.payload), {})
+})
+
+tap.test('getHeadersToProxy - backoffice header to true', async assert => {
+  const fastify = await setupFastify('./tests/services/get-headers-to-proxy.js', {
+    ...baseEnv,
+    ADDITIONAL_HEADERS_TO_PROXY,
+  })
+  const response = await fastify.inject({
+    method: 'POST',
+    url: '/default',
+    headers: {
+      [BACKOFFICE_HEADER_KEY]: '1',
+    },
+  })
+
+  assert.equal(response.statusCode, 200)
   assert.strictSame(JSON.parse(response.payload), {
-    'userid-header-key': null,
-    'userproperties-header-key': 'null',
-    'groups-header-key': '',
-    'clienttype-header-key': null,
-    'backoffice-header-key': '',
+    [BACKOFFICE_HEADER_KEY]: '1',
   })
 })

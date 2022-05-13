@@ -278,6 +278,43 @@ tap.test('Plain Custom Service', test => {
     assert.end()
   })
 
+  test.test('returns mia headers - empty', async assert => {
+    const fastify = await setupFastify(baseEnv)
+
+    const response = await fastify.inject({
+      method: 'GET',
+      url: '/mia-headers',
+    })
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(JSON.parse(response.payload), {})
+    assert.end()
+  })
+
+  test.test('returns mia headers - filled', async assert => {
+    const fastify = await setupFastify(baseEnv)
+
+    const response = await fastify.inject({
+      method: 'GET',
+      url: '/mia-headers',
+      headers: {
+        [USERID_HEADER_KEY]: 'my-user',
+        [GROUPS_HEADER_KEY]: 'group1,group2',
+        [USER_PROPERTIES_HEADER_KEY]: '{"foo":"bar"}',
+        [BACKOFFICE_HEADER_KEY]: 'false',
+        [CLIENTTYPE_HEADER_KEY]: 'web',
+      },
+    })
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(JSON.parse(response.payload), {
+      [USERID_HEADER_KEY]: 'my-user',
+      [GROUPS_HEADER_KEY]: 'group1,group2',
+      [USER_PROPERTIES_HEADER_KEY]: '{"foo":"bar"}',
+      [BACKOFFICE_HEADER_KEY]: '1',
+      [CLIENTTYPE_HEADER_KEY]: 'web',
+    })
+    assert.end()
+  })
+
   test.end()
 })
 

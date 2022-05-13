@@ -105,6 +105,10 @@ module.exports = customService(async function clientGroups(service) {
     })
   }
 
+  function handleMiaHeaders(request, reply) {
+    reply.send(request.getMiaHeaders())
+  }
+
   function handlerRespondWithBody(request, reply) {
     reply.send(request.body)
   }
@@ -117,6 +121,7 @@ module.exports = customService(async function clientGroups(service) {
   service.addRawCustomPlugin('GET', '/platform-values', handlePlatformValues)
   service.addRawCustomPlugin('POST', '/', handlerRespondWithBody)
   service.addRawCustomPlugin('GET', '/stream', handlerStream)
+  service.addRawCustomPlugin('GET', '/mia-headers', handleMiaHeaders)
   service.addRawCustomPlugin('POST', '/validation', handlerRespondWithBody, schema)
   service.addContentTypeParser('application/custom-type', customParser)
   service.addRawCustomPlugin('POST', '/customValidation', handlerRespondWithBody)
@@ -124,6 +129,7 @@ module.exports = customService(async function clientGroups(service) {
 
 module.exports.healthinessHandler = async function healthinessHandler(fastify) {
   fastify.assert.ok(fastify.getServiceProxy)
+  fastify.assert.ok(fastify.getHttpClient)
   fastify.assert.ok(fastify.routes)
   return {
     statusOk: true,

@@ -175,14 +175,18 @@ function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, requestMia
     })
 }
 
-// TODO: test this
 function getMiaHeaders() {
+  const userId = this.getUserId()
+  const userProperties = this.getUserProperties()
+  const groups = this.getGroups().join(',')
+  const clientType = this.getClientType()
+  const fromBackoffice = this.isFromBackOffice() ? '1' : ''
   return {
-    [this.USERID_HEADER_KEY]: this.getUserId(),
-    [this.USER_PROPERTIES_HEADER_KEY]: JSON.stringify(this.getUserProperties()),
-    [this.GROUPS_HEADER_KEY]: this.getGroups().join(','),
-    [this.CLIENTTYPE_HEADER_KEY]: this.getClientType(),
-    [this.BACKOFFICE_HEADER_KEY]: this.isFromBackOffice() ? '1' : '',
+    ...userId !== null ? { [this.USERID_HEADER_KEY]: userId } : {},
+    ...userProperties !== null ? { [this.USER_PROPERTIES_HEADER_KEY]: JSON.stringify(userProperties) } : {},
+    ...groups ? { [this.GROUPS_HEADER_KEY]: groups } : {},
+    ...clientType !== null ? { [this.CLIENTTYPE_HEADER_KEY]: clientType } : {},
+    ...fromBackoffice ? { [this.BACKOFFICE_HEADER_KEY]: fromBackoffice } : {},
   }
 }
 
