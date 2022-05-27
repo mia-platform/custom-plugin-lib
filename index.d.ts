@@ -128,6 +128,7 @@ declare namespace customPlugin {
     cert?: string,
     key?: string,
     ca?: string,
+    logger?: fastify.FastifyLoggerInstance
   }
   interface BaseHttpClientResponse {
     headers: http.IncomingHttpHeaders
