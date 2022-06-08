@@ -163,10 +163,11 @@ declare namespace customPlugin {
   }
 
   type RequestBody = any | Buffer | ReadableStream
-  type RequestMethodWithBody = (path: string, body: RequestBody, options?: HttpClientOptions) => Promise<ResponseType>
+  type RequestMethodWithBody = <ResponseType = Response>(path: string, body: RequestBody, options?: HttpClientOptions) => Promise<ResponseType>
+  type RequestMethodWithoutBody = <ResponseType = Response>(path: string, options?: HttpClientOptions) => Promise<ResponseType>
 
   interface HttpClient {
-    get: <ResponseType = Response>(path: string, options?: HttpClientOptions) => Promise<ResponseType>
+    get: RequestMethodWithoutBody
     post: RequestMethodWithBody
     put: RequestMethodWithBody
     patch: RequestMethodWithBody
