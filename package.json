@@ -54,7 +54,7 @@
     "simple-get": "^4.0.1"
   },
   "devDependencies": {
-    "@fastify/routes": "^4.0.0",
+    "@fastify/routes": "^5.0.0",
     "@mia-platform/eslint-config-mia": "^3.0.0",
     "eslint": "^8.14.0",
     "hpagent": "^1.0.0",
