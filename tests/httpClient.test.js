@@ -143,6 +143,28 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    innerTest.test('returnAs: JSON with prefix', async assert => {
+      const basePrefix = '/prefix'
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get(`${basePrefix}/foo`)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = new HttpClient(`${MY_AWESOME_SERVICE_PROXY_HTTP_URL}${basePrefix}`)
+
+      const response = await service.get('/foo', { returnAs: 'JSON' })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
     innerTest.test('returnAs: JSON default', async assert => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
         .replyContentLength()
