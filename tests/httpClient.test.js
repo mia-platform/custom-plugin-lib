@@ -1835,7 +1835,7 @@ tap.test('httpClient', test => {
         assert.match(beforeRequest, {
           level: 10,
           msg: /^make call$/,
-          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          url: '/foo',
           time: /[0-9]+/,
           headers: {
             some: 'value',
