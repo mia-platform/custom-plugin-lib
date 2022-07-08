@@ -1833,6 +1833,7 @@ tap.test('httpClient', test => {
 
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           level: 10,
           msg: /^make call$/,
           url: '/foo',
@@ -1887,6 +1888,7 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
           url: '/foo',
           time: /[0-9]+/,
@@ -1941,6 +1943,7 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
           url: '/foo',
           time: /[0-9]+/,
@@ -1993,6 +1996,7 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
           url: '/foo',
           time: /[0-9]+/,
