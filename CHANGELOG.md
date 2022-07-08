@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fixed http client typings
 - base url with path prefix
+- httpsAgent in options
 
 ## v5.0.0 - 2022-05-13
 

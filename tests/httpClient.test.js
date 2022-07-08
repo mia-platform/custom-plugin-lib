@@ -10,6 +10,7 @@ const https = require('https')
 const split = require('split2')
 const Pino = require('pino')
 const lc39 = require('@mia-platform/lc39')
+const httpsClient = require('https')
 
 const HttpClient = require('../lib/httpClient')
 
@@ -1794,6 +1795,38 @@ tap.test('httpClient', test => {
         cert: clientCert,
         key: clientKey,
       })
+
+      const response = await service.get('/')
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+
+      assert.end()
+    })
+
+    assert.test('returnAs: JSON - passing httpsAgent to service initialization', async assert => {
+      const server = await createServer()
+
+      assert.teardown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const httpsAgent = new httpsClient.Agent({
+        ca: serverCa,
+        cert: clientCert,
+        key: clientKey,
+      })
+
+      const service = new HttpClient('https://localhost:3200', {}, { httpsAgent })
 
       const response = await service.get('/')
 
