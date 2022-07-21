@@ -8,8 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fixed http client typings
 - make `pino` a dependency
+
+## v5.1.0 - 2022-07-08
+
+### Fixed
+
+- fixed http client typings
+- base url with path prefix
+- httpsAgent in options
 
 ## v5.0.0 - 2022-05-13
 

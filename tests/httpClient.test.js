@@ -10,6 +10,7 @@ const https = require('https')
 const split = require('split2')
 const Pino = require('pino')
 const lc39 = require('@mia-platform/lc39')
+const httpsClient = require('https')
 
 const HttpClient = require('../lib/httpClient')
 
@@ -131,6 +132,28 @@ tap.test('httpClient', test => {
         })
 
       const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+
+      const response = await service.get('/foo', { returnAs: 'JSON' })
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.headers['content-length'])
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('returnAs: JSON with prefix', async assert => {
+      const basePrefix = '/prefix'
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get(`${basePrefix}/foo`)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = new HttpClient(`${MY_AWESOME_SERVICE_PROXY_HTTP_URL}${basePrefix}`)
 
       const response = await service.get('/foo', { returnAs: 'JSON' })
 
@@ -1781,6 +1804,38 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    assert.test('returnAs: JSON - passing httpsAgent to service initialization', async assert => {
+      const server = await createServer()
+
+      assert.teardown(() => {
+        server.close()
+      })
+
+      server.on('request', (req, res) => {
+        if (!req.client.authorized) {
+          res.writeHead(401)
+          return res.end('{"status": "nok"}')
+        }
+
+        res.end('{"status": "ok"}')
+      })
+
+      const httpsAgent = new httpsClient.Agent({
+        ca: serverCa,
+        cert: clientCert,
+        key: clientKey,
+      })
+
+      const service = new HttpClient('https://localhost:3200', {}, { httpsAgent })
+
+      const response = await service.get('/')
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { status: 'ok' })
+
+      assert.end()
+    })
+
     assert.end()
   })
 
@@ -1811,9 +1866,10 @@ tap.test('httpClient', test => {
 
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           level: 10,
           msg: /^make call$/,
-          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          url: '/foo',
           time: /[0-9]+/,
           headers: {
             some: 'value',
@@ -1865,8 +1921,9 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
-          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          url: '/foo',
           time: /[0-9]+/,
           headers: {
             some: 'value',
@@ -1919,8 +1976,9 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
-          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          url: '/foo',
           time: /[0-9]+/,
           headers: {
             some: 'value',
@@ -1971,8 +2029,9 @@ tap.test('httpClient', test => {
       stream.once('data', beforeRequest => {
         assert.match(beforeRequest, {
           level: 10,
+          baseURL: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
           msg: /^make call$/,
-          url: new RegExp(`^${MY_AWESOME_SERVICE_PROXY_HTTP_URL}/foo$`),
+          url: '/foo',
           time: /[0-9]+/,
           headers: {
             some: 'value',
