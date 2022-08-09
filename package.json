@@ -42,7 +42,7 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@fastify/env": "^3.0.0",
+    "@fastify/env": "^4.1.0",
     "@fastify/formbody": "^6.0.0",
     "@mia-platform/lc39": "^6.0.0",
     "@types/node": "^16.7.1",
