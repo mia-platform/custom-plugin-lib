@@ -132,7 +132,7 @@ function getDirectlyServiceBuilderFromRequest(serviceNameOrURL, baseOptions = {}
     return getDirectServiceProxyFromUrlString(
       serviceNameOrURL,
       serviceHeaders,
-      baseOptions
+      options
     )
   } catch (error) {
     return serviceBuilder(serviceNameOrURL, serviceHeaders, options)
