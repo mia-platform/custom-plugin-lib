@@ -260,6 +260,29 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    innerTest.test('response includes duration property', async assert => {
+      const responseDelay = 50
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get('/foo')
+        .delay(responseDelay)
+        .reply(200, { the: 'response' }, {
+          some: 'response-header',
+        })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+
+      const response = await service.get('/foo')
+
+      assert.equal(response.statusCode, 200)
+      assert.strictSame(response.payload, { the: 'response' })
+      assert.strictSame(response.headers.some, 'response-header')
+      assert.ok(response.duration > responseDelay)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
     innerTest.test('with query parameter in path', async assert => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
         .replyContentLength()
@@ -294,6 +317,33 @@ tap.test('httpClient', test => {
       } catch (error) {
         assert.strictSame(error.statusCode, 500)
         assert.strictSame(error.payload, '<some><xml /></some>')
+      }
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('on 500 response includes duration property', async assert => {
+      const responseDelay = 50
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .get('/foo')
+        .delay(responseDelay)
+        .reply(500, { the: 'error' }, {
+          some: 'error-header',
+        })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+
+      try {
+        await service.get('/foo')
+        assert.fail('We can\'t reach this!')
+      } catch (error) {
+        assert.strictSame(error.message, 'Something went wrong')
+        assert.strictSame(error.statusCode, 500)
+        assert.strictSame(error.payload, { the: 'error' })
+        assert.strictSame(error.headers.some, 'error-header')
+        assert.ok(error.duration > responseDelay)
       }
 
       myServiceNameScope.done()
