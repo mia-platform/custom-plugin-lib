@@ -323,7 +323,7 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
-    innerTest.test('on 500 response includes duration property', async assert => {
+    innerTest.test('on not allowed statusCode error includes duration property', async assert => {
       const responseDelay = 50
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
         .replyContentLength()
