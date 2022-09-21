@@ -153,6 +153,7 @@ tap.test('serviceProxy', test => {
     const fastify = await setupFastify('./tests/services/service-proxy.js', {
       ...baseEnv,
       ADDITIONAL_HEADERS_TO_PROXY,
+      ENABLE_HTTP_CLIENT_METRICS: true,
     })
     const response = await fastify.inject({
       method: 'POST',

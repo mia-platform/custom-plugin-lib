@@ -122,6 +122,10 @@ declare namespace customPlugin {
   //
   // HTTP CLIENT
   //
+  type HttpClientMetrics = {
+    disabled: Boolean
+    urlLabel: String
+  }
   interface HttpClientBaseOptions {
     headers?: http.IncomingHttpHeaders,
     timeout?: number,
@@ -133,6 +137,7 @@ declare namespace customPlugin {
   interface BaseHttpClientResponse {
     headers: http.IncomingHttpHeaders
     statusCode: number
+    duration: number
   }
   interface StreamResponse extends BaseHttpClientResponse {
     payload: NodeJS.ReadableStream
@@ -160,6 +165,7 @@ declare namespace customPlugin {
     errorMessageKey?: string;
     proxy?: HttpClientProxy;
     query?: Record<string, string>;
+    metrics?: HttpClientMetrics;
   }
 
   type RequestBody = any | Buffer | ReadableStream
