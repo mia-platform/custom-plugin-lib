@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- add optional metrics on request duration. The metrics collection is enabled by mean of the variable `ENABLE_HTTP_CLIENT_METRICS` (default: false)
+
+### Added
+
 - add property `duration` to the httpClient response
 
 ## v5.1.1 - 2022-07-21
