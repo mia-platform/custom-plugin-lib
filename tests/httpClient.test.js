@@ -1354,6 +1354,23 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
+    innerTest.test('metrics are NOT collected if disabled on proxy level', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = null
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .delay(delay)
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, { disableMetrics: true }, metrics)
+      await service.get('/foo')
+
+      assert.strictSame(observedMetrics, expectedObservedMetrics)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
     innerTest.test('metrics are NOT collected if disabled on request level', async assert => {
       observedMetrics = null
       const expectedObservedMetrics = null

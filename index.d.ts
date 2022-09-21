@@ -123,8 +123,8 @@ declare namespace customPlugin {
   // HTTP CLIENT
   //
   type HttpClientMetrics = {
-    disabled: Boolean
-    urlLabel: String
+    disabled: boolean
+    urlLabel: string
   }
   interface HttpClientBaseOptions {
     headers?: http.IncomingHttpHeaders,
@@ -132,7 +132,8 @@ declare namespace customPlugin {
     cert?: string,
     key?: string,
     ca?: string,
-    logger?: fastify.FastifyLoggerInstance
+    logger?: fastify.FastifyLoggerInstance,
+    disableMetrics?: boolean
   }
   interface BaseHttpClientResponse {
     headers: http.IncomingHttpHeaders
