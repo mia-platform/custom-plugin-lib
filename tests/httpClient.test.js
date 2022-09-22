@@ -2,7 +2,7 @@
 
 const tap = require('tap')
 const nock = require('nock')
-const {pick} = require('ramda')
+const { pick } = require('ramda')
 const { Readable, PassThrough } = require('stream')
 const http = require('http')
 const proxy = require('proxy')
