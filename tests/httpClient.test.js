@@ -2,7 +2,8 @@
 
 const tap = require('tap')
 const nock = require('nock')
-const { Readable } = require('stream')
+const {pick} = require('ramda')
+const { Readable, PassThrough } = require('stream')
 const http = require('http')
 const proxy = require('proxy')
 const fs = require('fs')
@@ -13,6 +14,7 @@ const lc39 = require('@mia-platform/lc39')
 const httpsClient = require('https')
 
 const HttpClient = require('../lib/httpClient')
+const { defaultRedactionRules } = require('../lib/httpClient')
 
 const MY_AWESOME_SERVICE_PROXY_HTTP_URL = 'http://my-awesome-service'
 const MY_AWESOME_SERVICE_PROXY_HTTPS_URL = 'https://my-awesome-service'
@@ -2077,6 +2079,56 @@ tap.test('httpClient', test => {
       }
 
       myServiceNameScope.done()
+    })
+
+    innerTest.test('log correctly - redact data', async assert => {
+      const data = []
+      const logStream = new PassThrough()
+        .on('data', (streamData) => {
+          data.push(Buffer.from(streamData, 'utf8').toString())
+        })
+
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .replyContentLength()
+        .post('/foo')
+        .delay(101)
+        .reply(200, { the: 'response' })
+
+      const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
+        logger: Pino({
+          level: 'trace',
+          redact: defaultRedactionRules,
+        }, Pino.multistream([{ level: 'trace', stream: logStream }])),
+      })
+
+      try {
+        await httpClient.post('/foo', {
+          username: 'username',
+          password: 'password',
+          email: 'email@email.com',
+        }, {
+          headers: {
+            authorization: '1234',
+            cookie: 'sid=1234',
+          },
+        })
+      } catch (error) {
+        assert.equal(error.message, 'timeout of 100ms exceeded')
+      }
+
+      myServiceNameScope.done()
+
+      const logs = data.reduce((acc, log) => {
+        const parseLog = JSON.parse(log)
+        const pickedValues = pick(['headers', 'payload'], parseLog)
+        if (Object.keys(pickedValues).length === 0) {
+          return acc
+        }
+        return [...acc, pick(['headers', 'payload'], parseLog)]
+      }, [])
+
+      assert.matchSnapshot(logs)
+      assert.end()
     })
   })
 
