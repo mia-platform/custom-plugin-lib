@@ -128,7 +128,8 @@ declare namespace customPlugin {
     cert?: string,
     key?: string,
     ca?: string,
-    logger?: fastify.FastifyLoggerInstance
+    logger?: fastify.FastifyLoggerInstance,
+    isMiaHeaderInjected?: boolean
   }
   interface BaseHttpClientResponse {
     headers: http.IncomingHttpHeaders
@@ -156,7 +157,6 @@ declare namespace customPlugin {
   interface HttpClientOptions extends HttpClientBaseOptions {
     returnAs?: 'STREAM' | 'JSON' | 'BUFFER';
     validateStatus?: (statusCode: number) => boolean;
-    isMiaHeaderInjected?: boolean;
     errorMessageKey?: string;
     proxy?: HttpClientProxy;
     query?: Record<string, string>;
