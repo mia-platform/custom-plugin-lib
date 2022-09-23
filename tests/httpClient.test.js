@@ -2091,7 +2091,6 @@ tap.test('httpClient', test => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
         .replyContentLength()
         .post('/foo')
-        .delay(101)
         .reply(200, { the: 'response' })
 
       const httpClient = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {
