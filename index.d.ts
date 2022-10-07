@@ -16,6 +16,7 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
+import * as https from 'https'
 
 import {FormatName} from 'ajv-formats'
 
@@ -128,6 +129,7 @@ declare namespace customPlugin {
     cert?: string,
     key?: string,
     ca?: string,
+    httpsAgent?: https.Agent,
     logger?: fastify.FastifyLoggerInstance,
     isMiaHeaderInjected?: boolean
   }
