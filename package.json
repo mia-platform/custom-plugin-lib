@@ -1,6 +1,6 @@
 {
   "name": "@mia-platform/custom-plugin-lib",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "description": "Library that allows you to define Mia-Platform custom plugins easily",
   "keywords": [
     "mia-platform",
