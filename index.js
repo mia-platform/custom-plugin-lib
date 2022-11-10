@@ -22,7 +22,7 @@ const fastifyFormbody = require('@fastify/formbody')
 const Ajv = require('ajv')
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
-const { omit } = require('ramda')
+const { omit, mergeDeepRight } = require('ramda')
 
 const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
@@ -89,11 +89,15 @@ const baseSchema = {
   },
 }
 
-function mergeJsonSchemas(schemas) {
+function mergeJsonSchemas(schema, otherSchema) {
   const mergedSchema = {
     type: 'object',
-    properties: schemas.reduce((acc, schema) => ({ ...acc, ...schema.properties }), {}),
-    allOf: schemas.map(schema => omit(['properties'], schema)),
+    properties: mergeDeepRight(schema.properties, otherSchema.properties),
+    allOf: [
+      omit(['properties'], schema),
+      omit(['properties'], otherSchema),
+    ],
+    additionalProperties: false,
   }
   return mergedSchema
 }
@@ -289,7 +293,7 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
-      fastify.register(fastifyEnv, { schema: mergeJsonSchemas([baseSchema, envSchema]), data: opts })
+      fastify.register(fastifyEnv, { schema: mergeJsonSchemas(baseSchema, envSchema), data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }
