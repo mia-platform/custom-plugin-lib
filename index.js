@@ -88,18 +88,6 @@ const baseSchema = {
   },
 }
 
-function concatEnvSchemas(schema, otherSchema) {
-  return {
-    type: 'object',
-    required: schema.required.concat(otherSchema.required),
-    properties: {
-      ...schema.properties,
-      ...otherSchema.properties,
-    },
-    additionalProperties: false,
-  }
-}
-
 function getCustomHeaders(headersKeyToProxy, headers) {
   return headersKeyToProxy.reduce((acc, headerKey) => {
     if (!{}.hasOwnProperty.call(headers, headerKey)) {
@@ -291,7 +279,11 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
-      fastify.register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
+      const mergedSchema = {
+        type: 'object',
+        allOf: [baseSchema, envSchema],
+      }
+      fastify.register(fastifyEnv, { schema: mergedSchema, data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }
