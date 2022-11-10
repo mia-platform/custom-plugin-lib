@@ -97,10 +97,10 @@ tap.test('Test Environment variables', test => {
     assert.end()
   })
 
-  test.test('Should fail since FLAG_FIELD is true and FLAG_REQUIRED_FIELD is not present', async assert => {
+  test.test('Should fail since CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is not present', async assert => {
     const env = {
       ...baseEnv,
-      FLAG_FIELD: true,
+      CONDITION_FIELD: true,
     }
 
     // NOTE: use try catch instead of assert.reject to customize error message assertion
@@ -108,7 +108,25 @@ tap.test('Test Environment variables', test => {
     try {
       await setupFastify('./tests/services/advanced-env-validation-custom-service.js', env)
     } catch (error) {
-      const errorMessage = 'env must have required property \'BASE_REQUIRED_FIELD\', env must have required property \'FLAG_REQUIRED_FIELD\', env must match "then" schema'
+      const errorMessage = 'env must have required property \'CONDITION_TRUE_REQUIRED_FIELD\', env must match "then" schema, env must have required property \'BASE_REQUIRED_FIELD\''
+      assert.strictSame(error.message, errorMessage)
+    }
+
+    assert.end()
+  })
+
+  test.test('Should fail since CONDITION_FIELD is false and CONDITION_FALSE_REQUIRED_FIELD is not present', async assert => {
+    const env = {
+      ...baseEnv,
+      CONDITION_FIELD: false,
+    }
+
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/advanced-env-validation-custom-service.js', env)
+    } catch (error) {
+      const errorMessage = 'env must have required property \'CONDITION_FALSE_REQUIRED_FIELD\', env must match "else" schema, env must have required property \'BASE_REQUIRED_FIELD\''
       assert.strictSame(error.message, errorMessage)
     }
 

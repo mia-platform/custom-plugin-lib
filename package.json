@@ -52,6 +52,7 @@
     "fastify-plugin": "^3.0.1",
     "http-errors": "^2.0.0",
     "pino": "^8.0.0",
+    "ramda": "^0.28.0",
     "simple-get": "^4.0.1"
   },
   "devDependencies": {

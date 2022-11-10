@@ -22,6 +22,7 @@ const fastifyFormbody = require('@fastify/formbody')
 const Ajv = require('ajv')
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
+const { omit } = require('ramda')
 
 const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
@@ -86,6 +87,15 @@ const baseSchema = {
       description: 'comma separated list of additional headers to proxy',
     },
   },
+}
+
+function mergeJsonSchemas(schemas) {
+  const mergedSchema = {
+    type: 'object',
+    properties: schemas.reduce((acc, schema) => ({ ...acc, ...schema.properties }), {}),
+    allOf: schemas.map(schema => omit(['properties'], schema)),
+  }
+  return mergedSchema
 }
 
 function getCustomHeaders(headersKeyToProxy, headers) {
@@ -279,11 +289,7 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
-      const mergedSchema = {
-        type: 'object',
-        allOf: [baseSchema, envSchema],
-      }
-      fastify.register(fastifyEnv, { schema: mergedSchema, data: opts })
+      fastify.register(fastifyEnv, { schema: mergeJsonSchemas([baseSchema, envSchema]), data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }

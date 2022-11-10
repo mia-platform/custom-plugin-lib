@@ -18,33 +18,47 @@
 
 const fastifyRoutes = require('@fastify/routes')
 
-const properties = {
+const baseProperties = {
   BASE_REQUIRED_FIELD: { type: 'string' },
-  FLAG_FIELD: { type: 'boolean' },
-  FLAG_REQUIRED_FIELD: { type: 'string' },
+  CONDITION_FIELD: { type: 'boolean' },
 }
 
-const flagRequired = [
-  'FLAG_REQUIRED_FIELD',
+const thenProperties = {
+  CONDITION_TRUE_REQUIRED_FIELD: { type: 'string' },
+}
+
+const elseProperties = {
+  CONDITION_FALSE_REQUIRED_FIELD: { type: 'string' },
+}
+
+const thenRequired = [
+  'CONDITION_TRUE_REQUIRED_FIELD',
 ]
 
 const baseRequired = [
   'BASE_REQUIRED_FIELD',
 ]
 
+const elseRequired = [
+  'CONDITION_FALSE_REQUIRED_FIELD',
+]
+
 const envJsonSchema = {
   type: 'object',
-  properties,
+  properties: baseProperties,
+  required: baseRequired,
   if: {
     properties: {
-      FLAG_FIELD: { const: true },
+      CONDITION_FIELD: { const: true },
     },
   },
   then: {
-    required: [...baseRequired, ...flagRequired],
+    properties: thenProperties,
+    required: thenRequired,
   },
   else: {
-    required: baseRequired,
+    properties: elseProperties,
+    required: elseRequired,
   },
 }
 
