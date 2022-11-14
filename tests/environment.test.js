@@ -97,7 +97,7 @@ tap.test('Test Environment variables', test => {
       MICROSERVICE_GATEWAY_SERVICE_NAME: '172.16.0.0',
     }
 
-    assert.resolves(async() => {
+    await assert.resolves(async() => {
       await setupFastify('./tests/services/plain-custom-service.js', options)
     })
 
@@ -148,7 +148,7 @@ tap.test('Test Environment variables', test => {
       CONDITION_TRUE_REQUIRED_FIELD: 'some-value',
     }
 
-    assert.resolves(async() => {
+    await assert.resolves(async() => {
       await setupFastify('./tests/services/if-then-else-env-validation-custom-service.js', env)
     })
 
@@ -174,7 +174,7 @@ tap.test('Test Environment variables', test => {
       ANY_OF_REQUIRED_FIELD_1: 'some-value',
     }
 
-    assert.resolves(async() => {
+    await assert.resolves(async() => {
       await setupFastify('./tests/services/any-of-env-validation-custom-service.js', env)
     })
 
@@ -206,7 +206,7 @@ tap.test('Test Environment variables', test => {
       ALL_OF_REQUIRED_FIELD_2: 'some-value',
     }
 
-    assert.resolves(async() => {
+    await assert.resolves(async() => {
       await setupFastify('./tests/services/all-of-env-validation-custom-service.js', env)
     })
 
