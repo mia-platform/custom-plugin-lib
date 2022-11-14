@@ -213,6 +213,38 @@ tap.test('Test Environment variables', test => {
     assert.end()
   })
 
+  test.test('Should fail since all of the oneOf required fields are present', async assert => {
+    const env = {
+      ...baseEnv,
+      ONE_OF_REQUIRED_FIELD_1: 'some-value',
+      ONE_OF_REQUIRED_FIELD_2: 'some-value',
+    }
+
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/one-of-env-validation-custom-service.js', env)
+    } catch (error) {
+      const errorMessage = 'env must match exactly one schema in oneOf'
+      assert.strictSame(error.message, errorMessage)
+    }
+
+    assert.end()
+  })
+
+  test.test('Should pass since only one of the oneOf required fields is present', async assert => {
+    const env = {
+      ...baseEnv,
+      ONE_OF_REQUIRED_FIELD_1: 'some-value',
+    }
+
+    await assert.resolves(async() => {
+      await setupFastify('./tests/services/one-of-env-validation-custom-service.js', env)
+    })
+
+    assert.end()
+  })
+
   test.test('Should fail since the env has properties already present in the baseEnv of the lib', async assert => {
     // NOTE: use try catch instead of assert.reject to customize error message assertion
     assert.plan(1)
