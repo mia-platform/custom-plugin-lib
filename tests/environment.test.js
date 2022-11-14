@@ -32,8 +32,9 @@ const baseEnv = {
   MICROSERVICE_GATEWAY_SERVICE_NAME,
 }
 
+let fastify
 async function setupFastify(filePath, envVariables) {
-  const fastify = await lc39(filePath, {
+  fastify = await lc39(filePath, {
     logLevel: 'silent',
     envVariables,
   })
@@ -57,6 +58,10 @@ function testEnvVariableIsNotEmptyString(test, envVariableName) {
 tap.test('Test Environment variables', test => {
   const headersToTest = ['USERID_HEADER_KEY', 'GROUPS_HEADER_KEY', 'CLIENTTYPE_HEADER_KEY', 'BACKOFFICE_HEADER_KEY', 'MICROSERVICE_GATEWAY_SERVICE_NAME']
   headersToTest.forEach(header => testEnvVariableIsNotEmptyString(test, header))
+
+  tap.afterEach(async() => {
+    if (fastify) { fastify.close() }
+  })
 
   test.test('Should fail if required properties are missing', async assert => {
     const { ...badEnv } = baseEnv
@@ -92,12 +97,14 @@ tap.test('Test Environment variables', test => {
       MICROSERVICE_GATEWAY_SERVICE_NAME: '172.16.0.0',
     }
 
-    const fastify = await setupFastify('./tests/services/plain-custom-service.js', options)
-    assert.ok(fastify)
+    assert.resolves(async() => {
+      await setupFastify('./tests/services/plain-custom-service.js', options)
+    })
+
     assert.end()
   })
 
-  test.test('Should fail since CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is not present', async assert => {
+  test.test('Should fail since BASE_REQUIRED_FIELD is not present and CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is not present', async assert => {
     const env = {
       ...baseEnv,
       CONDITION_FIELD: true,
@@ -106,7 +113,7 @@ tap.test('Test Environment variables', test => {
     // NOTE: use try catch instead of assert.reject to customize error message assertion
     assert.plan(1)
     try {
-      await setupFastify('./tests/services/advanced-env-validation-custom-service.js', env)
+      await setupFastify('./tests/services/if-then-else-env-validation-custom-service.js', env)
     } catch (error) {
       const errorMessage = 'env must have required property \'CONDITION_TRUE_REQUIRED_FIELD\', env must match "then" schema, env must have required property \'BASE_REQUIRED_FIELD\''
       assert.strictSame(error.message, errorMessage)
@@ -124,9 +131,95 @@ tap.test('Test Environment variables', test => {
     // NOTE: use try catch instead of assert.reject to customize error message assertion
     assert.plan(1)
     try {
-      await setupFastify('./tests/services/advanced-env-validation-custom-service.js', env)
+      await setupFastify('./tests/services/if-then-else-env-validation-custom-service.js', env)
     } catch (error) {
       const errorMessage = 'env must have required property \'CONDITION_FALSE_REQUIRED_FIELD\', env must match "else" schema, env must have required property \'BASE_REQUIRED_FIELD\''
+      assert.strictSame(error.message, errorMessage)
+    }
+
+    assert.end()
+  })
+
+  test.test('Should pass since CONDITION_FIELD is true and CONDITION_FALSE_REQUIRED_FIELD is present', async assert => {
+    const env = {
+      ...baseEnv,
+      BASE_REQUIRED_FIELD: 'some-value',
+      CONDITION_FIELD: true,
+      CONDITION_TRUE_REQUIRED_FIELD: 'some-value',
+    }
+
+    assert.resolves(async() => {
+      await setupFastify('./tests/services/if-then-else-env-validation-custom-service.js', env)
+    })
+
+    assert.end()
+  })
+
+  test.test('Should fail since none of the anyOf required fields are present', async assert => {
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/any-of-env-validation-custom-service.js', baseEnv)
+    } catch (error) {
+      const errorMessage = 'env must have required property \'ANY_OF_REQUIRED_FIELD_1\', env must have required property \'ANY_OF_REQUIRED_FIELD_2\', env must match a schema in anyOf'
+      assert.strictSame(error.message, errorMessage)
+    }
+
+    assert.end()
+  })
+
+  test.test('Should pass since one of the anyOf required fields is present', async assert => {
+    const env = {
+      ...baseEnv,
+      ANY_OF_REQUIRED_FIELD_1: 'some-value',
+    }
+
+    assert.resolves(async() => {
+      await setupFastify('./tests/services/any-of-env-validation-custom-service.js', env)
+    })
+
+    assert.end()
+  })
+
+  test.test('Should fail since not all of the allOf required fields are present', async assert => {
+    const env = {
+      ...baseEnv,
+      ALL_OF_REQUIRED_FIELD_1: 'some-value',
+    }
+
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/all-of-env-validation-custom-service.js', env)
+    } catch (error) {
+      const errorMessage = 'env must have required property \'ALL_OF_REQUIRED_FIELD_2\''
+      assert.strictSame(error.message, errorMessage)
+    }
+
+    assert.end()
+  })
+
+  test.test('Should pass since all of the allOf required fields are present', async assert => {
+    const env = {
+      ...baseEnv,
+      ALL_OF_REQUIRED_FIELD_1: 'some-value',
+      ALL_OF_REQUIRED_FIELD_2: 'some-value',
+    }
+
+    assert.resolves(async() => {
+      await setupFastify('./tests/services/all-of-env-validation-custom-service.js', env)
+    })
+
+    assert.end()
+  })
+
+  test.test('Should fail since the env has properties already present in the baseEnv of the lib', async assert => {
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/overlapping-env-validation-custom-service.js', baseEnv)
+    } catch (error) {
+      const errorMessage = 'The provided Environment JSON Schema includes properties declared in the Base JSON Schema of the custom-plugin-lib, please remove them from your schema. The properties to remove are: USERID_HEADER_KEY, USER_PROPERTIES_HEADER_KEY, GROUPS_HEADER_KEY, CLIENTTYPE_HEADER_KEY'
       assert.strictSame(error.message, errorMessage)
     }
 
