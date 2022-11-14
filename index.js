@@ -22,7 +22,6 @@ const fastifyFormbody = require('@fastify/formbody')
 const Ajv = require('ajv')
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
-const { omit, mergeDeepRight } = require('ramda')
 
 const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
@@ -90,16 +89,30 @@ const baseSchema = {
 }
 
 function mergeJsonSchemas(schema, otherSchema) {
+  const { properties: schemaProperties, ...schemaWithoutProperties } = schema
+  const { properties: otherSchemaProperties, ...otherSchemaWithoutProperties } = otherSchema
   const mergedSchema = {
     type: 'object',
-    properties: mergeDeepRight(schema.properties, otherSchema.properties),
+    properties: {
+      ...schemaProperties,
+      ...otherSchemaProperties,
+    },
     allOf: [
-      omit(['properties'], schema),
-      omit(['properties'], otherSchema),
+      schemaWithoutProperties,
+      otherSchemaWithoutProperties,
     ],
     additionalProperties: false,
   }
   return mergedSchema
+}
+
+function getOverlappingKeys(properties, otherProperties) {
+  const propertiesNames = Object.keys(properties)
+  const otherPropertiesNames = Object.keys(otherProperties)
+  const overlappingProperties = propertiesNames.filter(propertyName =>
+    otherPropertiesNames.includes(propertyName)
+  )
+  return overlappingProperties
 }
 
 function getCustomHeaders(headersKeyToProxy, headers) {
@@ -293,6 +306,10 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
+      const overlappingPropertiesNames = getOverlappingKeys(baseSchema.properties, envSchema.properties)
+      if (overlappingPropertiesNames.length > 0) {
+        throw new Error(`The provided Environment JSON Schema includes properties declared in the Base JSON Schema of the custom-plugin-lib, please remove them from your schema. The properties to remove are ${overlappingPropertiesNames.join(', ')}`)
+      }
       fastify.register(fastifyEnv, { schema: mergeJsonSchemas(baseSchema, envSchema), data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
