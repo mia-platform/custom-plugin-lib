@@ -128,7 +128,7 @@ tap.test('Test Environment variables', test => {
     }
   })
 
-  test.test('Should pass since CONDITION_FIELD is true and CONDITION_FALSE_REQUIRED_FIELD is present', async assert => {
+  test.test('Should pass since CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is present', async assert => {
     const env = {
       ...baseEnv,
       BASE_REQUIRED_FIELD: 'some-value',
