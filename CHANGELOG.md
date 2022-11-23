@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add property `duration` to the httpClient response
 
+### Fixed
+
+- [issue-123](https://github.com/mia-platform/custom-plugin-lib/issues/231): use if-then-else syntax at root level in json-schema of envs
+
 ## v5.1.3 - 2022-10-07
 
 ### Fixed
