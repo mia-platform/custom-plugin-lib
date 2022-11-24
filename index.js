@@ -103,8 +103,8 @@ function mergeJsonSchemas(schema, otherSchema) {
     },
     required: [...requiredSchema, ...requiredOtherSchema],
     allOf: [
-      schemaWithoutProperties,
-      otherSchemaWithoutProperties,
+      schemaRemainingProperties,
+      otherSchemaRemainingProperties,
     ],
     additionalProperties: false,
   }
