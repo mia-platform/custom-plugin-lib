@@ -89,14 +89,19 @@ const baseSchema = {
 }
 
 function mergeJsonSchemas(schema, otherSchema) {
-  const { properties: schemaProperties, ...schemaWithoutProperties } = schema
-  const { properties: otherSchemaProperties, ...otherSchemaWithoutProperties } = otherSchema
+  const { properties: schemaProperties, required: requiredSchema = [], ...schemaWithoutProperties } = schema
+  const {
+    properties: otherSchemaProperties,
+    required: requiredOtherSchema = [],
+    ...otherSchemaWithoutProperties
+  } = otherSchema
   const mergedSchema = {
     type: 'object',
     properties: {
       ...schemaProperties,
       ...otherSchemaProperties,
     },
+    required: [...requiredSchema, ...requiredOtherSchema],
     allOf: [
       schemaWithoutProperties,
       otherSchemaWithoutProperties,
