@@ -93,7 +93,7 @@ function mergeJsonSchemas(schema, otherSchema) {
   const {
     properties: otherSchemaProperties,
     required: requiredOtherSchema = [],
-    ...otherSchemaWithoutProperties
+    ...otherSchemaRemainingProperties
   } = otherSchema
   const mergedSchema = {
     type: 'object',
