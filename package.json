@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@fastify/env": "^3.0.0",
-    "@fastify/formbody": "^6.0.0",
+    "@fastify/formbody": "^7.4.0",
     "@mia-platform/lc39": "^6.0.0",
     "@types/node": "^16.7.1",
     "ajv": "^8.11.0",
