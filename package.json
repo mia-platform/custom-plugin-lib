@@ -48,7 +48,7 @@
     "@types/node": "^16.7.1",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
-    "axios": "^0.27.2",
+    "axios": "^1.2.2",
     "fastify-plugin": "^3.0.1",
     "http-errors": "^2.0.0",
     "pino": "^8.0.0",
