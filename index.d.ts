@@ -16,6 +16,7 @@
 
 import * as fastify from 'fastify'
 import * as http from 'http'
+import * as https from 'https'
 
 import {FormatName} from 'ajv-formats'
 
@@ -132,7 +133,9 @@ declare namespace customPlugin {
     cert?: string,
     key?: string,
     ca?: string,
+    httpsAgent?: https.Agent,
     logger?: fastify.FastifyLoggerInstance,
+    isMiaHeaderInjected?: boolean,
     disableMetrics?: boolean
   }
   interface BaseHttpClientResponse {
@@ -162,7 +165,6 @@ declare namespace customPlugin {
   interface HttpClientOptions extends HttpClientBaseOptions {
     returnAs?: 'STREAM' | 'JSON' | 'BUFFER';
     validateStatus?: (statusCode: number) => boolean;
-    isMiaHeaderInjected?: boolean;
     errorMessageKey?: string;
     proxy?: HttpClientProxy;
     query?: Record<string, string>;

@@ -19,7 +19,7 @@ const envSchema = {
   type: 'object',
   required: ['MY_AWESOME_ENV'],
   properties: {
-    MY_AWESOME_ENV: { type: 'string' },
+    MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
   },
 }
 

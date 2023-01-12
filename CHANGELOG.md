@@ -9,10 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - add optional metrics on request duration. The metrics collection is enabled by mean of the variable `ENABLE_HTTP_CLIENT_METRICS` (default: false)
+## v5.1.5 - 2022-11-24
+
+### Fixed
+
+- fix the handle of env var required with a configured default
+
+## v5.1.4 - 2022-11-23
+
+THIS VERSION CONTAINS A BREAKING CHANGES
+
+This version contains a bug when it's configured a required env var with a default. The default is not handled before the default, so the service will not start.
 
 ### Added
 
 - add property `duration` to the httpClient response
+
+### Fixed
+
+- [issue-123](https://github.com/mia-platform/custom-plugin-lib/issues/231): use if-then-else syntax at root level in json-schema of envs
+
+## v5.1.3 - 2022-10-07
+
+### Fixed
+
+- http client base options
+
+## v5.1.2 - 2022-09-23
+
+### Fixed
+
+- http client base options
 
 ## v5.1.1 - 2022-07-21
 

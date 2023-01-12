@@ -94,16 +94,36 @@ const baseSchema = {
   },
 }
 
-function concatEnvSchemas(schema, otherSchema) {
-  return {
+function mergeJsonSchemas(schema, otherSchema) {
+  const { properties: schemaProperties, required: requiredSchema = [], ...schemaRemainingProperties } = schema
+  const {
+    properties: otherSchemaProperties,
+    required: requiredOtherSchema = [],
+    ...otherSchemaRemainingProperties
+  } = otherSchema
+  const mergedSchema = {
     type: 'object',
-    required: schema.required.concat(otherSchema.required),
     properties: {
-      ...schema.properties,
-      ...otherSchema.properties,
+      ...schemaProperties,
+      ...otherSchemaProperties,
     },
+    required: [...requiredSchema, ...requiredOtherSchema],
+    allOf: [
+      schemaRemainingProperties,
+      otherSchemaRemainingProperties,
+    ],
     additionalProperties: false,
   }
+  return mergedSchema
+}
+
+function getOverlappingKeys(properties, otherProperties) {
+  const propertiesNames = Object.keys(properties)
+  const otherPropertiesNames = Object.keys(otherProperties)
+  const overlappingProperties = propertiesNames.filter(propertyName =>
+    otherPropertiesNames.includes(propertyName)
+  )
+  return overlappingProperties
 }
 
 function getCustomHeaders(headersKeyToProxy, headers) {
@@ -300,7 +320,11 @@ const defaultSchema = { type: 'object', required: [], properties: {} }
 function initCustomServiceEnvironment(envSchema = defaultSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
-      fastify.register(fastifyEnv, { schema: concatEnvSchemas(baseSchema, envSchema), data: opts })
+      const overlappingPropertiesNames = getOverlappingKeys(baseSchema.properties, envSchema.properties)
+      if (overlappingPropertiesNames.length > 0) {
+        throw new Error(`The provided Environment JSON Schema includes properties declared in the Base JSON Schema of the custom-plugin-lib, please remove them from your schema. The properties to remove are: ${overlappingPropertiesNames.join(', ')}`)
+      }
+      fastify.register(fastifyEnv, { schema: mergeJsonSchemas(baseSchema, envSchema), data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }

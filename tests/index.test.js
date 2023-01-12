@@ -358,6 +358,17 @@ tap.test('Advanced Custom Service', test => {
     assert.end()
   })
 
+  test.test('default env var', async assert => {
+    const fastify = await setupFastify(baseEnv)
+    const response = await fastify.inject({
+      method: 'GET',
+      url: '/env',
+    })
+
+    assert.strictSame(response.statusCode, 200)
+    assert.strictSame(response.payload, 'the default value')
+    assert.end()
+  })
 
   test.end()
 })
@@ -371,7 +382,7 @@ tap.test('Advanced config', test => {
     return fastify
   }
 
-  test.test('it accepts advacend config', async assert => {
+  test.test('it accepts advanced config', async assert => {
     const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
