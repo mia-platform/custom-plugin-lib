@@ -38,6 +38,7 @@ const CLIENTTYPE_HEADER_KEY = 'CLIENTTYPE_HEADER_KEY'
 const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
 const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
+const ENABLE_HTTP_CLIENT_METRICS = 'ENABLE_HTTP_CLIENT_METRICS'
 
 const baseSchema = {
   type: 'object',
@@ -84,6 +85,11 @@ const baseSchema = {
       type: 'string',
       default: '',
       description: 'comma separated list of additional headers to proxy',
+    },
+    [ENABLE_HTTP_CLIENT_METRICS]: {
+      type: 'boolean',
+      default: false,
+      description: 'flag to enable the httpClient metrics',
     },
   },
 }
@@ -219,11 +225,11 @@ function getHttpClientFromRequest(url, baseOptions = {}) {
   const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
   const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
   const serviceHeaders = { ...this.getMiaHeaders(), ...extraHeaders }
-  return new HttpClient(url, serviceHeaders, options)
+  return new HttpClient(url, serviceHeaders, options, this.httpClientMetrics)
 }
 
 function getHttpClient(url, baseOptions = {}) {
-  return new HttpClient(url, {}, baseOptions)
+  return new HttpClient(url, {}, baseOptions, this.httpClientMetrics)
 }
 
 function getHeadersToProxy({ isMiaHeaderInjected = true } = {}) {
@@ -241,6 +247,7 @@ function getHeadersToProxy({ isMiaHeaderInjected = true } = {}) {
 
 function decorateFastify(fastify) {
   const { config } = fastify
+  const httpClientMetrics = config[ENABLE_HTTP_CLIENT_METRICS] ? getHttpClientMetrics(fastify) : {}
 
   fastify.decorateRequest(USERID_HEADER_KEY, config[USERID_HEADER_KEY])
   fastify.decorateRequest(USER_PROPERTIES_HEADER_KEY, config[USER_PROPERTIES_HEADER_KEY])
@@ -261,6 +268,7 @@ function decorateFastify(fastify) {
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
   fastify.decorateRequest('getHttpClient', getHttpClientFromRequest)
+  fastify.decorateRequest('httpClientMetrics', httpClientMetrics)
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
@@ -270,6 +278,7 @@ function decorateFastify(fastify) {
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
   fastify.decorate('getHttpClient', getHttpClient)
+  fastify.decorate('httpClientMetrics', httpClientMetrics)
 }
 
 async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction, serviceOptions = {} }) {
@@ -334,6 +343,18 @@ function initCustomServiceEnvironment(envSchema = defaultSchema) {
       produces: ['application/json'],
     }
     return index
+  }
+}
+
+function getHttpClientMetrics(fastify) {
+  if (fastify.metrics?.client) {
+    const requestDuration = new fastify.metrics.client.Histogram({
+      name: 'http_request_duration_milliseconds',
+      help: 'request duration histogram',
+      labelNames: ['baseUrl', 'url', 'method', 'statusCode'],
+      buckets: [5, 10, 50, 100, 500, 1000, 5000, 10000],
+    })
+    return { requestDuration }
   }
 }
 

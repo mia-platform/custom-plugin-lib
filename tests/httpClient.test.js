@@ -1243,6 +1243,154 @@ tap.test('httpClient', test => {
     innerTest.end()
   })
 
+  test.test('httpClient metrics', innerTest => {
+    const delay = 20
+    let observedMetrics
+    const metrics = {
+      requestDuration: {
+        observe: (labels, value) => {
+          observedMetrics = {
+            labels,
+            value,
+          }
+        },
+      },
+    }
+
+    innerTest.test('metrics are NOT collected if NOT enabled on proxy level - request ok', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = null
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+      await service.get('/foo')
+
+      assert.equal(observedMetrics, expectedObservedMetrics)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('metrics are collected if enabled - request ok', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = {
+        labels: {
+          method: 'GET',
+          url: '/foo',
+          baseUrl: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
+          statusCode: 200,
+        },
+      }
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .delay(delay)
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {}, metrics)
+      await service.get('/foo')
+
+      assert.strictSame(observedMetrics.labels, expectedObservedMetrics.labels)
+      assert.ok(observedMetrics.value > delay)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('metrics are collected if enabled - request ko', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = {
+        labels: {
+          method: 'GET',
+          url: '/foo',
+          baseUrl: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
+          statusCode: 500,
+        },
+      }
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .delay(delay)
+        .reply(500, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {}, metrics)
+
+      try {
+        await service.get('/foo')
+        assert.fail()
+      } catch (error) {
+        assert.pass()
+      }
+
+      assert.strictSame(observedMetrics.labels, expectedObservedMetrics.labels)
+      assert.ok(observedMetrics.value > delay)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('metrics are collected with option urlLabel', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = {
+        labels: {
+          method: 'GET',
+          url: '/foo/:user-parameter',
+          baseUrl: MY_AWESOME_SERVICE_PROXY_HTTP_URL,
+          statusCode: 200,
+        },
+      }
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo/1234')
+        .delay(delay)
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {}, metrics)
+      await service.get('/foo/1234', { metrics: { urlLabel: '/foo/:user-parameter' } })
+
+      assert.strictSame(observedMetrics.labels, expectedObservedMetrics.labels)
+      assert.ok(observedMetrics.value > delay)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('metrics are NOT collected if disabled on proxy level', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = null
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .delay(delay)
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, { disableMetrics: true }, metrics)
+      await service.get('/foo')
+
+      assert.strictSame(observedMetrics, expectedObservedMetrics)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('metrics are NOT collected if disabled on request level', async assert => {
+      observedMetrics = null
+      const expectedObservedMetrics = null
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
+        .get('/foo')
+        .delay(delay)
+        .reply(200, { the: 'response' })
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {}, {}, metrics)
+      await service.get('/foo', { metrics: { disabled: true } })
+
+      assert.strictSame(observedMetrics, expectedObservedMetrics)
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.end()
+  })
+
   test.test('returnAs: unknown', async assert => {
     const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL)
     try {
@@ -2128,6 +2276,31 @@ tap.test('httpClient', test => {
 
       myServiceNameScope.done()
     })
+  })
+
+  test.test('httpClientMetrics are registered if enabled', async innerTest => {
+    const USERID_HEADER_KEY = 'userid-header-key'
+    const GROUPS_HEADER_KEY = 'groups-header-key'
+    const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
+    const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
+    const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
+
+    const baseEnv = {
+      USERID_HEADER_KEY,
+      GROUPS_HEADER_KEY,
+      CLIENTTYPE_HEADER_KEY,
+      BACKOFFICE_HEADER_KEY,
+      MICROSERVICE_GATEWAY_SERVICE_NAME,
+      ENABLE_HTTP_CLIENT_METRICS: true,
+    }
+    const stream = split(JSON.parse)
+    const fastify = await lc39('./tests/services/http-client.js', {
+      logLevel: 'trace',
+      stream,
+      envVariables: baseEnv,
+    })
+
+    innerTest.equal(typeof fastify.httpClientMetrics?.requestDuration, 'object')
   })
 
   test.end()
