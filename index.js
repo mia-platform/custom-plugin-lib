@@ -95,25 +95,46 @@ const baseSchema = {
 }
 
 function mergeJsonSchemas(schema, otherSchema) {
-  const { properties: schemaProperties, required: requiredSchema = [], ...schemaRemainingProperties } = schema
-  const {
-    properties: otherSchemaProperties,
-    required: requiredOtherSchema = [],
-    ...otherSchemaRemainingProperties
-  } = otherSchema
   const mergedSchema = {
-    type: 'object',
-    properties: {
-      ...schemaProperties,
-      ...otherSchemaProperties,
-    },
-    required: [...requiredSchema, ...requiredOtherSchema],
-    allOf: [
-      schemaRemainingProperties,
-      otherSchemaRemainingProperties,
-    ],
     additionalProperties: false,
+    type: 'object',
   }
+
+  Object.keys(schema).forEach(key => {
+    if (Array.isArray(schema[key])) {
+      mergedSchema[key] = [
+        ...mergedSchema[key] ?? [],
+        ...schema[key],
+      ]
+      return true
+    }
+
+    if (typeof schema[key] === 'object') {
+      mergedSchema[key] = {
+        ...mergedSchema[key] ?? {},
+        ...schema[key],
+      }
+      return true
+    }
+  })
+
+  Object.keys(otherSchema).forEach(key => {
+    if (Array.isArray(otherSchema[key])) {
+      mergedSchema[key] = [
+        ...mergedSchema[key] ?? [],
+        ...otherSchema[key],
+      ]
+      return true
+    }
+
+    if (typeof otherSchema[key] === 'object') {
+      mergedSchema[key] = {
+        ...mergedSchema[key] ?? {},
+        ...otherSchema[key],
+      }
+      return true
+    }
+  })
   return mergedSchema
 }
 
