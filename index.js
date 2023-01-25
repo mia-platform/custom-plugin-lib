@@ -135,10 +135,12 @@ function mergeJsonSchemas(schema, otherSchema) {
       return true
     }
   })
+
   return mergedSchema
 }
 
 function getOverlappingKeys(properties, otherProperties) {
+  if (!otherProperties) { return [] }
   const propertiesNames = Object.keys(properties)
   const otherPropertiesNames = Object.keys(otherProperties)
   const overlappingProperties = propertiesNames.filter(propertyName =>
@@ -336,16 +338,17 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction, s
   })
 }
 
-const defaultSchema = { type: 'object', required: [], properties: {} }
 
-function initCustomServiceEnvironment(envSchema = defaultSchema) {
+function initCustomServiceEnvironment(envSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {
-      const overlappingPropertiesNames = getOverlappingKeys(baseSchema.properties, envSchema.properties)
+      const overlappingPropertiesNames = getOverlappingKeys(baseSchema.properties, envSchema?.properties)
       if (overlappingPropertiesNames.length > 0) {
         throw new Error(`The provided Environment JSON Schema includes properties declared in the Base JSON Schema of the custom-plugin-lib, please remove them from your schema. The properties to remove are: ${overlappingPropertiesNames.join(', ')}`)
       }
-      fastify.register(fastifyEnv, { schema: mergeJsonSchemas(baseSchema, envSchema), data: opts })
+
+      const schema = envSchema ? mergeJsonSchemas(baseSchema, envSchema) : baseSchema
+      fastify.register(fastifyEnv, { schema, data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
     }

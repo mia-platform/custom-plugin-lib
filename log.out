@@ -1,0 +1,2688 @@
+
+> @mia-platform/custom-plugin-lib@5.1.5 test
+> npm run lint && npm run unit && npm run checkonly && npm run typescript
+
+
+> @mia-platform/custom-plugin-lib@5.1.5 lint
+> eslint . --ignore-path .gitignore
+
+
+> @mia-platform/custom-plugin-lib@5.1.5 unit
+> tap -b -o tap.log tests/*.test.js
+
+TAP version 13
+# Subtest: tests/environment.test.js
+    # Subtest: Test Environment variables
+        # Subtest: Should fail on empty USERID_HEADER_KEY
+            ok 1 - expect truthy value
+            1..1
+        ok 1 - Should fail on empty USERID_HEADER_KEY # time=498.524ms
+        
+        # Subtest: Should fail on empty GROUPS_HEADER_KEY
+            ok 1 - expect truthy value
+            1..1
+        ok 2 - Should fail on empty GROUPS_HEADER_KEY # time=54.96ms
+        
+        # Subtest: Should fail on empty CLIENTTYPE_HEADER_KEY
+            ok 1 - expect truthy value
+            1..1
+        ok 3 - Should fail on empty CLIENTTYPE_HEADER_KEY # time=61.215ms
+        
+        # Subtest: Should fail on empty BACKOFFICE_HEADER_KEY
+            ok 1 - expect truthy value
+            1..1
+        ok 4 - Should fail on empty BACKOFFICE_HEADER_KEY # time=41.322ms
+        
+        # Subtest: Should fail on empty MICROSERVICE_GATEWAY_SERVICE_NAME
+            ok 1 - expect truthy value
+            1..1
+        ok 5 - Should fail on empty MICROSERVICE_GATEWAY_SERVICE_NAME # time=44.804ms
+        
+        # Subtest: Should fail if required properties are missing
+            ok 1 - expect truthy value
+            1..1
+        ok 6 - Should fail if required properties are missing # time=48.025ms
+        
+        # Subtest: Should fail on invalid microservice gateway name (special characters)
+            ok 1 - should be equivalent strictly
+            1..1
+        ok 7 - Should fail on invalid microservice gateway name (special characters) # time=36.929ms
+        
+        # Subtest: Should not fail when microservice gateway name is a valid IP
+            ok 1 - expect resolving Promise
+            1..1
+        ok 8 - Should not fail when microservice gateway name is a valid IP # time=112.835ms
+        
+        # Subtest: Should fail since BASE_REQUIRED_FIELD is not present and CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is not present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'BASE_REQUIRED_FIELD'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        BASE_REQUIRED_FIELD: { type: 'string' },
+        CONDITION_FIELD: { type: 'boolean' }
+      },
+      if: { properties: { CONDITION_FIELD: [Object] } },
+      then: {
+        properties: { CONDITION_TRUE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_TRUE_REQUIRED_FIELD' ]
+      },
+      else: {
+        properties: { CONDITION_FALSE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_FALSE_REQUIRED_FIELD' ]
+      }
+    }
+            ok 1 - should be equivalent strictly
+        ok 9 - Should fail since BASE_REQUIRED_FIELD is not present and CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is not present # time=60.624ms
+        
+        # Subtest: Should fail since CONDITION_FIELD is false and CONDITION_FALSE_REQUIRED_FIELD is not present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'BASE_REQUIRED_FIELD'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        BASE_REQUIRED_FIELD: { type: 'string' },
+        CONDITION_FIELD: { type: 'boolean' }
+      },
+      if: { properties: { CONDITION_FIELD: [Object] } },
+      then: {
+        properties: { CONDITION_TRUE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_TRUE_REQUIRED_FIELD' ]
+      },
+      else: {
+        properties: { CONDITION_FALSE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_FALSE_REQUIRED_FIELD' ]
+      }
+    }
+            ok 1 - should be equivalent strictly
+        ok 10 - Should fail since CONDITION_FIELD is false and CONDITION_FALSE_REQUIRED_FIELD is not present # time=75.766ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      },
+      if: { properties: { CONDITION_FIELD: [Object] } },
+      then: {
+      },
+      else: {
+      }
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'BASE_REQUIRED_FIELD'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        BASE_REQUIRED_FIELD: { type: 'string' },
+        CONDITION_FIELD: { type: 'boolean' }
+        properties: { CONDITION_TRUE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_TRUE_REQUIRED_FIELD' ]
+        properties: { CONDITION_FALSE_REQUIRED_FIELD: [Object] },
+        required: [ 'CONDITION_FALSE_REQUIRED_FIELD' ]
+        # Subtest: Should pass since CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is present
+            ok 1 - expect resolving Promise
+            1..1
+        ok 11 - Should pass since CONDITION_FIELD is true and CONDITION_TRUE_REQUIRED_FIELD is present # time=66.829ms
+        
+        # Subtest: Should fail since none of the anyOf required fields are present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ANY_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ANY_OF_REQUIRED_FIELD_2: { type: 'string' }
+      },
+      anyOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+            ok 1 - should be equivalent strictly
+        ok 12 - Should fail since none of the anyOf required fields are present # time=48.931ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      },
+      anyOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ANY_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ANY_OF_REQUIRED_FIELD_2: { type: 'string' }
+        # Subtest: Should pass since one of the anyOf required fields is present
+            ok 1 - expect resolving Promise
+            1..1
+        ok 13 - Should pass since one of the anyOf required fields is present # time=105.843ms
+        
+        # Subtest: Should fail since not all of the allOf required fields are present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ALL_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ALL_OF_REQUIRED_FIELD_2: { type: 'string' }
+      },
+      allOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+            ok 1 - should be equivalent strictly
+        ok 14 - Should fail since not all of the allOf required fields are present # time=53.51ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      },
+      allOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ALL_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ALL_OF_REQUIRED_FIELD_2: { type: 'string' }
+        # Subtest: Should pass since all of the allOf required fields are present
+            ok 1 - expect resolving Promise
+            1..1
+        ok 15 - Should pass since all of the allOf required fields are present # time=33.296ms
+        
+        # Subtest: Should fail since all of the oneOf required fields are present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ONE_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ONE_OF_REQUIRED_FIELD_2: { type: 'string' }
+      },
+      oneOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+            ok 1 - should be equivalent strictly
+        ok 16 - Should fail since all of the oneOf required fields are present # time=33.749ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      },
+      oneOf: [ { required: [Array] }, { required: [Array] } ]
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        ONE_OF_REQUIRED_FIELD_1: { type: 'string' },
+        ONE_OF_REQUIRED_FIELD_2: { type: 'string' }
+        # Subtest: Should pass since only one of the oneOf required fields is present
+            ok 1 - expect resolving Promise
+            1..1
+        ok 17 - Should pass since only one of the oneOf required fields is present # time=33.323ms
+        
+        # Subtest: Should fail since the env has properties already present in the baseEnv of the lib
+            1..1
+            ok 1 - should be equivalent strictly
+        ok 18 - Should fail since the env has properties already present in the baseEnv of the lib # time=25.41ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      }
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'MY_AWESOME_ENV',
+        'MY_REQUIRED_ENV'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+        MY_REQUIRED_ENV: { type: 'string' }
+        # Subtest: Should pass since all of the required fields are present
+            ok 1 - expect resolving Promise
+            1..1
+        ok 19 - Should pass since all of the required fields are present # time=32.652ms
+        
+        # Subtest: Should fail since one of the required fields is not present
+            1..1
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'MY_AWESOME_ENV',
+        'MY_REQUIRED_ENV'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+        MY_REQUIRED_ENV: { type: 'string' }
+      }
+    }
+            ok 1 - should be equivalent strictly
+        ok 20 - Should fail since one of the required fields is not present # time=51.014ms
+        
+        1..20
+    ok 1 - Test Environment variables # time=1538.431ms
+    
+    1..1
+    # time=1557.106ms
+ok 1 - tests/environment.test.js # time=1557.106ms
+
+# Subtest: tests/getHeadersToProxy.test.js
+    # Subtest: getHeadersToProxy basic
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 1 - getHeadersToProxy basic # time=513.042ms
+    
+    # Subtest: getHeadersToProxy with isMiaHeaderInjected to false
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 2 - getHeadersToProxy with isMiaHeaderInjected to false # time=69.327ms
+    
+    # Subtest: getHeadersToProxy - with isMiaHeaderInjected to false and additional headers to proxy
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 3 - getHeadersToProxy - with isMiaHeaderInjected to false and additional headers to proxy # time=54.468ms
+    
+    # Subtest: getHeadersToProxy - additional headers to proxy
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 4 - getHeadersToProxy - additional headers to proxy # time=41.511ms
+    
+    # Subtest: getHeadersToProxy - no request headers
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 5 - getHeadersToProxy - no request headers # time=39.065ms
+    
+    # Subtest: getHeadersToProxy - backoffice header to true
+        ok 1 - should be equal
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 6 - getHeadersToProxy - backoffice header to true # time=39.255ms
+    
+    1..6
+    # time=808.704ms
+ok 2 - tests/getHeadersToProxy.test.js # time=808.704ms
+
+# Subtest: tests/getHttpClient.test.js
+    # Subtest: getHttpClient available for testing - complete url passed
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 1 - getHttpClient available for testing - complete url passed # time=44.535ms
+    
+    # Subtest: getHttpClient available for testing - timeout passed
+        ok 1 - should be equivalent strictly
+        1..1
+    ok 2 - getHttpClient available for testing - timeout passed # time=5.939ms
+    
+    # Subtest: getHttpClient available for testing - https url
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 3 - getHttpClient available for testing - https url # time=6.006ms
+    
+    # Subtest: getHttpClient available for testing - custom port 3000 - custom headers
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 4 - getHttpClient available for testing - custom port 3000 - custom headers # time=9.023ms
+    
+    # Subtest: getHttpClient available for testing - https url - custom port 3001
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 5 - getHttpClient available for testing - https url - custom port 3001 # time=7.178ms
+    
+    # Subtest: getHttpClient throws on invalid url
+        1..0
+    ok 6 - getHttpClient throws on invalid url # time=1.11ms
+    
+    1..6
+    # time=155.073ms
+ok 3 - tests/getHttpClient.test.js # time=155.073ms
+
+# Subtest: tests/getServiceProxy.test.js
+    # Subtest: getDirectServiceProxy available for testing
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 1 - getDirectServiceProxy available for testing # time=43.703ms
+    
+    # Subtest: getDirectServiceProxy accept all options
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 2 - getDirectServiceProxy accept all options # time=11.15ms
+    
+    # Subtest: getServiceProxy available for testing
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 3 - getServiceProxy available for testing # time=6.098ms
+    
+    # Subtest: getDirectServiceProxy available for testing - complete url passed
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 4 - getDirectServiceProxy available for testing - complete url passed # time=4.907ms
+    
+    # Subtest: getDirectServiceProxy available for testing - https url
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 5 - getDirectServiceProxy available for testing - https url # time=5.979ms
+    
+    # Subtest: getDirectServiceProxy available for testing - custom port 3000 - custom headers
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 6 - getDirectServiceProxy available for testing - custom port 3000 - custom headers # time=5.662ms
+    
+    # Subtest: getDirectServiceProxy available for testing - https url - custom port 3001
+        ok 1 - should be equivalent strictly
+        ok 2 - should be equivalent strictly
+        1..2
+    ok 7 - getDirectServiceProxy available for testing - https url - custom port 3001 # time=5.303ms
+    
+    # Subtest: getDirectServiceProxy throws on invalid url
+        1..0
+    ok 8 - getDirectServiceProxy throws on invalid url # time=1.01ms
+    
+    1..8
+    # time=92.963ms
+ok 4 - tests/getServiceProxy.test.js # time=92.963ms
+
+# Subtest: tests/httpClient.test.js
+    # Subtest: httpClient
+        # Subtest: forwarding of mia headers
+            # Subtest: injects Mia Header if isMiaHeaderInjected option is missing
+                ok 1 - should be equal
+                1..1
+            ok 1 - injects Mia Header if isMiaHeaderInjected option is missing # time=103.534ms
+            
+            # Subtest: injects Mia Header if isMiaHeaderInjected option is true
+                ok 1 - should be equal
+                1..1
+            ok 2 - injects Mia Header if isMiaHeaderInjected option is true # time=6.035ms
+            
+            # Subtest: does not inject Mia header if isMiaHeaderInjected option is false
+                ok 1 - should be equal
+                1..1
+            ok 3 - does not inject Mia header if isMiaHeaderInjected option is false # time=7.818ms
+            
+            # Subtest: injects Mia Header if isMiaHeaderInjected base option is true
+                ok 1 - should be equal
+                1..1
+            ok 4 - injects Mia Header if isMiaHeaderInjected base option is true # time=6.467ms
+            
+            # Subtest: does not inject Mia header if isMiaHeaderInjected option is false and base option is true
+                ok 1 - should be equal
+                1..1
+            ok 5 - does not inject Mia header if isMiaHeaderInjected option is false and base option is true # time=5.287ms
+            
+            1..5
+        ok 1 - forwarding of mia headers # time=137.956ms
+        
+        # Subtest: get
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - returnAs: JSON # time=92.816ms
+            
+            # Subtest: returnAs: JSON with prefix
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 2 - returnAs: JSON with prefix # time=9.191ms
+            
+            # Subtest: returnAs: JSON default
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 3 - returnAs: JSON default # time=14.709ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 4 - returnAs: BUFFER # time=16.199ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 5 - returnAs: STREAM # time=215.729ms
+            
+            # Subtest: with query parameter
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 6 - with query parameter # time=14.742ms
+            
+            # Subtest: response includes duration property
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 7 - response includes duration property # time=55.223ms
+            
+            # Subtest: with query parameter in path
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 8 - with query parameter in path # time=10.626ms
+            
+            # Subtest: returnAs: JSON but xml is returned
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 9 - returnAs: JSON but xml is returned # time=7.466ms
+            
+            # Subtest: on not allowed statusCode error includes duration property
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - should be equivalent strictly
+                ok 5 - expect truthy value
+                1..5
+            ok 10 - on not allowed statusCode error includes duration property # time=55.632ms
+            
+            # Subtest: on 500 doesn't reject the promise
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 11 - on 500 doesn't reject the promise # time=11.064ms
+            
+            # Subtest: on TCP error rejects the promise
+                ok 1 - should be equal
+                1..1
+            ok 12 - on TCP error rejects the promise # time=8.2ms
+            
+            # Subtest: response status code is 201 - default validateStatus - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 13 - response status code is 201 - default validateStatus - returnAs: JSON # time=7.144ms
+            
+            # Subtest: response is empty - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 14 - response is empty - returnAs: JSON # time=5.581ms
+            
+            # Subtest: response status code is not allowed - default validateStatus - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 15 - response status code is not allowed - default validateStatus - returnAs: JSON # time=6.421ms
+            
+            # Subtest: response status code is not allowed - response is empty - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 16 - response status code is not allowed - response is empty - returnAs: JSON # time=7.741ms
+            
+            # Subtest: response status code is not allowed - custom errorMessageKey - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 17 - response status code is not allowed - custom errorMessageKey - returnAs: JSON # time=5.741ms
+            
+            # Subtest: response status code is not allowed - custom errorMessageKey in constructor - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 18 - response status code is not allowed - custom errorMessageKey in constructor - returnAs: JSON # time=5.411ms
+            
+            # Subtest: response status code is allowed - default validateStatus - returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 19 - response status code is allowed - default validateStatus - returnAs: BUFFER # time=7.804ms
+            
+            # Subtest: response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 20 - response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in JSON # time=14.001ms
+            
+            # Subtest: response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in text
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 21 - response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in text # time=8.509ms
+            
+            # Subtest: response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in text but content-type json
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 22 - response status code is not allowed - default validateStatus - returnAs: BUFFER - error response in text but content-type json # time=6.88ms
+            
+            # Subtest: response status code is allowed - default validateStatus - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 23 - response status code is allowed - default validateStatus - returnAs: STREAM # time=205.803ms
+            
+            # Subtest: response status code is not allowed - default validateStatus - returnAs: STREAM
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 24 - response status code is not allowed - default validateStatus - returnAs: STREAM # time=2.721ms
+            
+            1..24
+        ok 2 - get # time=818.801ms
+        
+        # Subtest: post
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=90.569ms
+            
+            # Subtest: send String - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 2 - send String - returnAs: JSON # time=10.876ms
+            
+            # Subtest: send Buffer - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 3 - send Buffer - returnAs: JSON # time=13.379ms
+            
+            # Subtest: send Stream - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 4 - send Stream - returnAs: JSON # time=14.866ms
+            
+            # Subtest: send nothing - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                ok 3 - should be equivalent strictly
+                ok 4 - should be equivalent strictly
+                ok 5 - expect truthy value
+                1..5
+            ok 5 - send nothing - returnAs: JSON # time=6.714ms
+            
+            # Subtest: with querystring - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 6 - with querystring - returnAs: JSON # time=6.602ms
+            
+            # Subtest: send Object - returnAs: BUFFER
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                ok 3 - should be equivalent strictly
+                ok 4 - should be equivalent strictly
+                ok 5 - expect truthy value
+                1..5
+            ok 7 - send Object - returnAs: BUFFER # time=13.956ms
+            
+            # Subtest: send Object - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 8 - send Object - returnAs: STREAM # time=211.56ms
+            
+            # Subtest: on 500 doesn't reject the promise
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 9 - on 500 doesn't reject the promise # time=12.324ms
+            
+            # Subtest: on TCP error rejects the promise
+                ok 1 - should be equal
+                1..1
+            ok 10 - on TCP error rejects the promise # time=3.454ms
+            
+            # Subtest: send null
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                ok 3 - should be equivalent strictly
+                ok 4 - should be equivalent strictly
+                ok 5 - expect truthy value
+                1..5
+            ok 11 - send null # time=15.807ms
+            
+            # Subtest: response status code is allowed - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 12 - response status code is allowed - returnAs: JSON # time=12.629ms
+            
+            # Subtest: response status code is not allowed - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                1..2
+            ok 13 - response status code is not allowed - returnAs: JSON # time=7.529ms
+            
+            # Subtest: response status code is allowed - returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 14 - response status code is allowed - returnAs: BUFFER # time=5.237ms
+            
+            # Subtest: response status code is not allowed - returnAs: BUFFER
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                1..2
+            ok 15 - response status code is not allowed - returnAs: BUFFER # time=5.573ms
+            
+            # Subtest: response status code is allowed - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 16 - response status code is allowed - returnAs: STREAM # time=230.786ms
+            
+            # Subtest: response status code is not allowed - returnAs: STREAM
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equal
+                1..3
+            ok 17 - response status code is not allowed - returnAs: STREAM # time=3.291ms
+            
+            1..17
+        ok 3 - post # time=682.438ms
+        
+        # Subtest: put
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=3.729ms
+            
+            1..1
+        ok 4 - put # time=5.785ms
+        
+        # Subtest: patch
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=9.558ms
+            
+            1..1
+        ok 5 - patch # time=11.729ms
+        
+        # Subtest: delete
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=9.023ms
+            
+            # Subtest: send Object - returnAs: BUFFER - error statusCode 502
+                ok 1 - should be equal
+                1..1
+            ok 2 - send Object - returnAs: BUFFER - error statusCode 502 # time=3.951ms
+            
+            # Subtest: send empty - returnAs: BUFFER - success statusCode 204
+                ok 1 - should be equal
+                1..1
+            ok 3 - send empty - returnAs: BUFFER - success statusCode 204 # time=4.085ms
+            
+            # Subtest: send empty - returnAs: STREAM - success statusCode 204
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 4 - send empty - returnAs: STREAM - success statusCode 204 # time=3.727ms
+            
+            1..4
+        ok 6 - delete # time=24.446ms
+        
+        # Subtest: httpClient metrics
+            # Subtest: metrics are NOT collected if NOT enabled on proxy level - request ok
+                ok 1 - should be equal
+                1..1
+            ok 1 - metrics are NOT collected if NOT enabled on proxy level - request ok # time=17.389ms
+            
+            # Subtest: metrics are collected if enabled - request ok
+                ok 1 - should be equivalent strictly
+                ok 2 - expect truthy value
+                1..2
+            ok 2 - metrics are collected if enabled - request ok # time=23.867ms
+            
+            # Subtest: metrics are collected if enabled - request ko
+                ok 1 - (unnamed test)
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                1..3
+            ok 3 - metrics are collected if enabled - request ko # time=23.949ms
+            
+            # Subtest: metrics are collected with option urlLabel
+                ok 1 - should be equivalent strictly
+                ok 2 - expect truthy value
+                1..2
+            ok 4 - metrics are collected with option urlLabel # time=23.444ms
+            
+            # Subtest: metrics are NOT collected if disabled on proxy level
+                ok 1 - should be equivalent strictly
+                1..1
+            ok 5 - metrics are NOT collected if disabled on proxy level # time=22.697ms
+            
+            # Subtest: metrics are NOT collected if disabled on request level
+                ok 1 - should be equivalent strictly
+                1..1
+            ok 6 - metrics are NOT collected if disabled on request level # time=21.751ms
+            
+            1..6
+        ok 7 - httpClient metrics # time=137.415ms
+        
+        # Subtest: returnAs: unknown
+            ok 1 - should be equal
+            1..1
+        ok 8 - returnAs: unknown # time=0.718ms
+        
+        # Subtest: allowedStatusCodes is not array
+            ok 1 - should be equal
+            1..1
+        ok 9 - allowedStatusCodes is not array # time=1.816ms
+        
+        # Subtest: https
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 10 - https # time=4.471ms
+        
+        # Subtest: change URL
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 11 - change URL # time=3.092ms
+        
+        # Subtest: request headers can be overwritten
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 12 - request headers can be overwritten # time=3.95ms
+        
+        # Subtest: developer can specify a global header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 13 - developer can specify a global header # time=4.037ms
+        
+        # Subtest: global header can be overwritten by a request header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 14 - global header can be overwritten by a request header # time=3.966ms
+        
+        # Subtest: request header overwrites global and mia headers
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 15 - request header overwrites global and mia headers # time=4.001ms
+        
+        # Subtest: global user header overwrites mia header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 16 - global user header overwrites mia header # time=4.511ms
+        
+        # Subtest: with prefix
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 17 - with prefix # time=4.19ms
+        
+        # Subtest: timeout
+            # Subtest: returnAs: JSON
+                ok 1 - expect rejected Promise: Error timeout of 100ms exceeded
+                1..1
+            ok 1 - returnAs: JSON # time=9.844ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - expect rejected Promise: Error timeout of 100ms exceeded
+                1..1
+            ok 2 - returnAs: BUFFER # time=1.835ms
+            
+            # Subtest: returnAs: STREAM with delay body
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 3 - returnAs: STREAM with delay body # time=204.242ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - expect rejected Promise: Error timeout of 100ms exceeded
+                1..1
+            ok 4 - returnAs: STREAM # time=1.805ms
+            
+            1..4
+        ok 18 - timeout # time=220.428ms
+        
+        # Subtest: proxy
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                1..3
+            ok 1 - returnAs: JSON # time=18.445ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                1..3
+            ok 2 - returnAs: BUFFER # time=4.366ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - expect truthy value
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 3 - returnAs: STREAM # time=205.54ms
+            
+            1..3
+        ok 19 - proxy # time=230.832ms
+        
+        # Subtest: tls options
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 1 - returnAs: JSON # time=18.705ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 2 - returnAs: BUFFER # time=6.183ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - expect truthy value
+                ok 3 - should be equivalent strictly
+                1..3
+            ok 3 - returnAs: STREAM # time=206.907ms
+            
+            # Subtest: returnAs: JSON - passing options to service initialization
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 4 - returnAs: JSON - passing options to service initialization # time=6.13ms
+            
+            # Subtest: returnAs: JSON - passing httpsAgent to service initialization
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 5 - returnAs: JSON - passing httpsAgent to service initialization # time=5.759ms
+            
+            1..5
+        ok 20 - tls options # time=247.064ms
+        
+        # Subtest: logger
+            # Subtest: log correctly - request ok
+                ok 1 - should match pattern provided
+                ok 2 - should match pattern provided
+                ok 3 - should be equal
+                1..3
+            ok 1 - log correctly - request ok # time=9.537ms
+            
+            # Subtest: log correctly - options overwrite base options
+                ok 1 - should match pattern provided
+                ok 2 - should match pattern provided
+                ok 3 - should be equal
+                1..3
+            ok 2 - log correctly - options overwrite base options # time=4.91ms
+            
+            # Subtest: log correctly - response error
+                ok 1 - should match pattern provided
+                ok 2 - should match pattern provided
+                ok 3 - should be equal
+                1..3
+            ok 3 - log correctly - response error # time=8.733ms
+            
+            # Subtest: log correctly - generic error
+                1..3
+                ok 1 - should match pattern provided
+                ok 2 - should match pattern provided
+                ok 3 - should be equal
+            ok 4 - log correctly - generic error # time=13.073ms
+            
+            1..4
+        ok 21 - logger # time=265.217ms
+        
+        # Subtest: httpClientMetrics are registered if enabled
+            ok 1 - should be equal
+            1..1
+        ok 22 - httpClientMetrics are registered if enabled # time=48.298ms
+        
+        1..22
+    ok 1 - httpClient # time=2876.786ms
+    
+    1..1
+    # time=2921.717ms
+ok 5 - tests/httpClient.test.js # time=2921.717ms
+
+# Subtest: tests/index.test.js
+    # Subtest: Plain Custom Service
+        # Subtest: Hello World
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 1 - Hello World # time=603.062ms
+        
+        # Subtest: Access platform values
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 2 - Access platform values # time=86.138ms
+        
+        # Subtest: Access platform "miauserproperties" - when USER_PROPERTIES_HEADER_KEY NOT defined - uses default header key
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 3 - Access platform "miauserproperties" - when USER_PROPERTIES_HEADER_KEY NOT defined - uses default header key # time=97.269ms
+        
+        # Subtest: Access platform values when not declared
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 4 - Access platform values when not declared # time=87.011ms
+        
+        # Subtest: Send form encoded data
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 5 - Send form encoded data # time=77.64ms
+        
+        # Subtest: Can return a stream
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 6 - Can return a stream # time=122.986ms
+        
+        # Subtest: Send some json, with validation
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - should be equivalent strictly
+            ok 5 - should be equivalent strictly
+            ok 6 - bad response
+            ok 7 - should be equivalent strictly
+            ok 8 - should be equivalent strictly
+            ok 9 - enum validation
+            ok 10 - should be equivalent strictly
+            ok 11 - should be equivalent strictly
+            ok 12 - nested fields validation
+            ok 13 - should be equivalent strictly
+            ok 14 - should be equivalent strictly
+            ok 15 - nested fields validation
+            1..15
+        ok 7 - Send some json, with validation # time=130.713ms
+        
+        # Subtest: custom body parsing
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 8 - custom body parsing # time=76.845ms
+        
+        # Subtest: Healtiness handler can see decoration
+            ok 1 - should be equivalent strictly
+            1..1
+        ok 9 - Healtiness handler can see decoration # time=52.049ms
+        
+        # Subtest: returns mia headers - empty
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 10 - returns mia headers - empty # time=51.32ms
+        
+        # Subtest: returns mia headers - filled
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 11 - returns mia headers - filled # time=52.13ms
+        
+        1..11
+    ok 1 - Plain Custom Service # time=1451.373ms
+    
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+    # Subtest: Advanced Custom Service
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'MY_AWESOME_ENV',
+        'MY_REQUIRED_ENV'
+      ],
+      properties: {
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+        MY_REQUIRED_ENV: { type: 'string' }
+      }
+    }
+        # Subtest: Require some environment variables
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 1 - Require some environment variables # time=69.981ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      }
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'MY_AWESOME_ENV',
+        'MY_REQUIRED_ENV'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+        MY_REQUIRED_ENV: { type: 'string' }
+        # Subtest: Decorate fastify with custom functionalities
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 2 - Decorate fastify with custom functionalities # time=71.921ms
+        
+    {
+      additionalProperties: false,
+      type: 'object',
+      required: [
+      ],
+      properties: {
+      }
+    }
+        'USERID_HEADER_KEY',
+        'GROUPS_HEADER_KEY',
+        'CLIENTTYPE_HEADER_KEY',
+        'BACKOFFICE_HEADER_KEY',
+        'MICROSERVICE_GATEWAY_SERVICE_NAME',
+        'MY_AWESOME_ENV',
+        'MY_REQUIRED_ENV'
+        USERID_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user id',
+          minLength: 1
+        },
+        USER_PROPERTIES_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the user permissions',
+          minLength: 1,
+          default: 'miauserproperties'
+        },
+        GROUPS_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the groups comma separated list',
+          minLength: 1
+        },
+        CLIENTTYPE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get the client type',
+          minLength: 1
+        },
+        BACKOFFICE_HEADER_KEY: {
+          type: 'string',
+          description: 'the header key to get if the request is from backoffice (any truly string is true!!!)',
+          minLength: 1
+        },
+        MICROSERVICE_GATEWAY_SERVICE_NAME: {
+          type: 'string',
+          description: 'the service name of the microservice gateway',
+          pattern: '^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$'
+        },
+        ADDITIONAL_HEADERS_TO_PROXY: {
+          type: 'string',
+          default: '',
+          description: 'comma separated list of additional headers to proxy'
+        },
+        ENABLE_HTTP_CLIENT_METRICS: {
+          type: 'boolean',
+          default: false,
+          description: 'flag to enable the httpClient metrics'
+        },
+        MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+        MY_REQUIRED_ENV: { type: 'string' }
+        # Subtest: default env var
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 3 - default env var # time=31.436ms
+        
+        1..3
+    ok 2 - Advanced Custom Service # time=178.852ms
+    
+    # Subtest: Advanced config
+        # Subtest: it accepts advanced config
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - route can access the validation error
+            ok 5 - route can access context
+            # Subtest: part of advanced config is overwritten
+                ok 1 - should not be equal
+                ok 2 - should not be equal
+                ok 3 - should not be equal
+                ok 4 - should not be equal
+                1..4
+            ok 6 - part of advanced config is overwritten # time=1.081ms
+            
+            1..6
+        ok 1 - it accepts advanced config # time=46.7ms
+        
+        1..1
+    ok 3 - Advanced config # time=49.095ms
+    
+    # Subtest: Service with API formats
+        # Subtest: it validates date-time
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 1 - it validates date-time # time=48.537ms
+        
+        # Subtest: fails for invalid date
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 2 - fails for invalid date # time=36.215ms
+        
+        1..2
+    ok 4 - Service with API formats # time=87.669ms
+    
+    1..4
+    # time=1771.172ms
+ok 6 - tests/index.test.js # time=1771.172ms
+
+# Subtest: tests/microserviceGateway.test.js
+    # Subtest: Call microservice gateway proxy
+        # Subtest: Call from request instance
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 1 - Call from request instance # time=615.507ms
+        
+        # Subtest: Call from service instance
+            1..0
+        ok 2 - Call from service instance # time=52.18ms
+        
+        # Subtest: Call from request instance custom options
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 3 - Call from request instance custom options # time=103.652ms
+        
+        # Subtest: Call from service instance custom options
+            1..0
+        ok 4 - Call from service instance custom options # time=43.025ms
+        
+        # Subtest: Call with custom header
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 5 - Call with custom header # time=100.798ms
+        
+        # Subtest: Call with custom header into a pre decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 6 - Call with custom header into a pre decorator # time=105.697ms
+        
+        # Subtest: Call with custom header into a post decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 7 - Call with custom header into a post decorator # time=87.488ms
+        
+        1..7
+    ok 1 - Call microservice gateway proxy # time=1124.355ms
+    
+    1..1
+    # time=1138.519ms
+ok 7 - tests/microserviceGateway.test.js # time=1138.519ms
+
+# Subtest: tests/oas.test.js
+    # Subtest: create a valid docs with the support of $ref schema
+        1..0
+    ok 1 - create a valid docs with the support of $ref schema # time=578.112ms
+    
+    # Subtest: create a valid docs with custom vocabulary
+        1..0
+    ok 2 - create a valid docs with custom vocabulary # time=72.618ms
+    
+    1..2
+    # time=658.376ms
+ok 8 - tests/oas.test.js # time=658.376ms
+
+# Subtest: tests/postDecorator.test.js
+    # Subtest: Test Post Decorator function
+        # Subtest: Return the signal to not change the response
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 1 - Return the signal to not change the response # time=598.166ms
+        
+        # Subtest: Return a modified body response
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 2 - Return a modified body response # time=64.535ms
+        
+        # Subtest: Return a modified headers response
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 3 - Return a modified headers response # time=53.015ms
+        
+        # Subtest: Test a bad handler that doesn't return the right type
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 4 - Test a bad handler that doesn't return the right type # time=45.153ms
+        
+        # Subtest: abortChain
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 5 - abortChain # time=54.71ms
+        
+        # Subtest: is able to access to the mia headers correctly
+            ok 1 - should be equivalent strictly
+            1..1
+        ok 6 - is able to access to the mia headers correctly # time=54.928ms
+        
+        # Subtest: addPostDecorator is chainable
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 7 - addPostDecorator is chainable # time=56.448ms
+        
+        1..7
+    ok 1 - Test Post Decorator function # time=936.566ms
+    
+    1..1
+    # time=940ms
+ok 9 - tests/postDecorator.test.js # time=940ms
+
+# Subtest: tests/preDecorator.test.js
+    # Subtest: preDecorator
+        # Subtest: leaveOriginalRequestUnmodified
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 1 - leaveOriginalRequestUnmodified # time=593.104ms
+        
+        # Subtest: changeOriginalRequest
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 2 - changeOriginalRequest # time=77.355ms
+        
+        # Subtest: changeOriginalRequest with headers
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 3 - changeOriginalRequest with headers # time=71.594ms
+        
+        # Subtest: test bad handler that doesn't return the right type
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 4 - test bad handler that doesn't return the right type # time=70.865ms
+        
+        # Subtest: abortChain
+            ok 1 - should be equivalent strictly
+            ok 2 - expect truthy value
+            ok 3 - expect truthy value
+            ok 4 - should be equivalent strictly
+            1..4
+        ok 5 - abortChain # time=73.731ms
+        
+        # Subtest: is able to access to the mia headers correctly
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 6 - is able to access to the mia headers correctly # time=44.354ms
+        
+        # Subtest: addPreDecorator is Chainable
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            1..2
+        ok 7 - addPreDecorator is Chainable # time=41.358ms
+        
+        1..7
+    ok 1 - preDecorator # time=982.833ms
+    
+    1..1
+    # time=987.583ms
+ok 10 - tests/preDecorator.test.js # time=987.583ms
+
+# Subtest: tests/serviceBuilder.test.js
+    # Subtest: serviceBuilder
+        # Subtest: forwarding of mia headers
+            # Subtest: injects Mia Header if isMiaHeaderInjected option is missing
+                ok 1 - should be equal
+                1..1
+            ok 1 - injects Mia Header if isMiaHeaderInjected option is missing # time=110.028ms
+            
+            # Subtest: injects Mia Header if isMiaHeaderInjected option is true
+                ok 1 - should be equal
+                1..1
+            ok 2 - injects Mia Header if isMiaHeaderInjected option is true # time=6.72ms
+            
+            # Subtest: does not inject Mia header if isMiaHeaderInjected option is false
+                ok 1 - should be equal
+                1..1
+            ok 3 - does not inject Mia header if isMiaHeaderInjected option is false # time=5.881ms
+            
+            1..3
+        ok 1 - forwarding of mia headers # time=132.769ms
+        
+        # Subtest: get
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - returnAs: JSON # time=55.133ms
+            
+            # Subtest: returnAs: JSON default
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 2 - returnAs: JSON default # time=4.837ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 3 - returnAs: BUFFER # time=5.828ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 4 - returnAs: STREAM # time=205.208ms
+            
+            # Subtest: with query parameter
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 5 - with query parameter # time=4.924ms
+            
+            # Subtest: returnAs: JSON but xml is returned
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 6 - returnAs: JSON but xml is returned # time=4.822ms
+            
+            # Subtest: on 500 doesn't reject the promise
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 7 - on 500 doesn't reject the promise # time=5.208ms
+            
+            # Subtest: on TCP error rejects the promise
+                ok 1 - should be equal
+                1..1
+            ok 8 - on TCP error rejects the promise # time=2.705ms
+            
+            # Subtest: response status code is allowed - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 9 - response status code is allowed - returnAs: JSON # time=4.722ms
+            
+            # Subtest: response status code is not allowed: returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 10 - response status code is not allowed: returnAs: JSON # time=4.331ms
+            
+            # Subtest: response status code is allowed - returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 11 - response status code is allowed - returnAs: BUFFER # time=4.871ms
+            
+            # Subtest: response status code is not allowed - returnAs: BUFFER
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 12 - response status code is not allowed - returnAs: BUFFER # time=4.322ms
+            
+            # Subtest: response status code is allowed - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 13 - response status code is allowed - returnAs: STREAM # time=204.17ms
+            
+            # Subtest: response status code is not allowed - returnAs: STREAM
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 14 - response status code is not allowed - returnAs: STREAM # time=3.539ms
+            
+            1..14
+        ok 2 - get # time=524.262ms
+        
+        # Subtest: post
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=34.779ms
+            
+            # Subtest: send String - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 2 - send String - returnAs: JSON # time=4.869ms
+            
+            # Subtest: send Buffer - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 3 - send Buffer - returnAs: JSON # time=4.036ms
+            
+            # Subtest: send Stream - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 4 - send Stream - returnAs: JSON # time=5.371ms
+            
+            # Subtest: send nothing - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 5 - send nothing - returnAs: JSON # time=4.082ms
+            
+            # Subtest: with querystring - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 6 - with querystring - returnAs: JSON # time=4.189ms
+            
+            # Subtest: send Object - returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 7 - send Object - returnAs: BUFFER # time=4.09ms
+            
+            # Subtest: send Object - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 8 - send Object - returnAs: STREAM # time=203.792ms
+            
+            # Subtest: on 500 doesn't reject the promise
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 9 - on 500 doesn't reject the promise # time=4.653ms
+            
+            # Subtest: on TCP error rejects the promise
+                ok 1 - should be equal
+                1..1
+            ok 10 - on TCP error rejects the promise # time=2.487ms
+            
+            # Subtest: send null
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 11 - send null # time=4.228ms
+            
+            # Subtest: response status code is allowed - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 12 - response status code is allowed - returnAs: JSON # time=4.156ms
+            
+            # Subtest: response status code is not allowed - returnAs: JSON
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                1..2
+            ok 13 - response status code is not allowed - returnAs: JSON # time=2.613ms
+            
+            # Subtest: response status code is allowed - returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 14 - response status code is allowed - returnAs: BUFFER # time=3.906ms
+            
+            # Subtest: response status code is not allowed - returnAs: BUFFER
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                1..2
+            ok 15 - response status code is not allowed - returnAs: BUFFER # time=3.804ms
+            
+            # Subtest: response status code is allowed - returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 16 - response status code is allowed - returnAs: STREAM # time=203.441ms
+            
+            # Subtest: response status code is not allowed - returnAs: STREAM
+                ok 1 - should be equivalent strictly
+                ok 2 - should be equal
+                1..2
+            ok 17 - response status code is not allowed - returnAs: STREAM # time=2.544ms
+            
+            1..17
+        ok 3 - post # time=504.677ms
+        
+        # Subtest: put
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=4.489ms
+            
+            1..1
+        ok 4 - put # time=6.738ms
+        
+        # Subtest: patch
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=4.245ms
+            
+            1..1
+        ok 5 - patch # time=6.452ms
+        
+        # Subtest: delete
+            # Subtest: send Object - returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - should be equivalent strictly
+                ok 4 - expect truthy value
+                1..4
+            ok 1 - send Object - returnAs: JSON # time=12.68ms
+            
+            # Subtest: send Object - returnAs: BUFFER and allowedStatusCodes: [204] - error statusCode 502
+                ok 1 - should be equal
+                1..1
+            ok 2 - send Object - returnAs: BUFFER and allowedStatusCodes: [204] - error statusCode 502 # time=3.531ms
+            
+            # Subtest: send Object - returnAs: BUFFER and allowedStatusCodes: [204] - success statusCode 204
+                ok 1 - should be equal
+                1..1
+            ok 3 - send Object - returnAs: BUFFER and allowedStatusCodes: [204] - success statusCode 204 # time=3.179ms
+            
+            1..3
+        ok 6 - delete # time=22.057ms
+        
+        # Subtest: returnAs: unknown
+            ok 1 - should be equal
+            1..1
+        ok 7 - returnAs: unknown # time=0.652ms
+        
+        # Subtest: allowedStatusCodes is not array
+            ok 1 - should be equal
+            1..1
+        ok 8 - allowedStatusCodes is not array # time=0.426ms
+        
+        # Subtest: https
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 9 - https # time=3.608ms
+        
+        # Subtest: https in service build
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 10 - https in service build # time=3.599ms
+        
+        # Subtest: change port
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 11 - change port # time=3.581ms
+        
+        # Subtest: base options change port
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 12 - base options change port # time=3.588ms
+        
+        # Subtest: base options change port, override during call
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 13 - base options change port, override during call # time=3.559ms
+        
+        # Subtest: request headers can be overwritten
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 14 - request headers can be overwritten # time=5.115ms
+        
+        # Subtest: developer can specify a global header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 15 - developer can specify a global header # time=3.983ms
+        
+        # Subtest: global header can be overwritten by a request header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 16 - global header can be overwritten by a request header # time=3.743ms
+        
+        # Subtest: request header overwrites global and mia headers
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 17 - request header overwrites global and mia headers # time=3.797ms
+        
+        # Subtest: global user header overwrites mia header
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 18 - global user header overwrites mia header # time=3.916ms
+        
+        # Subtest: with prefix
+            ok 1 - should be equal
+            ok 2 - should be equivalent strictly
+# time=4300.264ms
+            ok 3 - should be equivalent strictly
+            ok 4 - expect truthy value
+            1..4
+        ok 19 - with prefix # time=3.787ms
+        
+        # Subtest: timeout
+            # Subtest: returnAs: JSON
+                ok 1 - expect rejected Promise: Error Request timed out
+                1..1
+            ok 1 - returnAs: JSON # time=6.359ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - expect rejected Promise: Error Request timed out
+                1..1
+            ok 2 - returnAs: BUFFER # time=1.433ms
+            
+            # Subtest: returnAs: STREAM with delay body
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 3 - returnAs: STREAM with delay body # time=202.647ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - expect rejected Promise: Error Request timed out
+                1..1
+            ok 4 - returnAs: STREAM # time=1.403ms
+            
+            1..4
+        ok 20 - timeout # time=214.358ms
+        
+        # Subtest: agent
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                1..3
+            ok 1 - returnAs: JSON # time=18.105ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                ok 3 - expect truthy value
+                1..3
+            ok 2 - returnAs: BUFFER # time=4.354ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - expect truthy value
+                ok 3 - expect truthy value
+                ok 4 - should be equivalent strictly
+                1..4
+            ok 3 - returnAs: STREAM # time=206.289ms
+            
+            1..3
+        ok 21 - agent # time=231.447ms
+        
+        # Subtest: tls options
+            # Subtest: returnAs: JSON
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 1 - returnAs: JSON # time=16.264ms
+            
+            # Subtest: returnAs: BUFFER
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 2 - returnAs: BUFFER # time=6.007ms
+            
+            # Subtest: returnAs: STREAM
+                ok 1 - should be equal
+                ok 2 - expect truthy value
+                ok 3 - should be equivalent strictly
+                1..3
+            ok 3 - returnAs: STREAM # time=210.152ms
+            
+            # Subtest: returnAs: JSON - passing options to service initialization
+                ok 1 - should be equal
+                ok 2 - should be equivalent strictly
+                1..2
+            ok 4 - returnAs: JSON - passing options to service initialization # time=6.39ms
+            
+            1..4
+        ok 22 - tls options # time=243.689ms
+        
+        1..22
+    ok 1 - serviceBuilder # time=1941.379ms
+    
+    1..1
+    # time=1944.762ms
+ok 11 - tests/serviceBuilder.test.js # time=1944.762ms
+
+# Subtest: tests/serviceProxy.test.js
+    # Subtest: serviceProxy
+        # Subtest: directly call a service from request instance
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 1 - directly call a service from request instance # time=435.942ms
+        
+        # Subtest: directly call a service from service instance
+            1..0
+        ok 2 - directly call a service from service instance # time=35.368ms
+        
+        # Subtest: directly call a service from request instance specifying port
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 3 - directly call a service from request instance specifying port # time=51.654ms
+        
+        # Subtest: directly call a service with custom header
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 4 - directly call a service with custom header # time=50.344ms
+        
+        # Subtest: directly call a service with custom header into a pre decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 5 - directly call a service with custom header into a pre decorator # time=45.016ms
+        
+        # Subtest: directly call a service with custom header into a post decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 6 - directly call a service with custom header into a post decorator # time=69.573ms
+        
+        1..6
+    ok 1 - serviceProxy # time=698.545ms
+    
+    # Subtest: httpClient
+        # Subtest: directly call a service from request instance
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 1 - directly call a service from request instance # time=61.117ms
+        
+        # Subtest: directly call a service from service instance
+            1..0
+        ok 2 - directly call a service from service instance # time=24.853ms
+        
+        # Subtest: directly call a service from request instance specifying port
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 3 - directly call a service from request instance specifying port # time=46.949ms
+        
+        # Subtest: directly call a service with custom header
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 4 - directly call a service with custom header # time=50.56ms
+        
+        # Subtest: directly call a service with custom header into a pre decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 5 - directly call a service with custom header into a pre decorator # time=49.903ms
+        
+        # Subtest: directly call a service with custom header into a post decorator
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 6 - directly call a service with custom header into a post decorator # time=47.25ms
+        
+        # Subtest: directly call a service without mia headers
+            ok 1 - should be equivalent strictly
+            ok 2 - should be equivalent strictly
+            ok 3 - should be equivalent strictly
+            1..3
+        ok 7 - directly call a service without mia headers # time=46.062ms
+        
+        1..7
+    ok 2 - httpClient # time=332.17ms
+    
+    1..2
+    # time=1034.092ms
+ok 12 - tests/serviceProxy.test.js # time=1034.092ms
+
+1..12
+---------------------------------------|---------|----------|---------|---------|-------------------
+File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------------|---------|----------|---------|---------|-------------------
+All files                              |   95.84 |    93.38 |   94.05 |   95.82 |                   
+ custom-plugin-lib                     |   98.08 |       90 |     100 |   98.05 |                   
+  index.js                             |   98.08 |       90 |     100 |   98.05 | 328-330           
+ custom-plugin-lib/lib                 |   99.13 |    94.41 |   99.04 |   99.13 |                   
+  ajvSetup.js                          |     100 |    88.88 |     100 |     100 | 22                
+  decoratorsCommonFunctions.js         |     100 |       50 |     100 |     100 | 16                
+  httpClient.js                        |   97.87 |    93.97 |   95.65 |   97.87 | 228,268           
+  postDecorator.js                     |     100 |      100 |     100 |     100 |                   
+  preDecorator.js                      |     100 |      100 |     100 |     100 |                   
+  rawCustomPlugin.js                   |     100 |      100 |     100 |     100 |                   
+  serviceBuilder.js                    |     100 |    95.06 |     100 |     100 | 150,205-213       
+  util.js                              |    92.3 |      100 |     100 |    92.3 | 37                
+ custom-plugin-lib/tests/services      |   90.75 |      100 |   83.33 |   90.72 |                   
+  advanced-config.js                   |     100 |      100 |     100 |     100 |                   
+  advanced-custom-service.js           |     100 |      100 |     100 |     100 |                   
+  ...-env-validation-custom-service.js |   61.53 |      100 |   33.33 |   61.53 | 49,54-57          
+  ...-env-validation-custom-service.js |   61.53 |      100 |   33.33 |   61.53 | 49,54-57          
+  get-headers-to-proxy.js              |     100 |      100 |     100 |     100 |                   
+  http-client.js                       |     100 |      100 |     100 |     100 |                   
+  ...-env-validation-custom-service.js |   72.22 |      100 |   33.33 |   72.22 | 70,75-78          
+  microservice-gateway-from-index.js   |     100 |      100 |     100 |     100 |                   
+  microservice-gateway.js              |     100 |      100 |     100 |     100 |                   
+  ...-env-validation-custom-service.js |   61.53 |      100 |   33.33 |   61.53 | 49,54-57          
+  ...-env-validation-custom-service.js |   56.25 |      100 |       0 |   56.25 | 40-42,47-50       
+  plain-custom-service.js              |     100 |      100 |     100 |     100 |                   
+  post-decorator.js                    |     100 |      100 |     100 |     100 |                   
+  pre-decorator.js                     |     100 |      100 |     100 |     100 |                   
+  service-proxy-from-index.js          |     100 |      100 |     100 |     100 |                   
+  service-proxy.js                     |     100 |      100 |     100 |     100 |                   
+  service-with-formats.js              |     100 |      100 |     100 |     100 |                   
+---------------------------------------|---------|----------|---------|---------|-------------------
+
+> @mia-platform/custom-plugin-lib@5.1.5 checkonly
+> ! grep -R '\.only' tests/
+
+
+> @mia-platform/custom-plugin-lib@5.1.5 typescript
+> tsc --project ./tests/types/tsconfig.json
+
