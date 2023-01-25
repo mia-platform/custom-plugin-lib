@@ -17,9 +17,10 @@
 'use strict'
 const envSchema = {
   type: 'object',
-  required: ['MY_AWESOME_ENV'],
+  required: ['MY_AWESOME_ENV', 'MY_REQUIRED_ENV'],
   properties: {
     MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
+    MY_REQUIRED_ENV: { type: 'string' },
   },
 }
 

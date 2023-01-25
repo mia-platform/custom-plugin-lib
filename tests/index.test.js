@@ -28,6 +28,7 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
+const MY_REQUIRED_ENV = 'value'
 
 const baseEnv = {
   USERID_HEADER_KEY,
@@ -48,7 +49,7 @@ tap.test('Plain Custom Service', test => {
   }
 
   test.test('Hello World', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'GET',
@@ -62,7 +63,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('Access platform values', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/platform-values',
@@ -90,6 +91,7 @@ tap.test('Plain Custom Service', test => {
   test.test('Access platform "miauserproperties" - when USER_PROPERTIES_HEADER_KEY NOT defined - uses default header key', async assert => {
     const envarWithoutUserProperties = {
       ...baseEnv,
+      MY_REQUIRED_ENV,
     }
     delete envarWithoutUserProperties.USER_PROPERTIES_HEADER_KEY
 
@@ -117,7 +119,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('Access platform values when not declared', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/platform-values',
@@ -138,7 +140,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('Send form encoded data', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'POST',
@@ -162,7 +164,7 @@ tap.test('Plain Custom Service', test => {
   test.test('Can return a stream', async assert => {
     const filename = './tests/services/plain-custom-service.js'
     const readFile = promisify(fs.readFile)
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/stream',
@@ -177,7 +179,7 @@ tap.test('Plain Custom Service', test => {
 
   test.test('Send some json, with validation', async assert => {
     const payload = { some: 'stuff' }
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'POST',
       url: '/validation',
@@ -254,7 +256,7 @@ tap.test('Plain Custom Service', test => {
   test.test('custom body parsing', async assert => {
     const customType = 'application/custom-type'
     const payload = { hello: 'world' }
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'POST',
       url: '/',
@@ -269,7 +271,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('Healtiness handler can see decoration', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/-/healthz',
@@ -279,7 +281,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('returns mia headers - empty', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'GET',
@@ -291,7 +293,7 @@ tap.test('Plain Custom Service', test => {
   })
 
   test.test('returns mia headers - filled', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'GET',
@@ -329,7 +331,7 @@ tap.test('Advanced Custom Service', test => {
 
   test.test('Require some environment variables', async assert => {
     const MY_AWESOME_ENV = 'foobar'
-    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/env',
@@ -344,7 +346,7 @@ tap.test('Advanced Custom Service', test => {
   test.test('Decorate fastify with custom functionalities', async assert => {
     const MY_AWESOME_ENV = 'foobar'
     const payload = { hello: 'world' }
-    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'POST',
       url: '/custom',
@@ -359,7 +361,7 @@ tap.test('Advanced Custom Service', test => {
   })
 
   test.test('default env var', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const response = await fastify.inject({
       method: 'GET',
       url: '/env',
@@ -383,7 +385,7 @@ tap.test('Advanced config', test => {
   }
 
   test.test('it accepts advanced config', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'POST',
@@ -431,7 +433,7 @@ tap.test('Service with API formats', t => {
   }
 
   t.test('it validates date-time', async t => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
     const someDate = '2021-10-12T15:46:39.081Z'
 
     const response = await fastify.inject({
@@ -454,7 +456,7 @@ tap.test('Service with API formats', t => {
   })
 
   t.test('fails for invalid date', async t => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV })
 
     const response = await fastify.inject({
       method: 'POST',
