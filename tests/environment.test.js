@@ -237,7 +237,7 @@ tap.test('Test Environment variables', test => {
     }
 
     await assert.resolves(async() => {
-      await setupFastify('./tests/services/advanced-custom-service.js', env)
+      await setupFastify('./tests/services/advanced-first-level-properties-service.js', env)
     })
   })
 
@@ -245,7 +245,7 @@ tap.test('Test Environment variables', test => {
     // NOTE: use try catch instead of assert.reject to customize error message assertion
     assert.plan(1)
     try {
-      await setupFastify('./tests/services/advanced-custom-service.js', baseEnv)
+      await setupFastify('./tests/services/advanced-first-level-properties-service.js', baseEnv)
     } catch (error) {
       const errorMessage = 'env must have required property \'MY_REQUIRED_ENV\''
       assert.strictSame(error.message, errorMessage)

@@ -116,6 +116,8 @@ function mergeJsonSchemas(schema, otherSchema) {
       }
       return true
     }
+
+    mergedSchema[key] = schema[key]
   })
 
   Object.keys(otherSchema).forEach(key => {
@@ -134,6 +136,8 @@ function mergeJsonSchemas(schema, otherSchema) {
       }
       return true
     }
+
+    mergedSchema[key] = otherSchema[key]
   })
 
   return mergedSchema
