@@ -1,0 +1,72 @@
+    {
+      "type": "object",
+      "required": [
+        "USERID_HEADER_KEY",
+        "GROUPS_HEADER_KEY",
+        "CLIENTTYPE_HEADER_KEY",
+        "BACKOFFICE_HEADER_KEY",
+        "MICROSERVICE_GATEWAY_SERVICE_NAME",
+        "MY_AWESOME_ENV",
+        "MY_REQUIRED_ENV_VAR"
+      ],
+      "properties": {
+        "USERID_HEADER_KEY": {
+          "type": "string",
+          "description": "the header key to get the user id",
+          "minLength": 1
+        },
+        "USER_PROPERTIES_HEADER_KEY": {
+          "type": "string",
+          "description": "the header key to get the user permissions",
+          "minLength": 1,
+          "default": "miauserproperties"
+        },
+        "GROUPS_HEADER_KEY": {
+          "type": "string",
+          "description": "the header key to get the groups comma separated list",
+          "minLength": 1
+        },
+        "CLIENTTYPE_HEADER_KEY": {
+          "type": "string",
+          "description": "the header key to get the client type",
+          "minLength": 1
+        },
+        "BACKOFFICE_HEADER_KEY": {
+          "type": "string",
+          "description": "the header key to get if the request is from backoffice (any truly string is true!!!)",
+          "minLength": 1
+        },
+        "MICROSERVICE_GATEWAY_SERVICE_NAME": {
+          "type": "string",
+          "description": "the service name of the microservice gateway",
+          "pattern": "^(?=.{1,253}.?$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:.[a-z0-9](?:[-0-9a-z]{0,61}[0-9a-z])?)*.?$"
+        },
+        "ADDITIONAL_HEADERS_TO_PROXY": {
+          "type": "string",
+          "default": "",
+          "description": "comma separated list of additional headers to proxy"
+        },
+        "ENABLE_HTTP_CLIENT_METRICS": {
+          "type": "boolean",
+          "default": false,
+          "description": "flag to enable the httpClient metrics"
+        },
+        "MY_AWESOME_ENV": {
+          "type": "string",
+          "default": "the default value"
+        },
+        "MY_REQUIRED_ENV_VAR": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "patternProperties": {
+        "^S_": {
+          "type": "string"
+        },
+        "^I_": {
+          "type": "number"
+        }
+      },
+      "minProperties": 1
+    }

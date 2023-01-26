@@ -30,6 +30,7 @@ const addPostDecorator = require('./lib/postDecorator')
 const ajvSetup = require('./lib/ajvSetup')
 const HttpClient = require('./lib/httpClient')
 const { extraHeadersKeys } = require('./lib/util')
+const { mergeDeepWithKey, concat } = require('ramda')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
@@ -95,52 +96,11 @@ const baseSchema = {
 }
 
 function mergeJsonSchemas(schema, otherSchema) {
-  const mergedSchema = {
-    additionalProperties: false,
-    type: 'object',
-  }
-
-  Object.keys(schema).forEach(key => {
-    if (Array.isArray(schema[key])) {
-      mergedSchema[key] = [
-        ...mergedSchema[key] ?? [],
-        ...schema[key],
-      ]
-      return true
-    }
-
-    if (typeof schema[key] === 'object') {
-      mergedSchema[key] = {
-        ...mergedSchema[key] ?? {},
-        ...schema[key],
-      }
-      return true
-    }
-
-    mergedSchema[key] = schema[key]
-  })
-
-  Object.keys(otherSchema).forEach(key => {
-    if (Array.isArray(otherSchema[key])) {
-      mergedSchema[key] = [
-        ...mergedSchema[key] ?? [],
-        ...otherSchema[key],
-      ]
-      return true
-    }
-
-    if (typeof otherSchema[key] === 'object') {
-      mergedSchema[key] = {
-        ...mergedSchema[key] ?? {},
-        ...otherSchema[key],
-      }
-      return true
-    }
-
-    mergedSchema[key] = otherSchema[key]
-  })
-
-  return mergedSchema
+  return mergeDeepWithKey(
+    (_, left, right) => (typeof left === 'object' && typeof right === 'object' ? concat(left, right) : right),
+    schema,
+    otherSchema
+  )
 }
 
 function getOverlappingKeys(properties, otherProperties) {
