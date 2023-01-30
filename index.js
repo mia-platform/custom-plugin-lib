@@ -94,35 +94,30 @@ const baseSchema = {
   },
 }
 
-function mergeObjectOrArray(toBeMergedValue, alreadyMergedValues, isArray) {
+function mergeObjectOrArrayProperty(toBeMergedValues, alreadyMergedValues, isArray) {
   return isArray ? [
-    ...toBeMergedValue ?? [],
+    ...toBeMergedValues ?? [],
     ...alreadyMergedValues,
   ] : {
-    ...toBeMergedValue ?? {},
+    ...toBeMergedValues ?? {},
     ...alreadyMergedValues,
   }
 }
 
-function mergeJsonSchemas(schema, otherSchema) {
-  const mergedSchema = {
-    additionalProperties: false,
-    type: 'object',
+// WARNING: including any first level properties other than the ones already declared
+// may have undesired effects on the result of the merge
+function mergeWithDefaultJsonSchema(schema) {
+  const defaultSchema = {
+    ...baseSchema,
   }
 
   Object.keys(schema).forEach(key => {
-    mergedSchema[key] = typeof schema[key] === 'object'
-      ? mergeObjectOrArray(mergedSchema[key], schema[key], Array.isArray(schema[key]))
+    defaultSchema[key] = typeof schema[key] === 'object'
+      ? mergeObjectOrArrayProperty(defaultSchema[key], schema[key], Array.isArray(schema[key]))
       : schema[key]
   })
 
-  Object.keys(otherSchema).forEach(key => {
-    mergedSchema[key] = typeof otherSchema[key] === 'object'
-      ? mergeObjectOrArray(mergedSchema[key], otherSchema[key], Array.isArray(otherSchema[key]))
-      : otherSchema[key]
-  })
-
-  return mergedSchema
+  return defaultSchema
 }
 
 function getOverlappingKeys(properties, otherProperties) {
@@ -335,7 +330,7 @@ function initCustomServiceEnvironment(envSchema) {
         throw new Error(`The provided Environment JSON Schema includes properties declared in the Base JSON Schema of the custom-plugin-lib, please remove them from your schema. The properties to remove are: ${overlappingPropertiesNames.join(', ')}`)
       }
 
-      const schema = envSchema ? mergeJsonSchemas(baseSchema, envSchema) : baseSchema
+      const schema = envSchema ? mergeWithDefaultJsonSchema(envSchema) : baseSchema
       fastify.register(fastifyEnv, { schema, data: opts })
       fastify.register(fastifyFormbody)
       fastify.register(fp(decorateRequestAndFastifyInstance), { asyncInitFunction, serviceOptions })
