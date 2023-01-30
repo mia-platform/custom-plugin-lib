@@ -30,7 +30,6 @@ const addPostDecorator = require('./lib/postDecorator')
 const ajvSetup = require('./lib/ajvSetup')
 const HttpClient = require('./lib/httpClient')
 const { extraHeadersKeys } = require('./lib/util')
-const { mergeDeepWithKey, concat } = require('ramda')
 
 const USERID_HEADER_KEY = 'USERID_HEADER_KEY'
 const USER_PROPERTIES_HEADER_KEY = 'USER_PROPERTIES_HEADER_KEY'
@@ -95,16 +94,41 @@ const baseSchema = {
   },
 }
 
+function mergeObjectOrArray(toBeMergedValue, alreadyMergedValues, isArray) {
+  return isArray ? [
+    ...toBeMergedValue ?? [],
+    ...alreadyMergedValues,
+  ] : {
+    ...toBeMergedValue ?? {},
+    ...alreadyMergedValues,
+  }
+}
+
 function mergeJsonSchemas(schema, otherSchema) {
-  return mergeDeepWithKey(
-    (_, left, right) => (typeof left === 'object' && typeof right === 'object' ? concat(left, right) : right),
-    schema,
-    otherSchema
-  )
+  const mergedSchema = {
+    additionalProperties: false,
+    type: 'object',
+  }
+
+  Object.keys(schema).forEach(key => {
+    mergedSchema[key] = typeof schema[key] === 'object'
+      ? mergeObjectOrArray(mergedSchema[key], schema[key], Array.isArray(schema[key]))
+      : schema[key]
+  })
+
+  Object.keys(otherSchema).forEach(key => {
+    mergedSchema[key] = typeof otherSchema[key] === 'object'
+      ? mergeObjectOrArray(mergedSchema[key], otherSchema[key], Array.isArray(otherSchema[key]))
+      : otherSchema[key]
+  })
+
+  return mergedSchema
 }
 
 function getOverlappingKeys(properties, otherProperties) {
-  if (!otherProperties) { return [] }
+  if (!otherProperties) {
+    return []
+  }
   const propertiesNames = Object.keys(properties)
   const otherPropertiesNames = Object.keys(otherProperties)
   const overlappingProperties = propertiesNames.filter(propertyName =>
