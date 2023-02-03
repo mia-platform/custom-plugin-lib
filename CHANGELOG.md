@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
-### Fixed
-
-- fixed documentation link to monitoring section in logging.md
-
 ### Added
 
 - add optional metrics on request duration. The metrics collection is enabled by mean of the variable `ENABLE_HTTP_CLIENT_METRICS` (default: false)
