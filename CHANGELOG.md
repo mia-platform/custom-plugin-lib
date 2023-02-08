@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Unreleased
 
+### Fixed
+- merging of baseProperties with customProperties causing inconsistent microservices' env Variables schema
+
 ### Added
 
 - add optional metrics on request duration. The metrics collection is enabled by mean of the variable `ENABLE_HTTP_CLIENT_METRICS` (default: false)

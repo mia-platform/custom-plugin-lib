@@ -28,6 +28,7 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
+const MY_REQUIRED_ENV_VAR = 'value'
 
 const baseEnv = {
   USERID_HEADER_KEY,
@@ -329,7 +330,7 @@ tap.test('Advanced Custom Service', test => {
 
   test.test('Require some environment variables', async assert => {
     const MY_AWESOME_ENV = 'foobar'
-    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV, MY_REQUIRED_ENV_VAR })
     const response = await fastify.inject({
       method: 'GET',
       url: '/env',
@@ -344,7 +345,7 @@ tap.test('Advanced Custom Service', test => {
   test.test('Decorate fastify with custom functionalities', async assert => {
     const MY_AWESOME_ENV = 'foobar'
     const payload = { hello: 'world' }
-    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV })
+    const fastify = await setupFastify({ ...baseEnv, MY_AWESOME_ENV, MY_REQUIRED_ENV_VAR })
     const response = await fastify.inject({
       method: 'POST',
       url: '/custom',
@@ -359,7 +360,7 @@ tap.test('Advanced Custom Service', test => {
   })
 
   test.test('default env var', async assert => {
-    const fastify = await setupFastify(baseEnv)
+    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
     const response = await fastify.inject({
       method: 'GET',
       url: '/env',
@@ -474,6 +475,41 @@ tap.test('Service with API formats', t => {
     })
 
     t.end()
+  })
+
+  t.end()
+})
+
+tap.test('baseEnv with first level properties', t => {
+  async function setupFastify(envVariables) {
+    const fastify = await lc39('./tests/services/if-then-else-env-validation-custom-service.js', {
+      logLevel: 'silent',
+      envVariables,
+    })
+    return fastify
+  }
+
+  t.test('it should fail the build', async t => {
+    try {
+      await setupFastify({
+        ...baseEnv,
+        if: {
+          properties: {
+            field: {
+              const: 'value',
+            },
+          },
+        },
+        then: {
+          required: [
+            'field1',
+          ],
+        },
+      })
+      t.fail()
+    } catch (error) {
+      t.ok(error)
+    }
   })
 
   t.end()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Mia srl
+ * Copyright 2023 Mia srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +22,20 @@ const envSchema = {
     MY_AWESOME_ENV: { type: 'string', default: 'the default value' },
     MY_REQUIRED_ENV_VAR: { type: 'string' },
   },
+  patternProperties: {
+    '^S_': { 'type': 'string' },
+    '^I_': { 'type': 'number' },
+  },
+  minProperties: 1,
+  additionalProperties: true,
 }
 
 const customService = require('../../index')(envSchema)
 
 module.exports = customService(async function clientGroups(service) {
-  const customFunctionality = request => request.body
-  service.decorate('customFunctionality', customFunctionality)
-  async function handlerCustom(request, reply) {
-    reply.send(this.customFunctionality(request))
+  async function handlerApiRest(_, reply) {
+    reply.send(this.config.required)
   }
 
-  function handlerEnv(request, reply) {
-    reply.send(this.config.MY_AWESOME_ENV)
-  }
-
-  service.addRawCustomPlugin('GET', '/env', handlerEnv)
-  service.addRawCustomPlugin('POST', '/custom', handlerCustom)
+  service.addRawCustomPlugin('GET', '/api-rest', handlerApiRest)
 })

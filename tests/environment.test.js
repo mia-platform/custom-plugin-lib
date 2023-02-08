@@ -230,5 +230,27 @@ tap.test('Test Environment variables', test => {
     }
   })
 
+  test.test('Should pass since all of the required fields are present', async assert => {
+    const env = {
+      ...baseEnv,
+      MY_REQUIRED_ENV_VAR: 'value',
+    }
+
+    await assert.resolves(async() => {
+      await setupFastify('./tests/services/advanced-first-level-properties-service.js', env)
+    })
+  })
+
+  test.test('Should fail since one of the required fields is not present', async assert => {
+    // NOTE: use try catch instead of assert.reject to customize error message assertion
+    assert.plan(1)
+    try {
+      await setupFastify('./tests/services/advanced-first-level-properties-service.js', baseEnv)
+    } catch (error) {
+      const errorMessage = 'env must have required property \'MY_REQUIRED_ENV_VAR\''
+      assert.strictSame(error.message, errorMessage)
+    }
+  })
+
   test.end()
 })
