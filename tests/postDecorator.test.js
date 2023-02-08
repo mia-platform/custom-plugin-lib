@@ -25,7 +25,6 @@ const GROUPS_HEADER_KEY = 'groups-header-key'
 const CLIENTTYPE_HEADER_KEY = 'clienttype-header-key'
 const BACKOFFICE_HEADER_KEY = 'backoffice-header-key'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'microservice-gateway'
-const MY_REQUIRED_ENV_VAR = 'value'
 const baseEnv = {
   USERID_HEADER_KEY,
   USER_PROPERTIES_HEADER_KEY,
@@ -45,7 +44,7 @@ async function setupFastify(envVariables) {
 
 tap.test('Test Post Decorator function', test => {
   test.test('Return the signal to not change the response', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -71,7 +70,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('Return a modified body response', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -102,7 +101,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('Return a modified headers response', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -132,7 +131,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('Test a bad handler that doesn\'t return the right type', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -162,7 +161,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('abortChain', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -194,7 +193,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('is able to access to the mia headers correctly', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
@@ -226,7 +225,7 @@ tap.test('Test Post Decorator function', test => {
   })
 
   test.test('addPostDecorator is chainable', async assert => {
-    const fastify = await setupFastify({ ...baseEnv, MY_REQUIRED_ENV_VAR })
+    const fastify = await setupFastify(baseEnv)
 
     const response = await fastify.inject({
       method: 'POST',
