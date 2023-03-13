@@ -94,6 +94,7 @@ declare namespace customPlugin {
     getGroups: () => string[],
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
+    getMiaHeaders: () => NodeJS.Dict<string | string[]>
     /**
      * @deprecated Do not use this method, use `getHttpClient` instead
      */
