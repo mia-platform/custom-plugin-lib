@@ -114,6 +114,7 @@ module.exports = customService(async function clientGroups(service) {
   }
 
   function handlerStream(request, reply) {
+    reply.header('Content-Type', 'application/octet-stream')
     reply.send(fs.createReadStream('./tests/services/plain-custom-service.js'))
   }
 

@@ -274,7 +274,7 @@ function decorateFastify(fastify) {
   fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
   fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
   fastify.decorateRequest('getHttpClient', getHttpClientFromRequest)
-  fastify.decorateRequest('httpClientMetrics', httpClientMetrics)
+  fastify.decorateRequest('httpClientMetrics', { getter: () => httpClientMetrics })
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
