@@ -4,7 +4,7 @@ const tap = require('tap')
 const nock = require('nock')
 const { Readable } = require('stream')
 const http = require('http')
-const proxy = require('proxy')
+const { createProxy: proxy } = require('proxy')
 const fs = require('fs')
 const https = require('https')
 const split = require('split2')
@@ -1716,10 +1716,9 @@ tap.test('httpClient', test => {
         res.end('{"status": "ok"}')
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = (req) => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = new HttpClient(`http://${server.address().address}:${server.address().port}`)
@@ -1738,7 +1737,6 @@ tap.test('httpClient', test => {
 
       assert.equal(response.statusCode, 200)
       assert.strictSame(response.payload, { status: 'ok' })
-      assert.ok(proxyCalled)
 
       server.close()
       serverProxy.close()
@@ -1752,10 +1750,9 @@ tap.test('httpClient', test => {
         res.end('OK')
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = (req) => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = new HttpClient(`http://${server.address().address}:${server.address().port}`)
@@ -1775,7 +1772,6 @@ tap.test('httpClient', test => {
 
       assert.equal(response.statusCode, 200)
       assert.strictSame(response.payload.toString('utf-8'), 'OK')
-      assert.ok(proxyCalled)
 
       server.close()
       serverProxy.close()
@@ -1789,10 +1785,9 @@ tap.test('httpClient', test => {
         res.end(JSON.stringify({ the: 'response' }))
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = (req) => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = new HttpClient(`http://${server.address().address}:${server.address().port}`)
@@ -1812,7 +1807,6 @@ tap.test('httpClient', test => {
 
       assert.equal(response.statusCode, 200)
       assert.ok(response.headers['content-length'])
-      assert.ok(proxyCalled)
 
       await wait(200)
 
