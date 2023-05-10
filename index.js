@@ -234,8 +234,12 @@ function getHttpClientFromRequest(url, baseOptions = {}) {
   return new HttpClient(url, serviceHeaders, options, this.httpClientMetrics)
 }
 
-function getHttpClient(url, baseOptions = {}) {
-  return new HttpClient(url, {}, baseOptions, this.httpClientMetrics)
+function getHttpClient(url, baseOptions = {}, httpClientMetrics = {}) {
+  return new HttpClient(url, {}, baseOptions, httpClientMetrics)
+}
+
+function getHttpClientFastifyDecoration(url, baseOptions = {}) {
+  return getHttpClient(url, baseOptions, this.httpClientMetrics)
 }
 
 function getHeadersToProxy({ isMiaHeaderInjected = true } = {}) {
@@ -283,7 +287,7 @@ function decorateFastify(fastify) {
 
   fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
   fastify.decorate('getServiceProxy', getServiceBuilderFromService)
-  fastify.decorate('getHttpClient', getHttpClient)
+  fastify.decorate('getHttpClient', getHttpClientFastifyDecoration)
   fastify.decorate('httpClientMetrics', httpClientMetrics)
 }
 
