@@ -23,7 +23,7 @@ const serviceBuilder = require('../lib/serviceBuilder')
 const reqheaders = { 'content-type': 'application/json;charset=utf-8' }
 const { Readable } = require('stream')
 const http = require('http')
-const proxy = require('proxy')
+const { createProxy: proxy } = require('proxy')
 const { HttpProxyAgent } = require('hpagent')
 const fs = require('fs')
 const https = require('https')
@@ -1331,10 +1331,9 @@ tap.test('serviceBuilder', test => {
         res.end('{"status": "ok"}')
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = req => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = serviceBuilder(server.address().address)
@@ -1349,7 +1348,6 @@ tap.test('serviceBuilder', test => {
 
       assert.equal(response.statusCode, 200)
       assert.strictSame(response.payload, { status: 'ok' })
-      assert.ok(proxyCalled)
 
       server.close()
       serverProxy.close()
@@ -1363,10 +1361,9 @@ tap.test('serviceBuilder', test => {
         res.end('OK')
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = (req) => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = serviceBuilder(server.address().address)
@@ -1381,7 +1378,6 @@ tap.test('serviceBuilder', test => {
 
       assert.equal(response.statusCode, 200)
       assert.strictSame(response.payload.toString('utf-8'), 'OK')
-      assert.ok(proxyCalled)
 
       server.close()
       serverProxy.close()
@@ -1395,10 +1391,9 @@ tap.test('serviceBuilder', test => {
         res.end(JSON.stringify({ the: 'response' }))
       })
       const serverProxy = await createProxy()
-      let proxyCalled = false
-      serverProxy.authenticate = (req, fn) => {
-        proxyCalled = true
-        fn(null, req.headers['proxy-authorization'] === `Basic ${Buffer.from('hello:world').toString('base64')}`)
+      serverProxy.authenticate = (req) => {
+        assert.strictSame(req.headers['proxy-authorization'], `Basic ${Buffer.from('hello:world').toString('base64')}`)
+        return true
       }
 
       const service = serviceBuilder(server.address().address)
@@ -1413,7 +1408,6 @@ tap.test('serviceBuilder', test => {
 
       assert.equal(response.statusCode, 200)
       assert.ok(response.headers['content-length'])
-      assert.ok(proxyCalled)
 
       await wait(200)
 

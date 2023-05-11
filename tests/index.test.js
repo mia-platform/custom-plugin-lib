@@ -201,6 +201,7 @@ tap.test('Plain Custom Service', test => {
       statusCode: 400,
       message: 'body must NOT have additional properties',
       error: 'Bad Request',
+      code: 'FST_ERR_VALIDATION',
     }, 'bad response')
 
     const badResponse1 = await fastify.inject({
@@ -215,6 +216,7 @@ tap.test('Plain Custom Service', test => {
       statusCode: 400,
       error: 'Bad Request',
       message: 'body.foobar must be equal to one of the allowed values',
+      code: 'FST_ERR_VALIDATION',
     }, 'enum validation')
 
     const badResponse2 = await fastify.inject({
@@ -233,6 +235,7 @@ tap.test('Plain Custom Service', test => {
       statusCode: 400,
       error: 'Bad Request',
       message: 'body.nested.field must be string',
+      code: 'FST_ERR_VALIDATION',
     }, 'nested fields validation')
 
     const badResponse3 = await fastify.inject({
@@ -247,6 +250,7 @@ tap.test('Plain Custom Service', test => {
       statusCode: 400,
       error: 'Bad Request',
       message: 'querystring.some must be number',
+      code: 'FST_ERR_VALIDATION',
     }, 'nested fields validation')
 
     assert.end()
@@ -472,6 +476,7 @@ tap.test('Service with API formats', t => {
       statusCode: 400,
       error: 'Bad Request',
       message: 'body.someDate must match format "date-time"',
+      code: 'FST_ERR_VALIDATION',
     })
 
     t.end()
