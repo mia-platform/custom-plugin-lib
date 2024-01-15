@@ -194,3 +194,6 @@ Temporary Items
 .apdisk
 
 examples/**/package-lock.json
+
+# tap
+.tap

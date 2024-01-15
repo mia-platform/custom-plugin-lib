@@ -22,7 +22,7 @@ module.exports = customService(async function clientGroups(service) {
   function handlerAdvancedConfig(request, reply) {
     reply.send({
       error: request.validationError.message,
-      config: reply.context.config,
+      config: request.routeOptions.config,
     })
   }
 
