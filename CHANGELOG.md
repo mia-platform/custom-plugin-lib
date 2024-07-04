@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### BREAKING
 
 - dropped node 14 and node 16 support
+- dropped deprecated method `getServiceProxy` and `getDirectServiceProxy`
 
 ### Updated
 
@@ -208,6 +209,7 @@ This version contains a bug when it's configured a required env var with a defau
 ### Fixed
 
 - replaced expired test certificates with new ones that will expire on 3 September 3061
+
 ### Changed
 
 - the `getDirectServiceProxy` function now can receive a complete url as `serviceName` parameter

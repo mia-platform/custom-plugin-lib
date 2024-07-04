@@ -51,7 +51,6 @@ module.exports = customService(async function clientGroups(service) {
 })
 
 module.exports.healthinessHandler = async function healthinessHandler(fastify) {
-  fastify.assert.ok(fastify.getServiceProxy)
   fastify.assert.ok(fastify.getHttpClient)
   fastify.assert.ok(fastify.routes)
   return {
