@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v7.0.0 - 2024-07-04
+
 ### BREAKING
 
 - dropped node 14 and node 16 support
