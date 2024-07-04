@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### BREAKING
 
 - dropped node 14 and node 16 support
-- dropped deprecated method `getServiceProxy` and `getDirectServiceProxy`
+- dropped deprecated method `getServiceProxy` and `getDirectServiceProxy`, see the [migration guide](./docs/migration_guides/10_migrate_from_v6_to_v7.md) for further details.
 
 ### Updated
 

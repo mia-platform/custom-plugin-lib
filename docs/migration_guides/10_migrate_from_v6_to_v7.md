@@ -4,7 +4,18 @@ With v7 the `getServiceProxy` and `getDirectServiceProxy` methods have been re
 
 In order to upgrade to v7 you need to change the implementation using such methods to use another HTTP Client.
 
-Custom Plugin Lib provides the [`getHttpClient`](../http_client.md) method to build an axios-based HTTP client.
+:::tip
+
+Custom Plugin Lib already provides the [`getHttpClient`](../http_client.md) method to build an axios-based HTTP client since [v5.0.0](../../CHANGELOG.md#v500---2022-05-13).
+
+Main breaking changes from the already existent `getServiceProxy` and `getDirectServiceProxy`:
+
+- streams respond with an object with headers, payload and statusCode. The payload has the stream interface
+- `allowedStatusCodes` array of status codes is replaced by the function `validateStatus` (which accept by default 2xx)
+- `agent` to configure the proxy is renamed to `proxy` and it is now an object
+- `port` and `protocol` are now accepted only in url and baseUrl
+
+:::
 
 ## Migrate getDirectServiceProxy
 
