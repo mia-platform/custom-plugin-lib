@@ -30,7 +30,7 @@ cpl({
 cpl()
 
 const a = cpl()
-const { getDirectServiceProxy, getServiceProxy, getHttpClient } = cpl
+const { getHttpClient } = cpl
 
 async function invokeSomeApisServiceProxy(service: cpl.Service) {
   service.get('/path')
@@ -182,27 +182,6 @@ a(async function (service) {
     const clientType: string | null = request.getClientType()
     const isFromBackOffice: boolean = request.isFromBackOffice()
 
-    const directService: cpl.Service = request.getDirectServiceProxy('my-service')
-    await invokeSomeApisServiceProxy(directService)
-
-    const directServiceWithOptions: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http'})
-    await invokeSomeApisServiceProxy(directServiceWithOptions)
-
-    const directServiceWithOptionsAndHeaders: cpl.Service = request.getDirectServiceProxy('my-service', {port: 3000, protocol: 'http', headers: { key: 'value1' }})
-    await invokeSomeApisServiceProxy(directServiceWithOptionsAndHeaders)
-
-    const proxiedService: cpl.Service = request.getServiceProxy()
-    await invokeSomeApisServiceProxy(proxiedService)
-
-    const proxiedServiceWithOptions: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http'})
-    await invokeSomeApisServiceProxy(proxiedServiceWithOptions)
-
-    const proxiedServiceWithOptionsAndHeaders: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', headers: { key: 'value1' }})
-    await invokeSomeApisServiceProxy(proxiedServiceWithOptionsAndHeaders)
-
-    const proxiedServiceWithPrefix: cpl.Service = request.getServiceProxy({port: 3000, protocol: 'http', prefix: '/my-prefix'})
-    await invokeSomeApisServiceProxy(proxiedServiceWithPrefix)
-
     await invokeProxies()
 
     return { 'aa': 'boo' }
@@ -352,18 +331,6 @@ b(async function (service) {}, {
 })
 
 async function invokeProxies() {
-  const directServiceProxy = getDirectServiceProxy('service_name')
-  const directServiceProxyWithOpetions = getDirectServiceProxy('service_name', { port: 3000 })
-
-  await directServiceProxy.get('/path')
-  await directServiceProxyWithOpetions.get('/path')
-
-  const serviceProxy = getServiceProxy('microservice-gateway')
-  const serviceProxyWithOptions = getServiceProxy('microservice-gateway', { port: 3000 })
-
-  await serviceProxy.get('/path')
-  await serviceProxyWithOptions.get('/path')
-
   const httpClient = getHttpClient('http://service_name')
   const httpClientWithOptions = getHttpClient('http://service_name:3000', {
     timeout: 1000,
