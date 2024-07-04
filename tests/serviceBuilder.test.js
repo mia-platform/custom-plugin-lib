@@ -1535,6 +1535,7 @@ tap.test('serviceBuilder', test => {
       })
 
       server.on('request', (req, res) => {
+        res.setHeader('Connection', 'close')
         if (!req.client.authorized) {
           res.writeHead(401)
           res.end(JSON.stringify({ the: 'nok' }))
