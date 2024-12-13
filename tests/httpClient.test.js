@@ -23,7 +23,7 @@ function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
-tap.only('httpClient', test => {
+tap.test('httpClient', test => {
   nock.disableNetConnect()
 
   test.teardown(() => {
