@@ -23,14 +23,14 @@ function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
-tap.only('httpClient', test => {
+tap.test('httpClient', test => {
   nock.disableNetConnect()
 
   test.teardown(() => {
     nock.enableNetConnect()
   })
 
-  test.only('forwarding of mia headers', innerTest => {
+  test.test('forwarding of mia headers', innerTest => {
     const HEADER_MIA_KEY = 'miaheader'
     const HEADER_MIA = { [HEADER_MIA_KEY]: 'foo' }
 
@@ -49,10 +49,9 @@ tap.only('httpClient', test => {
       } catch (error) {
         assert.ok('duration' in error)
         assert.type(error.duration, 'number')
+        myServiceNameScope.done()
+        assert.end()
       }
-
-      myServiceNameScope.done()
-      assert.end()
     })
 
     innerTest.test('expect to response.duration to be defined', async assert => {
