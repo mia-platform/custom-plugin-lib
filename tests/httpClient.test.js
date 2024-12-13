@@ -30,7 +30,7 @@ tap.test('httpClient', test => {
     nock.enableNetConnect()
   })
 
-  test.only('forwarding of mia headers', innerTest => {
+  test.test('forwarding of mia headers', innerTest => {
     const HEADER_MIA_KEY = 'miaheader'
     const HEADER_MIA = { [HEADER_MIA_KEY]: 'foo' }
 
