@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- fixed response & error config.metadata.endTime undefined inside to axios interceptors
+
 ## v7.0.0 - 2024-07-04
 
 ### BREAKING

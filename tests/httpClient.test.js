@@ -23,15 +23,57 @@ function wait(time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
-tap.test('httpClient', test => {
+tap.only('httpClient', test => {
   nock.disableNetConnect()
+
   test.teardown(() => {
     nock.enableNetConnect()
   })
 
-  test.test('forwarding of mia headers', innerTest => {
+  test.only('forwarding of mia headers', innerTest => {
     const HEADER_MIA_KEY = 'miaheader'
     const HEADER_MIA = { [HEADER_MIA_KEY]: 'foo' }
+
+    innerTest.test('expect to error.duration to be defined', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {
+        reqheaders: {
+          [HEADER_MIA_KEY]: HEADER_MIA[HEADER_MIA_KEY],
+        },
+      })
+        .get('/foo')
+        .reply(500, {})
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, HEADER_MIA)
+      try {
+        await service.get('/foo')
+      } catch (error) {
+        assert.ok('duration' in error)
+        assert.type(error.duration, 'number')
+      }
+
+      myServiceNameScope.done()
+      assert.end()
+    })
+
+    innerTest.test('expect to response.duration to be defined', async assert => {
+      const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {
+        reqheaders: {
+          [HEADER_MIA_KEY]: HEADER_MIA[HEADER_MIA_KEY],
+        },
+      })
+        .get('/foo')
+        .reply(200, {})
+
+      const service = new HttpClient(MY_AWESOME_SERVICE_PROXY_HTTP_URL, HEADER_MIA)
+      const response = await service.get('/foo')
+
+      assert.equal(response.statusCode, 200)
+      assert.ok('duration' in response)
+      assert.type(response.duration, 'number')
+
+      myServiceNameScope.done()
+      assert.end()
+    })
 
     innerTest.test('injects Mia Header if isMiaHeaderInjected option is missing', async assert => {
       const myServiceNameScope = nock(MY_AWESOME_SERVICE_PROXY_HTTP_URL, {
