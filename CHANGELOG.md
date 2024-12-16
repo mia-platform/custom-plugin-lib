@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 
+- update axios to v1.7.9
+
+## v6.0.3
+
+### Updated
+
 - update axios to v1.6.7
 
 ## v6.0.2 - 2023-10-30
