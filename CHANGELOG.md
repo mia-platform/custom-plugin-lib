@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Updated
+
+- axios: v1.7.9
+
 ## v7.0.0 - 2024-07-04
 
 ### BREAKING
