@@ -50,5 +50,6 @@ jobs:
         with:
           check-latest: true
           node-version: 24
+          registry-url: 'https://registry.npmjs.org'
       - run: npm i
       - run: npm publish --access public
