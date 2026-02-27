@@ -28,7 +28,11 @@ jobs:
       with:
         check-latest: true
         node-version: ${{ matrix.node-version }}
-    - run: apt install -y mkcert
+    - run: |
+        curl -JLO "https://dl.filippo.io/mkcert/v1.4.4?for=linux/amd64"
+        chmod +x mkcert-v1.4.4-linux-amd64
+        mkdir -p $HOME/.local/bin
+        mv mkcert-v1.4.4-linux-amd64 $HOME/.local/bin/mkcert
     - run: npm i
     - run: npm test
     - run: npm run coverage
@@ -51,7 +55,11 @@ jobs:
           check-latest: true
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
-      - run: apt install -y mkcert
+      - run: |
+          curl -JLO "https://dl.filippo.io/mkcert/v1.4.4?for=linux/amd64"
+          chmod +x mkcert-v1.4.4-linux-amd64
+          mkdir -p $HOME/.local/bin
+          mv mkcert-v1.4.4-linux-amd64 $HOME/.local/bin/mkcert
       - run: npm i
       - name: Determine npm publish tag
         id: npm-tag
