@@ -42,32 +42,33 @@
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
-    "@fastify/env": "^4.2.0",
-    "@fastify/formbody": "^7.0.0",
-    "@mia-platform/lc39": "^8.0.0",
-    "@types/node": "^18.15.3",
-    "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1",
-    "axios": "^1.7.9",
-    "fastify-plugin": "^4.5.0",
-    "http-errors": "^2.0.0",
-    "pino": "^8.0.0",
+    "@fastify/env": "^5.0.3",
+    "@fastify/formbody": "^8.0.2",
+    "@mia-platform/lc39": "^9.0.0-rc.0",
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
+    "axios": "^1.13.5",
+    "fastify-plugin": "^5.1.0",
+    "http-errors": "^2.0.1",
+    "pino": "^10.3.1",
     "simple-get": "^4.0.1"
   },
   "devDependencies": {
-    "@fastify/routes": "^5.1.0",
+    "@fastify/routes": "^6.0.2",
     "@mia-platform/eslint-config-mia": "^3.0.0",
+    "@types/node": "^24.1.0",
     "eslint": "^8.40.0",
+    "fastify": "^5.6.1",
     "hpagent": "^1.2.0",
     "nock": "^13.3.1",
-    "proxy": "^2.0.1",
+    "proxy": "^2.2.0",
     "split2": "^4.2.0",
     "swagger-parser": "^10.0.3",
     "tap": "^16.3.4",
     "typescript": "^5.0.4"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=22"
   },
   "eslintConfig": {
     "extends": "@mia-platform/eslint-config-mia"
