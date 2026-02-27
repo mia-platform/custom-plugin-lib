@@ -4,13 +4,13 @@
 
 [![Build Status][travis-svg]][travis-org]
 [![javascript style guide][standard-mia-svg]][standard-mia]
-[![Coverage Status][coverall-svg]][coverall-io]  
+[![Coverage Status][coverall-svg]][coverall-io]
 [![NPM version][npmjs-svg]][npmjs-com]
 
 </div>
 
 This library is intended to ease the [creation of new services](https://docs.mia-platform.eu/development_suite/api-console/api-design/services/) to deploy
-on [Mia-Platform][mia-platform].  
+on [Mia-Platform][mia-platform].
 Built on [`Fastify`][fastify], it takes advantage of Mia-Platform Node.js service launcher [`lc39`][lc39].
 
 # Getting Started
@@ -19,7 +19,7 @@ You can use this module in your projects or, from the [DevOps Console](https://d
 ## Setup the local development environment
 
 To develop the service locally you need:
-- Node.js v12 or later.
+- Node.js v22 or later.
 
 To setup node.js, we suggest using [nvm][nvm], so you can manage multiple versions easily.
 Once you have installed nvm, you can go inside the directory of the project and simply run
@@ -62,13 +62,13 @@ module.exports = customService(async function helloWorldService(service) {
       hello: `${user}!`,
     })
   })
-}) 
+})
 ```
 - The library exports a function which creates the infrastructure ready to accept the definition of routes and decorators. Optionally can take a schema of the required environment variables, you can find the reference [here][fastify-env]. The function returned, `customService`, expects an async function to initialize and configure the `service`.
 - `service` is a [Fastify instance](https://www.fastify.io/docs/latest/Server/), that is decorated by the library to help you interact with Mia-Platform resources. You can use  *service* to register any Fastify routes, custom decorations and plugin, see [here][fastify-ecosystem] for a list of currently available plugins.
 
-- `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and a handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).  
-Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.  
+- `addRawCustomPlugin` is a function that requires the HTTP method, the path of the route and a handler. The handler can also be an [async function](https://www.fastify.io/docs/latest/Routes/#async-await).
+Optionally you can indicate the JSONSchemas to validate the querystring, the parameters, the payload and the response.
 
 To get more info about Custom Services can you look at the [related section](./docs/custom_service.md).
 
@@ -82,7 +82,7 @@ To works correctly, this library needs some specific environment variables:
 * `BACKOFFICE_HEADER_KEY`
 * `MICROSERVICE_GATEWAY_SERVICE_NAME`
 
-When creating a new service from Mia-Platform DevOps Console, they come already defined but you can always change or add them anytime as described [in the DevOps console documentation](https://docs.mia-platform.eu/docs/development_suite/api-console/api-design/services#environment-variable-configuration).  
+When creating a new service from Mia-Platform DevOps Console, they come already defined but you can always change or add them anytime as described [in the DevOps console documentation](https://docs.mia-platform.eu/docs/development_suite/api-console/api-design/services#environment-variable-configuration).
 In local, the environment variables are defined
 in this [file](examples/default.env).
 
