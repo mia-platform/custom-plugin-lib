@@ -13,7 +13,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,6 +28,7 @@ jobs:
       with:
         check-latest: true
         node-version: ${{ matrix.node-version }}
+    - run: apt install -y mkcert
     - run: npm i
     - run: npm test
     - run: npm run coverage
@@ -51,6 +51,7 @@ jobs:
           check-latest: true
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
+      - run: apt install -y mkcert
       - run: npm i
       - name: Determine npm publish tag
         id: npm-tag
