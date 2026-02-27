@@ -32,13 +32,13 @@
   },
   "scripts": {
     "checkonly": "! grep -R '\\.only' tests/",
-    "coverage": "npm run unit -- --coverage-report=text-summary",
-    "postcoverage": "tap --coverage-report=html --no-browser",
+    "coverage": "npm run unit && tap report --allow-incomplete-coverage text-summary",
+    "postcoverage": "tap report --allow-incomplete-coverage html --no-browser",
     "lint": "eslint . --ignore-path .gitignore",
     "start": "echo 'unable to start the library directly' && exit 1",
     "test": "npm run lint && npm run unit && npm run checkonly && npm run typescript",
     "typescript": "tsc --project ./tests/types/tsconfig.json",
-    "unit": "tap -b -o tap.log tests/*.test.js",
+    "unit": "tap --allow-incomplete-coverage -o tap.log tests/*.test.js",
     "version": "./scripts/update-version.sh ${npm_package_version} && git add CHANGELOG.md"
   },
   "dependencies": {
@@ -64,7 +64,7 @@
     "proxy": "^2.2.0",
     "split2": "^4.2.0",
     "swagger-parser": "^10.0.3",
-    "tap": "^16.3.4",
+    "tap": "^21.6.2",
     "typescript": "^5.0.4"
   },
   "engines": {
@@ -72,8 +72,5 @@
   },
   "eslintConfig": {
     "extends": "@mia-platform/eslint-config-mia"
-  },
-  "tap": {
-    "check-coverage": false
   }
 }
