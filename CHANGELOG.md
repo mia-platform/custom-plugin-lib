@@ -8,9 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v8.0.0 - 2026-03-03
 
-## v8.0.0-rc.1 - 2026-02-27
+### Updated
 
-## v8.0.0-rc.0 - 2026-02-27
+- `custom-plugin-lib` now supports NodeJS from v22 and above
+- Updated `lc39` to v9, which uses Fastify@5 and related dependencies. While there are no breaking changes in this library, you might want to get more details about the changes by checking the Fastify Migration Guide
+- using `tap` v21 for testing
 
 ## v7.0.1 - 2024-12-16
 
@@ -206,15 +208,15 @@ This version contains a bug when it's configured a required env var with a defau
 
 - improve validation error message
 
-## v3.0.0 - 2021-28-06 
+## v3.0.0 - 2021-28-06
 
 ### BREAKING CHANGES
 
-- ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression. 
+- ajv formats are no longer supported. Validation can now be achieved using a pattern field and specifying a regular expression.
 
-    This change is due to an incompatibility between fastify-env dependency env-schema and ajv formats. From ajv version 7.0.0 formats have been separated from the main package, requiring to be explicitly added. Visit ajv [official documentation](https://ajv.js.org/guide/formats.html#string-formats) and env-schema [official release page](https://github.com/fastify/env-schema/releases/tag/v3.0.0) for further details regarding this topic. 
+    This change is due to an incompatibility between fastify-env dependency env-schema and ajv formats. From ajv version 7.0.0 formats have been separated from the main package, requiring to be explicitly added. Visit ajv [official documentation](https://ajv.js.org/guide/formats.html#string-formats) and env-schema [official release page](https://github.com/fastify/env-schema/releases/tag/v3.0.0) for further details regarding this topic.
 
-- Environment variables using default values cannot be required anymore (and viceversa). 
+- Environment variables using default values cannot be required anymore (and viceversa).
 
     Fastify-env dependency env-schema no longer support both required and default properties to be defined simultaneously. Please make sure your environment variables now respect this constraint. You can have further details regarding this issue [here](https://github.com/fastify/env-schema/blob/master/index.js#L51)
 
