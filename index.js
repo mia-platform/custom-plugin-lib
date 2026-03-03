@@ -39,6 +39,8 @@ const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
 const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
 const ENABLE_HTTP_CLIENT_METRICS = 'ENABLE_HTTP_CLIENT_METRICS'
 
+let hasWarnedAboutReplyContextDeprecation = false
+
 const baseSchema = {
   type: 'object',
   required: [
@@ -224,6 +226,22 @@ function decorateFastify(fastify) {
 
   fastify.decorateRequest('getHttpClient', getHttpClientFromRequest)
   fastify.decorateRequest('httpClientMetrics', { getter: () => httpClientMetrics })
+
+  fastify.decorateReply('context', {
+    getter() {
+      if (!hasWarnedAboutReplyContextDeprecation) {
+        // We emit the warning only once to avoid spamming logs in case of multiple accesses
+        hasWarnedAboutReplyContextDeprecation = true
+
+        process.emitWarning(
+          'reply.context is deprecated and will be removed in a future major version. Use request.routeOptions.config instead.',
+          { type: 'DeprecationWarning', code: 'CPL_REPLY_CONTEXT_DEPRECATED' }
+        )
+      }
+      const routeConfig = this.request?.routeOptions?.config || this.request?.routeConfig || {}
+      return { config: routeConfig }
+    },
+  })
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
