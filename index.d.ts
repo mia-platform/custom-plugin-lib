@@ -29,14 +29,6 @@ declare namespace customPlugin {
 
   type CustomService<Config extends ServiceConfig = ServiceConfig> = (asyncInitFunction: AsyncInitFunction<Config>, serviceOptions?: CustomServiceOptions) => any
 
-  /**
-   * @deprecated Do not use this method, use `getHttpClient` instead
-   */
-  function getDirectServiceProxy(serviceNameOrURL: string, options?: InitServiceOptions): Service
-  /**
-   * @deprecated Do not use this method, use `getHttpClient` instead
-   */
-  function getServiceProxy(microserviceGatewayServiceName: string, options?: InitServiceOptions): Service
   function getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient
 
   interface environmentSchema {
@@ -75,14 +67,6 @@ declare namespace customPlugin {
     addRawCustomPlugin<Request extends RequestGeneric = RequestGeneric>(method: RawCustomPluginMethod, path: string, handler: AsyncHandler<Config, Request> | Handler<Config, Request>, schema?: InputOutputSchemas, advancedConfigs?: RawCustomPluginAdvancedConfig): DecoratedFastify,
     addPreDecorator<Request extends RequestGeneric = RequestGeneric>(path: string, handler: preDecoratorHandler<Config, Request>): DecoratedFastify<Config>
     addPostDecorator<Request extends RequestGeneric = RequestGeneric>(path: string, handler: postDecoratorHandler<Config, Request>): DecoratedFastify<Config>
-    /**
-     * @deprecated Do not use this method, use `getHttpClient` instead
-     */
-    getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
-    /**
-     * @deprecated Do not use this method, use `getHttpClient` instead
-     */
-    getServiceProxy: (options?: InitServiceOptions) => Service,
     getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient,
     addValidatorSchema(schema: object): void,
     getValidatorSchema(schemaId: string): undefined | ((data: any) => boolean | Promise<any>),
@@ -95,14 +79,6 @@ declare namespace customPlugin {
     getClientType: () => string | null,
     isFromBackOffice: () => boolean,
     getMiaHeaders: () => NodeJS.Dict<string | string[]>
-    /**
-     * @deprecated Do not use this method, use `getHttpClient` instead
-     */
-    getDirectServiceProxy: (serviceNameOrURL: string, options?: InitServiceOptions) => Service,
-    /**
-     * @deprecated Do not use this method, use `getHttpClient` instead
-     */
-    getServiceProxy: (options?: InitServiceOptions) => Service,
     getHeadersToProxy({isMiaHeaderInjected}: {isMiaHeaderInjected?: boolean}): NodeJS.Dict<string | string[]>
     getHttpClient(url: string, options?: HttpClientBaseOptions): HttpClient,
     USERID_HEADER_KEY: string,

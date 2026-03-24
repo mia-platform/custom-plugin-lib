@@ -1,5 +1,8 @@
+/* eslint-disable no-sync */
 'use strict'
 
+const cp = require('child_process')
+const path = require('path')
 const tap = require('tap')
 const nock = require('nock')
 const { Readable } = require('stream')
@@ -1828,23 +1831,32 @@ tap.test('httpClient', test => {
     assert.end()
   })
 
+
   test.test('tls options', async assert => {
     nock.enableNetConnect('localhost:3200')
     assert.teardown(() => {
       nock.disableNetConnect()
     })
 
-    // eslint-disable-next-line no-sync
-    const serverCa = fs.readFileSync('tests/fixtures/keys/ca.crt')
-    // eslint-disable-next-line no-sync
-    const serverKey = fs.readFileSync('tests/fixtures/keys/server.key')
-    // eslint-disable-next-line no-sync
-    const serverCert = fs.readFileSync('tests/fixtures/keys/server.crt')
+    // Generation certs and keys
+    const fixturesPath = path.join(__dirname, 'fixtures', 'keys')
+    cp.execSync(`mkdir -p ${fixturesPath}`)
+    cp.execSync(`mkcert -cert-file ${fixturesPath}/cert.pem -key-file ${fixturesPath}/key.pem localhost ::1 127.0.0.1`)
+    cp.execSync(`mkcert -client -cert-file ${fixturesPath}/client-cert.pem -key-file ${fixturesPath}/client-key.pem localhost ::1 127.0.0.1`)
+    const caPath = cp.execSync(`mkcert -CAROOT`).toString()
+      .trim()
 
     // eslint-disable-next-line no-sync
-    const clientKey = fs.readFileSync('tests/fixtures/keys/client.key')
+    const serverCa = fs.readFileSync(path.join(caPath, 'rootCA.pem'))
     // eslint-disable-next-line no-sync
-    const clientCert = fs.readFileSync('tests/fixtures/keys/client.crt')
+    const serverKey = fs.readFileSync('tests/fixtures/keys/key.pem')
+    // eslint-disable-next-line no-sync
+    const serverCert = fs.readFileSync('tests/fixtures/keys/cert.pem')
+
+    // eslint-disable-next-line no-sync
+    const clientKey = fs.readFileSync('tests/fixtures/keys/client-key.pem')
+    // eslint-disable-next-line no-sync
+    const clientCert = fs.readFileSync('tests/fixtures/keys/client-cert.pem')
 
     async function createServer() {
       return new Promise((resolve) => {

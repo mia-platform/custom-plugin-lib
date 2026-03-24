@@ -23,7 +23,6 @@ const Ajv = require('ajv')
 const path = require('path')
 const { name, description, version } = require(path.join(process.cwd(), 'package.json'))
 
-const serviceBuilder = require('./lib/serviceBuilder')
 const addRawCustomPlugin = require('./lib/rawCustomPlugin')
 const addPreDecorator = require('./lib/preDecorator')
 const addPostDecorator = require('./lib/postDecorator')
@@ -39,6 +38,8 @@ const BACKOFFICE_HEADER_KEY = 'BACKOFFICE_HEADER_KEY'
 const MICROSERVICE_GATEWAY_SERVICE_NAME = 'MICROSERVICE_GATEWAY_SERVICE_NAME'
 const ADDITIONAL_HEADERS_TO_PROXY = 'ADDITIONAL_HEADERS_TO_PROXY'
 const ENABLE_HTTP_CLIENT_METRICS = 'ENABLE_HTTP_CLIENT_METRICS'
+
+let hasWarnedAboutReplyContextDeprecation = false
 
 const baseSchema = {
   type: 'object',
@@ -155,58 +156,6 @@ function getBaseOptionsDecorated(headersKeyToProxy, baseOptions, headers) {
   }
 }
 
-function getDirectlyServiceBuilderFromRequest(serviceNameOrURL, baseOptions = {}) {
-  const requestHeaders = this.getOriginalRequestHeaders()
-  const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
-  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  const serviceHeaders = { ...this.getMiaHeaders(), ...extraHeaders }
-  try {
-    return getDirectServiceProxyFromUrlString(
-      serviceNameOrURL,
-      serviceHeaders,
-      baseOptions
-    )
-  } catch (error) {
-    return serviceBuilder(serviceNameOrURL, serviceHeaders, options)
-  }
-}
-
-function getDirectlyServiceBuilderFromService(serviceNameOrURL, baseOptions = {}) {
-  try {
-    return getDirectServiceProxyFromUrlString(serviceNameOrURL, {}, baseOptions)
-  } catch (error) {
-    return serviceBuilder(serviceNameOrURL, {}, baseOptions)
-  }
-}
-
-function getServiceBuilderFromRequest(baseOptions = {}) {
-  const requestHeaders = this.getOriginalRequestHeaders()
-  const extraHeaders = getCustomHeaders(extraHeadersKeys, requestHeaders)
-  const options = getBaseOptionsDecorated(this[ADDITIONAL_HEADERS_TO_PROXY], baseOptions, requestHeaders)
-  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], { ...this.getMiaHeaders(), ...extraHeaders }, options)
-}
-
-function getServiceBuilderFromService(baseOptions = {}) {
-  return serviceBuilder(this[MICROSERVICE_GATEWAY_SERVICE_NAME], {}, baseOptions)
-}
-
-function getDirectServiceProxyFromUrlString(serviceCompleteUrlString, requestMiaHeaders = {}, baseOptions = {}) {
-  let completeUrl
-  try {
-    completeUrl = new URL(serviceCompleteUrlString)
-  } catch (error) {
-    throw new Error(`getDirectServiceProxy: invalid url ${serviceCompleteUrlString}`)
-  }
-  return serviceBuilder(
-    completeUrl.hostname,
-    requestMiaHeaders,
-    {
-      protocol: completeUrl.protocol,
-      port: completeUrl.port,
-      ...baseOptions,
-    })
-}
-
 function getMiaHeaders() {
   const userId = this.getUserId()
   const userProperties = this.getUserProperties()
@@ -275,18 +224,30 @@ function decorateFastify(fastify) {
   fastify.decorateRequest('getOriginalRequestHeaders', getOriginalRequestHeaders)
   fastify.decorateRequest('getHeadersToProxy', getHeadersToProxy)
 
-  fastify.decorateRequest('getDirectServiceProxy', getDirectlyServiceBuilderFromRequest)
-  fastify.decorateRequest('getServiceProxy', getServiceBuilderFromRequest)
   fastify.decorateRequest('getHttpClient', getHttpClientFromRequest)
   fastify.decorateRequest('httpClientMetrics', { getter: () => httpClientMetrics })
+
+  fastify.decorateReply('context', {
+    getter() {
+      if (!hasWarnedAboutReplyContextDeprecation) {
+        // We emit the warning only once to avoid spamming logs in case of multiple accesses
+        hasWarnedAboutReplyContextDeprecation = true
+
+        process.emitWarning(
+          'reply.context is deprecated and will be removed in a future major version. Use request.routeOptions.config instead.',
+          { type: 'DeprecationWarning', code: 'CPL_REPLY_CONTEXT_DEPRECATED' }
+        )
+      }
+      const routeConfig = this.request?.routeOptions?.config || this.request?.routeConfig || {}
+      return { config: routeConfig }
+    },
+  })
 
   fastify.decorate(MICROSERVICE_GATEWAY_SERVICE_NAME, config[MICROSERVICE_GATEWAY_SERVICE_NAME])
   fastify.decorate('addRawCustomPlugin', addRawCustomPlugin)
   fastify.decorate('addPreDecorator', addPreDecorator)
   fastify.decorate('addPostDecorator', addPostDecorator)
 
-  fastify.decorate('getDirectServiceProxy', getDirectlyServiceBuilderFromService)
-  fastify.decorate('getServiceProxy', getServiceBuilderFromService)
   fastify.decorate('getHttpClient', getHttpClientFastifyDecoration)
   fastify.decorate('httpClientMetrics', httpClientMetrics)
 }
@@ -370,8 +331,4 @@ function getHttpClientMetrics(fastify) {
 }
 
 module.exports = initCustomServiceEnvironment
-module.exports.getDirectServiceProxy = getDirectlyServiceBuilderFromService
-module.exports.getServiceProxy = (microserviceGatewayServiceName, baseOptions = {}) => {
-  return serviceBuilder(microserviceGatewayServiceName, {}, baseOptions)
-}
 module.exports.getHttpClient = getHttpClient
