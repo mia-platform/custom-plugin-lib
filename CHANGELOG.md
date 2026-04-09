@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v8.0.1 - 2026-04-09
+
+### Updated
+
+- updated `lc39` to v9.0.1 to fix vulnerability issues
+
 ## v8.0.0 - 2026-03-03
 
 ### Updated
