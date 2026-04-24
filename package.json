@@ -65,7 +65,7 @@
     "split2": "^4.2.0",
     "swagger-parser": "^10.0.3",
     "tap": "^21.6.2",
-    "typescript": "^5.0.4"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=22"
