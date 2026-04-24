@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v8.0.2 - 2026-04-24
+
+### Updated
+
+- updated `@fastify/env` to v6, `lc39` to v9.0.2, and `axios` to v1.15.2
+
 ## v8.0.1 - 2026-04-09
 
 ### Updated
