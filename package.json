@@ -44,10 +44,10 @@
   "dependencies": {
     "@fastify/env": "^6.0.0",
     "@fastify/formbody": "^8.0.2",
-    "@mia-platform/lc39": "^9.0.1",
+    "@mia-platform/lc39": "^9.0.2",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
-    "axios": "^1.13.5",
+    "axios": "^1.15.2",
     "fastify-plugin": "^5.1.0",
     "http-errors": "^2.0.1",
     "pino": "^10.3.1",
