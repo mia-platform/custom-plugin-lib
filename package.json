@@ -57,7 +57,7 @@
     "@fastify/routes": "^6.0.2",
     "@mia-platform/eslint-config-mia": "^3.0.0",
     "@types/node": "^24.1.0",
-    "eslint": "^8.40.0",
+    "eslint": "^9.0.0",
     "fastify": "^5.6.1",
     "hpagent": "^1.2.0",
     "nock": "^13.3.1",
