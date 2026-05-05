@@ -286,7 +286,6 @@ async function decorateRequestAndFastifyInstance(fastify, { asyncInitFunction, s
   })
 }
 
-
 function initCustomServiceEnvironment(envSchema) {
   return function customService(asyncInitFunction, serviceOptions) {
     async function index(fastify, opts) {

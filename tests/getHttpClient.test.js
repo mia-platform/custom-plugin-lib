@@ -139,7 +139,7 @@ tap.test('getHttpClient throws on invalid url', async t => {
   const invalidUrl = 'httpnot-a-complete-url'
   try {
     getHttpClient.call(fastifyMock, invalidUrl)
-  } catch (error) {
+  } catch {
     t.notOk(true, 'The function should not throw anymore if the url is not a valid one, bet return the standard proxy')
   }
 })

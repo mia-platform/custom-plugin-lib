@@ -1,4 +1,3 @@
-/* eslint-disable no-sync */
 'use strict'
 
 const cp = require('child_process')
@@ -1242,7 +1241,6 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
-
     innerTest.end()
   })
 
@@ -1321,7 +1319,7 @@ tap.test('httpClient', test => {
       try {
         await service.get('/foo')
         assert.fail()
-      } catch (error) {
+      } catch {
         assert.pass()
       }
 
@@ -1681,7 +1679,6 @@ tap.test('httpClient', test => {
         })
       }, expectedError)
 
-
       myServiceNameScope.done()
       assert.end()
     })
@@ -1831,7 +1828,6 @@ tap.test('httpClient', test => {
     assert.end()
   })
 
-
   test.test('tls options', async assert => {
     nock.enableNetConnect('localhost:3200')
     assert.teardown(() => {
@@ -1846,16 +1842,11 @@ tap.test('httpClient', test => {
     const caPath = cp.execSync(`mkcert -CAROOT`).toString()
       .trim()
 
-    // eslint-disable-next-line no-sync
     const serverCa = fs.readFileSync(path.join(caPath, 'rootCA.pem'))
-    // eslint-disable-next-line no-sync
     const serverKey = fs.readFileSync('tests/fixtures/keys/key.pem')
-    // eslint-disable-next-line no-sync
     const serverCert = fs.readFileSync('tests/fixtures/keys/cert.pem')
 
-    // eslint-disable-next-line no-sync
     const clientKey = fs.readFileSync('tests/fixtures/keys/client-key.pem')
-    // eslint-disable-next-line no-sync
     const clientCert = fs.readFileSync('tests/fixtures/keys/client-cert.pem')
 
     async function createServer() {
@@ -1903,7 +1894,6 @@ tap.test('httpClient', test => {
       assert.end()
     })
 
-
     assert.test('returnAs: BUFFER', async assert => {
       const server = await createServer()
 
@@ -1934,7 +1924,6 @@ tap.test('httpClient', test => {
 
       assert.end()
     })
-
 
     assert.test('returnAs: STREAM', async assert => {
       const server = await createServer()
@@ -2223,7 +2212,6 @@ tap.test('httpClient', test => {
         assert.equal(error.statusCode, 500)
       }
 
-
       myServiceNameScope.done()
     })
 
@@ -2249,7 +2237,7 @@ tap.test('httpClient', test => {
           assert.match(afterRequest, {
             level: 50,
             msg: /^generic request error$/,
-            // eslint-disable-next-line id-blacklist
+            // eslint-disable-next-line id-denylist
             err: {
               type: 'Error',
               message: 'timeout of 100ms exceeded',

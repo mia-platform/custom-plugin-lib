@@ -38,7 +38,6 @@ tap.test('create a valid docs with the support of $ref schema', async t => {
   t.end()
 })
 
-
 tap.test('create a valid docs with custom vocabulary', async t => {
   const fastify = await setupFastify('./tests/services/service-with-formats.js', baseEnv)
 
