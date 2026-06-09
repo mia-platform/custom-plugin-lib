@@ -44,7 +44,7 @@
   "dependencies": {
     "@fastify/env": "^6.0.0",
     "@fastify/formbody": "^8.0.2",
-    "@mia-platform/lc39": "^9.0.2",
+    "@mia-platform/lc39": "^9.1.0",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "axios": "^1.15.2",
