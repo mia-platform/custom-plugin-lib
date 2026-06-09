@@ -1,6 +1,6 @@
 {
   "name": "@mia-platform/custom-plugin-lib",
-  "version": "8.1.0",
+  "version": "8.1.1",
   "description": "Library that allows you to define Mia-Platform custom plugins easily",
   "keywords": [
     "mia-platform",
@@ -61,7 +61,6 @@
     "fastify": "^5.6.1",
     "hpagent": "^1.2.0",
     "nock": "^13.3.1",
-    "@mia-platform/eslint-config-mia": "^10.0.0",
     "proxy": "^4.0.0",
     "split2": "^4.2.0",
     "swagger-parser": "^10.0.3",
