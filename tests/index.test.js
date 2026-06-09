@@ -18,7 +18,6 @@
 
 const tap = require('tap')
 const lc39 = require('@mia-platform/lc39')
-
 const fs = require('fs')
 const { promisify } = require('util')
 
