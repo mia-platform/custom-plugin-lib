@@ -6,25 +6,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - updated `lc39` to v9.1.0 to fix vulnerability issues
 
 ## v8.0.2 - 2026-04-24
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - updated `@fastify/env` to v6, `lc39` to v9.0.2, and `axios` to v1.15.2
 
 ## v8.0.1 - 2026-04-09
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - updated `lc39` to v9.0.1 to fix vulnerability issues
 
 ## v8.0.0 - 2026-03-03
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - `custom-plugin-lib` now supports NodeJS from v22 and above
 - Updated `lc39` to v9, which uses Fastify@5 and related dependencies. While there are no breaking changes in this library, you might want to get more details about the changes by checking the Fastify Migration Guide
@@ -32,7 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v7.0.1 - 2024-12-16
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - axios: v1.7.9
 
@@ -43,19 +53,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - dropped node 14 and node 16 support
 - dropped deprecated method `getServiceProxy` and `getDirectServiceProxy`, see the [migration guide](./docs/migration_guides/10_migrate_from_v6_to_v7.md) for further details.
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - lc39: v8
 
 ## v6.0.3
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - update axios to v1.6.7
 
 ## v6.0.2 - 2023-10-30
 
-### Updated
+### Unreleased
+
+## v8.1.0 - 2026-06-09pdated
 
 - update axios to v1.6.0
 
