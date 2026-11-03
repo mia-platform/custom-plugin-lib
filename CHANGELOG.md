@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+
+- updated `lc39` to v9.1.4 and bumped `ajv`, `axios`, `pino` and dev dependencies to their latest non-breaking versions
+- added `overrides` for `minimatch` (`^11.0.4`) and `glob` (`^14.0.3`) to fix vulnerabilities in transitive dependencies
+
 ## v8.1.1 - 2026-06-09
 
 ### Updated
