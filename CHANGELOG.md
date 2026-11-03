@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v8.1.2 - 2026-11-03
+
 ### Updated
 
 - updated `lc39` to v9.1.4 and bumped `ajv`, `axios`, `pino` and dev dependencies to their latest non-breaking versions
